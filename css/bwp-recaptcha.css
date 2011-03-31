@@ -15,7 +15,7 @@
 
 #recaptcha_widget:after { content: "."; display: block; height: 0; font-size: 0; line-height: 0; clear: both; visibility: hidden; }
 
-.recaptcha_only_if_incorrect_sol {
+.recaptcha_only_if_incorrect_sol, .bwp-capt-spam-identified {
 	clear: both;
 }
 

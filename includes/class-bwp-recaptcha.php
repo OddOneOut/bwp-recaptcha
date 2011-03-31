@@ -36,7 +36,7 @@ function bwp_capt_custom_theme_widget()
 				tabindex: <?php echo (int) $bwp_capt->options['input_tab']; echo "\n"; ?>
 			};
 		</script>
-		<div id="recaptcha_widget" class="clearfix" style="display: none;">
+		<div id="recaptcha_widget" style="display: none;">
 			<p class="recaptcha_only_if_incorrect_sol">
 				<?php echo $bwp_capt->options['input_error']; ?>
 			</p>
@@ -177,7 +177,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 				else if (!$this->user_can_bypass())
 				{
 					// this action needs to be added manually into your theme file, i.e. comments.php
-					add_action('bwp_comment_form_after_fields', array($this, 'add_recaptcha'));
+					add_action('bwp_recaptcha_add_markups', array($this, 'add_recaptcha'));
 					// action for themes using the comment_form() functions added in WordPress 3.0
 					add_action('comment_form_after_fields', array($this, 'add_recaptcha'));
 					add_action('comment_form_logged_in_after', array($this, 'add_recaptcha'));
@@ -545,7 +545,7 @@ if (!empty($page))
 			if (!empty($_SESSION['bwp_capt_akismet_needed']) && 'yes' == $_SESSION['bwp_capt_akismet_needed'])
 			{
 ?>
-		<p class="bwp-capt-spam-identified"><?php _e('Your comment is identified as spam, please answer this CAPTCHA below:', 'bwp-recaptcha'); ?></p>
+		<p class="bwp-capt-spam-identified"><?php _e('Your comment was identified as spam, please complete the CAPTCHA below:', 'bwp-recaptcha'); ?></p>
 <?php
 			}
 

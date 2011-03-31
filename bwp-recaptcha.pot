@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: BWP reCAPTCHA\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-19 15:34+0700\n"
-"PO-Revision-Date: 2011-03-19 15:34+0700\n"
+"POT-Creation-Date: 2011-04-05 15:41+0700\n"
+"PO-Revision-Date: 2011-04-05 15:41+0700\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -352,7 +352,7 @@ msgid "You are enabling Akismet integration but Akismet is not currently active.
 msgstr ""
 
 #: includes/class-bwp-recaptcha.php:548
-msgid "Your comment is identified as spam, please answer this CAPTCHA below:"
+msgid "Your comment was identified as spam, please complete the CAPTCHA below:"
 msgstr ""
 
 #: includes/class-bwp-recaptcha.php:580

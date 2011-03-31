@@ -3,7 +3,7 @@ Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/bwp-recaptcha/
 Tags: anti-spam, recaptcha, akismet, akismet integration
 Requires at least: 2.8
-Tested up to: 3.1
+Tested up to: 3.1.1
 Stable tag: 1.0.0
 
 This plugin utilizes reCAPTCHA (with support for Akismet) to help your blog stay clear of spams.
@@ -21,14 +21,17 @@ In the 21th century, spamming could be one of the most annoying problems for a w
 * Option to load media files (CSS, JS, etc.) only when needed
 * Possibility to integrate with Akismet, allowing better protection against spam and better end-users experience, i.e. "only force a CAPTCHA when a comment looks like spam".
 * WordPress Multi-site compatible (not tested with WPMU)
-* And [more](http://betterwp.net/wordpress-plugins/bwp-recaptcha/)...!
+* And more...
+
+The installation of this plugin will require additional work if you don't use `comment_form()` by default. Please read this plugin's [usage note](http://betterwp.net/wordpress-plugins/bwp-recaptcha/#usage) for more information.
 
 == Installation ==
 
-1. Upload the bwp-recaptcha folder to the /wp-content/plugins/ directory
+1. Upload the `bwp-recaptcha` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the Plugins menu in WordPress. After activation, you should see a menu of this plugin on your left. If you can not locate it, click on Settings under the plugin's name.
-3. Configure the plugin, and add your API keys. You must have API keys for the current domain for this plugin to work.
-4. Say goodbye to spam!
+3. If you don't use `comment_form()` to print the comment form, please read [this usage note](http://betterwp.net/wordpress-plugins/bwp-recaptcha/#usage).
+4. Configure the plugin, and add your API keys. You must have API keys for the current domain for this plugin to work.
+5. Say goodbye to spam!
 
 [View instructions with images](http://betterwp.net/wordpress-plugins/bwp-recaptcha/installation/).
 
@@ -38,9 +41,7 @@ In the 21th century, spamming could be one of the most annoying problems for a w
 
 == Screenshots ==
 
-1. screenshot-1.png
-1. screenshot-2.png
-1. screenshot-3.png
+1. reCAPTCHA with custom theme
 
 == Changelog ==
 
