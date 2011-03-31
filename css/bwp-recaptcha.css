@@ -1,0 +1,66 @@
+#recaptcha_widget, #recaptcha_widget_div {
+	/*margin-top: 5px;*/
+	margin-bottom: 15px;
+	/*ie fix*/ zoom: 1;
+}
+
+.bwp-option-page #recaptcha_widget, .bwp-option-page #recaptcha_widget_div
+{
+	margin-bottom: 0px;
+}
+
+#wpbody-content .form-spam-protect {
+	display: none;
+}
+
+#recaptcha_widget:after { content: "."; display: block; height: 0; font-size: 0; line-height: 0; clear: both; visibility: hidden; }
+
+.recaptcha_only_if_incorrect_sol {
+	clear: both;
+}
+
+#recaptcha_widget #recaptcha_image {
+	float: left;
+	width: 300px; height: 57px;
+	border: 1px solid #bbbbbb;
+}
+
+#recaptcha_widget #recaptcha_image a {
+	margin-left: 10px;
+}
+
+#recaptcha_widget .recaptcha_text, #recaptcha_widget .recaptcha_control {
+	float: left; 
+	width: 200px;
+	margin-left: 10px;
+}
+
+#recaptcha_widget .recaptcha_control {
+	width: 20px;
+	margin-left: 13px;
+}
+
+#recaptcha_widget .recaptcha_text span, #recaptcha_widget .recaptcha_text input {
+	display: block;
+}
+
+#recaptcha_widget .recaptcha_control img {
+	border: none;
+}
+
+/* Registration Page */
+
+#login #recaptcha_widget .recaptcha_text input {
+	background: none repeat scroll 0 0 #FBFBFB;
+	border: 1px solid #E5E5E5;
+	font-size: 13px;
+	margin-bottom: 16px;
+	margin-right: 6px;
+	margin-top: 2px;
+	padding: 3px;
+	width: 97%;
+}
+
+#login #recaptcha_widget #recaptcha_image {
+	margin-bottom: 10px;
+}

@@ -1,0 +1,389 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BWP reCAPTCHA\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-19 15:34+0700\n"
+"PO-Revision-Date: 2011-03-19 15:34+0700\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/class-bwp-framework.php:172
+#, php-format
+msgid "%s requires WordPress <strong>%s</strong> or higher and PHP <strong>%s</strong> or higher. The plugin will not function until you update your software. Please deactivate this plugin."
+msgstr ""
+
+#: includes/class-bwp-framework.php:181
+msgid "log"
+msgstr ""
+
+#: includes/class-bwp-framework.php:186
+msgid "You can buy me some coffees if you appreciate my work, thank you!"
+msgstr ""
+
+#: includes/class-bwp-framework.php:211
+#, php-format
+msgid "You are using version %s!"
+msgstr ""
+
+#: includes/class-bwp-framework.php:343
+msgid "Settings"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:45
+msgid "Get another challenge"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:46
+msgid "Get audio reCAPTCHA"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:47
+msgid "Get image reCAPTCHA"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:48
+msgid "About reCAPTCHA"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:52
+msgid "Enter the two words in the box:"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:53
+msgid "Enter the numbers you hear:"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:98
+msgid "<strong>ERROR:</strong> Incorrect or empty reCAPTCHA response, please try again."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:99
+#, php-format
+msgid "Error: Incorrect or empty reCAPTCHA response, please click the back button on your browser's toolbar or click on %s to go back."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:119
+#: includes/class-bwp-recaptcha.php:250
+msgid "General Options"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:120
+#: includes/class-bwp-recaptcha.php:251
+msgid "Theme Options"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:123
+msgid "English"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:124
+msgid "Dutch"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:125
+msgid "French"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:126
+msgid "German"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:127
+msgid "Portuguese"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:128
+msgid "Russian"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:129
+msgid "Spanish"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:130
+msgid "Turkish"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:134
+msgid "Read Profile"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:135
+msgid "Manage Options"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:248
+msgid "Better WordPress reCAPTCHA"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:250
+msgid "BWP reCAPTCHA General Options"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:251
+msgid "BWP reCAPTCHA Theme Options"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:262
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:281
+msgid "What is reCAPTCHA?"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:282
+msgid "This plugin will be"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:283
+msgid "Public Key"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:284
+msgid "Private Key"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:285
+msgid "Visibility Options (only applied to comment forms)"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:286
+msgid "Hide the CAPTCHA for"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:287
+msgid "If wrong or empty response"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:288
+#: includes/class-bwp-recaptcha.php:289
+msgid "Show the error message"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:290
+msgid "Akismet Integration"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:291
+msgid "Integrate with Akismet?"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:292
+msgid "If correct CAPTCHA response"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:296
+msgid "reCAPTCHA is a free CAPTCHA service that helps to digitize books, newspapers and old time radio shows. You can read more about reCAPTCHA <a href=\"http://www.google.com/recaptcha/learnmore\" target=\"_blank\">here</a>."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:297
+msgid "<em>This section allows you to determine when to show reCAPTCHA and how this plugin reacts to errors.</em>"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:298
+msgid "<em>Integrate with Akismet for better end-user experience. reCAPTCHA is optional and <strong>NO</strong> spam comment will be added to the spam/moderation queue, except likely legitimate comments. This makes the task of identifying sincere comments much easier. This integration is currently in beta stage.</em>"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:313
+msgid "Redirect commenter back to the comment form"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:314
+msgid "Show an error page just like WordPress does"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:317
+msgid "Approve comment immediately"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:318
+msgid "Hold comment in moderation queue"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:319
+msgid "Put comment in spam queue"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:323
+msgid "enabled for comment forms."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:324
+msgid "enabled for registration page."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:325
+msgid "registered users <em>(even without any capabilities)</em>."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:326
+msgid "users who can"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:327
+msgid "visitors who have at least"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:328
+msgid "reCAPTCHA will only show when Akismet identifies a comment as spam. Highly recommended if you do not want to force your visitors to type the captcha every time."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:331
+msgid "A public key used to request captchas from reCAPTCHA server."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:332
+msgid "A private (secret) key used to authenticate user's response."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:333
+msgid "when redirect commenter back to the comment form."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:334
+msgid "when show the normal error page with no redirection."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:335
+msgid "approved comment(s)."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:338
+msgid "<em><strong>Note:</strong> For this plugin to work, you will need a pair of API keys (public and private), which is available for free <a href=\"https://www.google.com/recaptcha/admin/create\" target=\"_blank\">here</a>. Once you have created those two keys for this domain, simply paste them below.</em>"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:339
+msgid "<em><strong>Note:</strong> Now you may wonder, why put the comment in the spam queue? The benefit is Akismet will be able to mark the comment as False Positive, and thus will not possibly block that comment in the future. However, it is best to just put the comment in moderation queue as next time Akismet will put such comment in moderation queue immediately without the need of a CAPTCHA.</em>"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:364
+msgid "Choose a theme"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:365
+msgid "Use CSS provided by this plugin?"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:366
+msgid "Load CSS, JS selectively?"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:367
+msgid "Choose a language for built-in themes"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:368
+msgid "Tabindex for captcha input field"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:369
+msgid "Preview your reCAPTCHA"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:373
+msgid "<em>Below you will see how your reCAPTCHA will look. Note that this might differ on your actual pages.<br /></em>"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:377
+msgid "Default Theme (Red)"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:378
+msgid "White Theme"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:379
+msgid "Black Theme"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:380
+msgid "Clean Theme"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:381
+msgid "Custom Theme (use CSS)"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:386
+msgid "This stylesheet is used to style the custom theme as well as the registration page. You can disable this or add appropriate filters to use your own."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:387
+msgid "This is only useful when you do not use any minify or cache plugin."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:390
+msgid "Basically, this should be 4 if you place the captcha before the textarea, and 5 if you put it after."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:393
+#, php-format
+msgid "<em><strong>Note:</strong> The four built-in captcha themes will look OK in most WordPress themes; However, some times it is better to control how reCAPTCHA looks using CSS. Please read <a href=\"%s#customization\" target=\"_blank\">this guide</a> if you would like to do so.</em>"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:394
+#, php-format
+msgid "<em><strong>Note:</strong> Above you can select some built-in languages. If you would like to add your own language, please read <a href=\"%s#customization\" target=\"_blank\">this guide</a>.</em>"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:438
+msgid "Warning"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:438
+msgid "API key(s) missing. Please get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a> (free!)"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:440
+msgid "Notice"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:440
+msgid "You are enabling Akismet integration but Akismet is not currently active. Please activate Akismet for the integration to work."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:548
+msgid "Your comment is identified as spam, please answer this CAPTCHA below:"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:580
+msgid "To use reCAPTCHA you must get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a>"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:609
+msgid "<strong>ERROR</strong>: Captcha response is either empty or incorrect."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:611
+msgid "<strong>ERROR</strong>: Unknown captcha error."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:661
+msgid "this link"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:663
+msgid "There is some problem with your reCAPTCHA API keys, please double check them."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:665
+msgid "Unknown error. Please contact the administrator for more info."
+msgstr ""
+
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:74
+msgid "Plugin Configurations"
+msgstr ""
+
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:391
+msgid "Save Changes"
+msgstr ""
+
