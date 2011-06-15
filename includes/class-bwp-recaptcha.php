@@ -1,4 +1,4 @@
-<?php
+c<?php
 /**
  * Copyright (c) 2011 Khang Minh <betterwp.net>
  *
@@ -697,6 +697,21 @@ if (!empty($page))
 		$location = (!empty($_POST['error_redirect_to'])) ? $_POST['error_redirect_to'] : get_permalink($comment_post_ID) . '#respond';		
 		wp_safe_redirect($location);
 		exit;
+	}
+
+	/**
+	 * Helper method to add Captcha below the comment field in themes using comment_form() function call
+	 * Usage: substitute comment_form() by $bwp_capt->below_comment_form() in the theme code
+	 */
+	function below_comment_form()
+	{
+		remove_action('comment_form_after_fields', array($this, 'add_recaptcha'));
+		remove_action('comment_form_logged_in_after', array($this, 'add_recaptcha'));
+		ob_start();
+		do_action('bwp_recaptcha_add_markups');
+		$recaptcha_html = ob_get_contents();
+		ob_end_clean();
+		comment_form(array('comment_notes_after' => $recaptcha_html));
 	}
 }
 ?>
