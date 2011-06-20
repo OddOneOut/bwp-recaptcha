@@ -699,4 +699,25 @@ if (!empty($page))
 		exit;
 	}
 }
+
+/**
+ * Helper function to display the captcha below the comment input field in themes using comment_form() function
+ * 
+ * Copyright (c) 2011 João Bruni <jbruni.com.br> - Free software, in the terms of the GNU General Public License.
+ */
+function bwp_capt_comment_form()
+{
+	global $bwp_capt;
+
+	remove_action('comment_form_after_fields', array($bwp_capt, 'add_recaptcha'));
+	remove_action('comment_form_logged_in_after', array($bwp_capt, 'add_recaptcha'));
+
+	ob_start();
+	do_action('bwp_recaptcha_add_markups');
+	$recaptcha_html = ob_get_contents();
+	ob_end_clean();
+
+	comment_form(array('comment_notes_after' => $recaptcha_html));
+}
+
 ?>
