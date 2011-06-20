@@ -58,6 +58,33 @@ function bwp_capt_custom_theme_widget()
 }
 }
 
+/**
+ * Helper function to display the captcha below the comment input field in themes using comment_form() function
+ * 
+ * Copyright (c) 2011 João Bruni <jbruni.com.br> - Free software, in the terms of the GNU General Public License.
+ */
+function bwp_capt_comment_form($args = array(), $post_id = null)
+{
+	global $bwp_capt;
+
+	remove_action('comment_form_after_fields', array($bwp_capt, 'add_recaptcha'));
+	remove_action('comment_form_logged_in_after', array($bwp_capt, 'add_recaptcha'));
+
+	ob_start();
+	do_action('bwp_recaptcha_add_markups');
+	$recaptcha_html = ob_get_contents();
+	ob_end_clean();
+
+	$args = wp_parse_args($args);
+
+	if (isset($args['comment_notes_after']))
+		$args['comment_notes_after'] .= $recaptcha_html;
+	else
+		$args['comment_notes_after'] = $recaptcha_html;
+
+	comment_form($args, $post_id);
+}
+
 if (!class_exists('BWP_FRAMEWORK'))
 	require_once('class-bwp-framework.php');
 
