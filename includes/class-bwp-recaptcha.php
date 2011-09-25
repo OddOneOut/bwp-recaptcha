@@ -58,6 +58,31 @@ function bwp_capt_custom_theme_widget()
 }
 }
 
+/**
+* Helper function to display the captcha below the comment input field in themes using comment_form() function
+*
+* Copyright (c) 2011 João Bruni <jbruni.com.br> - Free software, in the terms of the GNU General Public License.
+*/
+function bwp_capt_comment_form($args = array(), $post_id = null)
+{
+	global $bwp_capt;
+
+	remove_action('comment_form_after_fields', array($bwp_capt, 'add_recaptcha'));
+	remove_action('comment_form_logged_in_after', array($bwp_capt, 'add_recaptcha'));
+
+	ob_start();
+	do_action('bwp_recaptcha_add_markups');
+	$recaptcha_html = ob_get_contents();
+	ob_end_clean();
+
+	if (isset($args['comment_notes_after']))
+		$args['comment_notes_after'] .= $recaptcha_html;
+	else
+		$args['comment_notes_after'] = $recaptcha_html;
+
+	comment_form($args, $post_id);
+}
+
 if (!class_exists('BWP_FRAMEWORK'))
 	require_once('class-bwp-framework.php');
 
@@ -81,7 +106,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */	
-	function __construct($version = '1.0.0')
+	function __construct($version = '1.0.1')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BetterWP reCAPTCHA';
@@ -113,6 +138,9 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 			'hide_cap' => '',
 			'hide_approved' => 'yes'
 		);
+
+		// Super admin only options
+		$this->site_options = array('input_pubkey', 'input_prikey');
 
 		$this->build_properties('BWP_CAPT', 'bwp-recaptcha', $options, 'BetterWP reCAPTCHA', dirname(dirname(__FILE__)) . '/bwp-recaptcha.php', 'http://betterwp.net/wordpress-plugins/bwp-recaptcha/', false);
 		
@@ -263,7 +291,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 
 		// Init the class
 		$page = $_GET['page'];		
-		$bwp_option_page = new BWP_OPTION_PAGE($page);
+		$bwp_option_page = new BWP_OPTION_PAGE($page, $this->site_options, 'bwp-recaptcha');
 		
 		$options = array();	
 
@@ -345,12 +373,13 @@ if (!empty($page))
 		);
 		
 		// Get the default options
-		$options = $bwp_option_page->get_options(array('input_pubkey', 'input_prikey', 'input_error', 'input_approved', 'select_cap', 'hide_registered', 'hide_cap', 'hide_approved', 'enable_registration', 'enable_comment', 'input_back', 'select_response', 'enable_akismet', 'select_akismet_react'), $this->options);		
+		$options = $bwp_option_page->get_options(array('input_pubkey', 'input_prikey', 'input_error', 'input_approved', 'select_cap', 'hide_registered', 'hide_cap', 'hide_approved', 'enable_registration', 'enable_comment', 'input_back', 'select_response', 'enable_akismet', 'select_akismet_react'), $this->options);
 
 		// Get option from the database
 		$options = $bwp_option_page->get_db_options($page, $options);
-		
+
 		$option_formats = array('input_approved' => 'int', 'input_error' => 'html', 'input_back' => 'html');
+		$option_super_admin = $this->site_options;
 	}
 	else if ($page == BWP_CAPT_OPTION_THEME)
 	{
@@ -402,6 +431,7 @@ if (!empty($page))
 		$options = $bwp_option_page->get_db_options($page, $options);
 		
 		$option_formats = array('input_tab' => 'int');
+		$option_super_admin = array();
 		
 		// preview reCAPTCHA
 		if (!defined('RECAPTCHA_API_SERVER'))
@@ -416,21 +446,35 @@ if (!empty($page))
 			check_admin_referer($page);
 			foreach ($options as $key => &$option)
 			{
-				if (isset($_POST[$key]))
-					$bwp_option_page->format_field($key, $option_formats);
-				if (!isset($_POST[$key]))
-					$option = '';
-				else if (isset($option_formats[$key]) && 0 == $_POST[$key] && 'int' == $option_formats[$key])
-					$option = 0;
-				else if (isset($option_formats[$key]) && empty($_POST[$key]) && 'int' == $option_formats[$key])
-					$option = $this->options_default[$key];
-				else if (!empty($_POST[$key])) // should add more validation here though
-					$option = trim(stripslashes($_POST[$key]));
+				// [WPMS Compatible]
+				if ($this->is_normal_admin() && in_array($key, $option_super_admin))
+				{
+				}
 				else
-					$option = '';
+				{
+					if (isset($_POST[$key]))
+						$bwp_option_page->format_field($key, $option_formats);
+					if (!isset($_POST[$key]))
+						$option = '';
+					else if (isset($option_formats[$key]) && 0 == $_POST[$key] && 'int' == $option_formats[$key])
+						$option = 0;
+					else if (isset($option_formats[$key]) && empty($_POST[$key]) && 'int' == $option_formats[$key])
+						$option = $this->options_default[$key];
+					else if (!empty($_POST[$key])) // should add more validation here though
+						$option = trim(stripslashes($_POST[$key]));
+					else
+						$option = '';
+				}
 			}
 			update_option($page, $options);
+			// [WPMS Compatible]
+			if (!$this->is_normal_admin())
+				update_site_option($page, $options);
 		}
+
+		// [WPMS Compatible]
+		if ($this->is_normal_admin())
+			$bwp_option_page->kill_html_fields($form, array(2,3));
 
 		// show notice if one of the api keys is missing
 		$this->options = array_merge($this->options, $options);

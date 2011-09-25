@@ -20,7 +20,7 @@ class BWP_OPTION_PAGE {
 	 * Tabs to build
 	 */
 	var $form_tabs;
-	
+
 	/**
 	 * Current tab
 	 */
@@ -47,12 +47,18 @@ class BWP_OPTION_PAGE {
 	var $form_options = array(), $site_options = array();
 
 	/**
+	 * Other things
+	 */
+	var $domain;
+
+	/**
 	 * Constructor
 	 */
-	function __construct($form_name = 'bwp_option_page', $site_options = array())
+	function __construct($form_name = 'bwp_option_page', $site_options = array(), $domain = '')
 	{
 		$this->form_name			= $form_name;
 		$this->site_options			= $site_options;
+		$this->domain				= $domain;
 	}
 
 	/**
@@ -125,7 +131,7 @@ class BWP_OPTION_PAGE {
 			else if ('float' == $option_formats[$key])
 				$_POST[$key] = (float) $_POST[$key];
 			else if ('html' == $option_formats[$key])
-				$_POST[$key] = wp_filter_kses($_POST[$key]);
+				$_POST[$key] = wp_filter_post_kses($_POST[$key]);
 		}
 		else
 			$_POST[$key] = strip_tags($_POST[$key]);
@@ -154,6 +160,7 @@ class BWP_OPTION_PAGE {
 		$checked			= 'checked="checked" ';
 		$selected			= 'selected="selected" ';
 		$value				= (isset($this->form_options[$name])) ? $this->form_options[$name] : '';
+		$value				= (!empty($this->domain) && ('textarea' == $type || 'input' == $type)) ? __($value, $this->domain) : $value;
 		$value				= ('textarea' == $type) ? esc_html($value) : esc_attr($value);
 		$array_replace 		= array();
 		$array_search 		= array('size', 'name', 'value', 'cols', 'rows', 'label', 'disabled', 'pre', 'post');
@@ -333,7 +340,7 @@ class BWP_OPTION_PAGE {
 	 */
 	function generate_html_form()
 	{
-		$return_str = '<div class="wrap">' . "\n";
+		$return_str = '<div class="wrap" style="padding-bottom: 20px;">' . "\n";
 		if (sizeof($this->form_tabs) >= 2)
 			$return_str .= apply_filters('bwp-admin-form-icon', '<div class="icon32" id="icon-options-general"><br></div>'  . "\n");
 		else
@@ -388,7 +395,7 @@ class BWP_OPTION_PAGE {
 		echo $return_str;		
 		do_action('bwp_option_action_before_submit_button');		
 		$return_str = '';
-		$return_str .= '<p class="submit"><input type="submit" class="button-primary" name="submit_' . $this->form_name . '" value="' . __('Save Changes') . '" /></p>' . "\n";			
+		$return_str .= apply_filters('bwp_option_submit_button', '<p class="submit"><input type="submit" class="button-primary" name="submit_' . $this->form_name . '" value="' . __('Save Changes') . '" /></p>') . "\n";
 		$return_str .= '</form>' . "\n";		
 		$return_str .= '</div>' . "\n";
 		

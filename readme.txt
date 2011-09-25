@@ -3,8 +3,8 @@ Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/bwp-recaptcha/
 Tags: anti-spam, recaptcha, akismet, akismet integration
 Requires at least: 2.8
-Tested up to: 3.1.1
-Stable tag: 1.0.0
+Tested up to: 3.2.1
+Stable tag: 1.0.1
 
 This plugin utilizes reCAPTCHA (with support for Akismet) to help your blog stay clear of spams.
 
@@ -23,13 +23,23 @@ In the 21th century, spamming could be one of the most annoying problems for a w
 * WordPress Multi-site compatible (not tested with WPMU)
 * And more...
 
+**Languages**
+
+* English (default)
+* Spanish - Espanol (es_ES) - Thanks to [Ivan Leomuro]!
+
+Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using-poedit/) this plugin!
+
 The installation of this plugin will require additional work if you don't use `comment_form()` by default. Please read this plugin's [usage note](http://betterwp.net/wordpress-plugins/bwp-recaptcha/#usage) for more information.
 
 == Installation ==
 
 1. Upload the `bwp-recaptcha` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the Plugins menu in WordPress. After activation, you should see a menu of this plugin on your left. If you can not locate it, click on Settings under the plugin's name.
-3. If you don't use `comment_form()` to print the comment form, please read [this usage note](http://betterwp.net/wordpress-plugins/bwp-recaptcha/#usage).
+3. If you don't use `comment_form()` to print the comment form, please read [this usage note](http://betterwp.net/wordpress-plugins/bwp-recaptcha/#usage). Also, if you would like to have reCAPTCHA appearing below the textarea where your visitors type their comments, simply replace `comment_form()` in `comments.php` with this:
+<pre><code>
+if (function_exists('bwp_capt_comment_form')) {bwp_capt_comment_form();}
+</code></pre>
 4. Configure the plugin, and add your API keys. You must have API keys for the current domain for this plugin to work.
 5. Say goodbye to spam!
 
@@ -44,6 +54,13 @@ The installation of this plugin will require additional work if you don't use `c
 1. reCAPTCHA with custom theme
 
 == Changelog ==
+
+= 1.0.1 =
+* Added a template function that allows you to display reCAPTCHA below the textarea in a comment form. Check the installation tab out if you would like to know how to use the new template function. Thanks to João Bruni!
+* Made the public key and private key site-wide options. If you use BWP reCAPTCHA on a multi-site installation, you will only need to input this once.
+* Added Spanish - Espanol translation, thanks to Ivan Leomuro!
+* Marked this plugin as compatible with WordPress 3.2.x.
+* Other minor bugfixes and improvements.
 
 = 1.0.0 =
 * Initial Release.
