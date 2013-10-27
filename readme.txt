@@ -3,8 +3,8 @@ Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/bwp-recaptcha/
 Tags: anti-spam, recaptcha, akismet, akismet integration
 Requires at least: 2.8
-Tested up to: 3.2.1
-Stable tag: 1.0.1
+Tested up to: 3.7
+Stable tag: 1.0.2
 
 This plugin utilizes reCAPTCHA (with support for Akismet) to help your blog stay clear of spams.
 
@@ -27,6 +27,8 @@ In the 21th century, spamming could be one of the most annoying problems for a w
 
 * English (default)
 * Spanish - Espanol (es_ES) - Thanks to [Ivan Leomuro]!
+* Hungarian (hu_HU). Thanks to [Attila Porvay](http://helloftranslations.net)
+* French (fr_FR). Thansk to [Christophe GUILLOUX](http://christophe.guilloux.info)
 
 Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using-poedit/) this plugin!
 
@@ -55,8 +57,16 @@ if (function_exists('bwp_capt_comment_form')) {bwp_capt_comment_form();}
 
 == Changelog ==
 
+= 1.0.2 =
+* Marked as WordPress 3.7 compatible.
+* Added a Hungarian translation. Thanks to Attila Porvay!
+* Added a French translation. Thansk to Christophe GUILLOUX!
+* Updated BWP Framework to fix a possible bug that caues BWP setting pages to go blank.
+* Removed the `frameborder` attribute within the noscript tag of the PHP reCAPTCHA library for W3C compliance, thanks to Jools!
+* **Good news**: ManageWP.com has become the official sponsor for BWP reCAPTCHA - [Read more](http://betterwp.net/319-better-wordpress-plugins-updates-2013/).
+
 = 1.0.1 =
-* Added a template function that allows you to display reCAPTCHA below the textarea in a comment form. Check the installation tab out if you would like to know how to use the new template function. Thanks to João Bruni!
+* Added a template function that allows you to display reCAPTCHA below the textarea in a comment form. Check the installation tab out if you would like to know how to use the new template function. Thanks to Joï¿½o Bruni!
 * Made the public key and private key site-wide options. If you use BWP reCAPTCHA on a multi-site installation, you will only need to input this once.
 * Added Spanish - Espanol translation, thanks to Ivan Leomuro!
 * Marked this plugin as compatible with WordPress 3.2.x.

@@ -1,0 +1,438 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BWP reCAPTCHA\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-09-25 13:43+0700\n"
+"PO-Revision-Date: 2012-02-05 13:17+0100\n"
+"Last-Translator: Brandon <brandon@helloftranslations.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-Language: Hungarian\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Country: HUNGARY\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/class-bwp-framework.php:172
+#, php-format
+msgid "%s requires WordPress <strong>%s</strong> or higher and PHP <strong>%s</strong> or higher. The plugin will not function until you update your software. Please deactivate this plugin."
+msgstr "%s legalább %s WordPresst és legalább %s PHP-t igényel. A plugin nem fog működni, amíg nem frissíted a szoftvert. Kérlek kapcsold ki ezt a plugint."
+
+#: includes/class-bwp-framework.php:183
+msgid "Development Log"
+msgstr "Fejlesztési napló"
+
+#: includes/class-bwp-framework.php:183
+msgid "Frequently Asked Questions"
+msgstr "Gyakran Ismételt Kérdések"
+
+#: includes/class-bwp-framework.php:183
+msgid "FAQ"
+msgstr "GyIK"
+
+#: includes/class-bwp-framework.php:183
+msgid "Got a problem? Send me a feedback!"
+msgstr "Hibát találtál? Küldj visszajelzést!"
+
+#: includes/class-bwp-framework.php:183
+msgid "Contact"
+msgstr "Kapcsolat"
+
+#: includes/class-bwp-framework.php:190
+msgid "You can buy me some special coffees if you appreciate my work, thank you!"
+msgstr "Vehetsz nekem pár különleges kávét, ha elégedett vagy a munkámmal, köszi!"
+
+#: includes/class-bwp-framework.php:204
+msgid "Donate to "
+msgstr "Támogatom"
+
+#: includes/class-bwp-framework.php:206
+msgid "One cup $5.00"
+msgstr "Egy csésze $5,00"
+
+#: includes/class-bwp-framework.php:207
+msgid "Two cups $10.00"
+msgstr "Két csésze $10,00"
+
+#: includes/class-bwp-framework.php:208
+msgid "Five cups! $25.00"
+msgstr "Öt csésze! $25,00"
+
+#: includes/class-bwp-framework.php:209
+msgid "One LL-cup!!! $50.00"
+msgstr "Egy extranagy bögre!!! $50,00"
+
+#: includes/class-bwp-framework.php:210
+msgid "... or any amount!"
+msgstr "... vagy akármennyit!"
+
+#: includes/class-bwp-framework.php:225
+msgid "Latest updates from BetterWP.net!"
+msgstr "Legújabb hírek a BetterWP.net-től!"
+
+#: includes/class-bwp-framework.php:226
+msgid "Follow me on Twitter!"
+msgstr "Kövess Twitteren!"
+
+#: includes/class-bwp-framework.php:235
+#, php-format
+msgid "You are using version %s!"
+msgstr "Te a %s verziót használod!"
+
+#: includes/class-bwp-framework.php:372
+msgid "Settings"
+msgstr "Beállítások"
+
+#: includes/class-bwp-recaptcha.php:45
+msgid "Get another challenge"
+msgstr "Új kihívás kérése"
+
+#: includes/class-bwp-recaptcha.php:46
+msgid "Get audio reCAPTCHA"
+msgstr "Hangkihívás kérése"
+
+#: includes/class-bwp-recaptcha.php:47
+msgid "Get image reCAPTCHA"
+msgstr "Képkihívás kérése"
+
+#: includes/class-bwp-recaptcha.php:48
+msgid "About reCAPTCHA"
+msgstr "Súgó"
+
+#: includes/class-bwp-recaptcha.php:52
+msgid "Enter the two words in the box:"
+msgstr "Írd ide a két szót:"
+
+#: includes/class-bwp-recaptcha.php:53
+msgid "Enter the numbers you hear:"
+msgstr "Írd be a hallott számokat:"
+
+#: includes/class-bwp-recaptcha.php:98
+msgid "<strong>ERROR:</strong> Incorrect or empty reCAPTCHA response, please try again."
+msgstr "<strong>HIBA:</strong> Helytelen vagy üres reCAPTCHA válasz, kérlek próbáld újra."
+
+#: includes/class-bwp-recaptcha.php:99
+#, php-format
+msgid "Error: Incorrect or empty reCAPTCHA response, please click the back button on your browser's toolbar or click on %s to go back."
+msgstr "Hiba: Helytelen vagy üres reCAPTCHA válasz,, kérlek kattints a böngésző vissza gombjára vagy nyomd meg a %s gombot a visszatéréshez."
+
+#: includes/class-bwp-recaptcha.php:119
+#: includes/class-bwp-recaptcha.php:250
+msgid "General Options"
+msgstr "Alapbeállítások"
+
+#: includes/class-bwp-recaptcha.php:120
+#: includes/class-bwp-recaptcha.php:251
+msgid "Theme Options"
+msgstr "Témabeállítások"
+
+#: includes/class-bwp-recaptcha.php:123
+msgid "English"
+msgstr "Angol"
+
+#: includes/class-bwp-recaptcha.php:124
+msgid "Dutch"
+msgstr "Holland"
+
+#: includes/class-bwp-recaptcha.php:125
+msgid "French"
+msgstr "Francia"
+
+#: includes/class-bwp-recaptcha.php:126
+msgid "German"
+msgstr "Német"
+
+#: includes/class-bwp-recaptcha.php:127
+msgid "Portuguese"
+msgstr "Portugál"
+
+#: includes/class-bwp-recaptcha.php:128
+msgid "Russian"
+msgstr "Orosz"
+
+#: includes/class-bwp-recaptcha.php:129
+msgid "Spanish"
+msgstr "Spanyol"
+
+#: includes/class-bwp-recaptcha.php:130
+msgid "Turkish"
+msgstr "Török"
+
+#: includes/class-bwp-recaptcha.php:134
+msgid "Read Profile"
+msgstr "Profil Megtekintésére"
+
+#: includes/class-bwp-recaptcha.php:135
+msgid "Manage Options"
+msgstr "Beállítások Kezelésére"
+
+#: includes/class-bwp-recaptcha.php:248
+msgid "Better WordPress reCAPTCHA"
+msgstr "Fejlettebb Wordpress reCAPTCHA"
+
+#: includes/class-bwp-recaptcha.php:250
+msgid "BWP reCAPTCHA General Options"
+msgstr "BWP reCAPTCHA Alapbeállítások"
+
+#: includes/class-bwp-recaptcha.php:251
+msgid "BWP reCAPTCHA Theme Options"
+msgstr "BWP reCAPTCHA Témabeállítások"
+
+#: includes/class-bwp-recaptcha.php:262
+msgid "You do not have sufficient permissions to access this page."
+msgstr "Nincs engedélyed a lap megtekintéséhez."
+
+#: includes/class-bwp-recaptcha.php:281
+msgid "What is reCAPTCHA?"
+msgstr "Mi a reCAPTCHA?"
+
+#: includes/class-bwp-recaptcha.php:282
+msgid "This plugin will be"
+msgstr "Ez a plugin"
+
+#: includes/class-bwp-recaptcha.php:283
+msgid "Public Key"
+msgstr "Nyilvános Kulcs"
+
+#: includes/class-bwp-recaptcha.php:284
+msgid "Private Key"
+msgstr "Privát Kulcs"
+
+#: includes/class-bwp-recaptcha.php:285
+msgid "Visibility Options (only applied to comment forms)"
+msgstr "Láthatósági beállítások"
+
+#: includes/class-bwp-recaptcha.php:286
+msgid "Hide the CAPTCHA for"
+msgstr "CAPTCHA elrejtése a következők esetén:"
+
+#: includes/class-bwp-recaptcha.php:287
+msgid "If wrong or empty response"
+msgstr "Ha hibás vagy üres a válasz"
+
+#: includes/class-bwp-recaptcha.php:288
+#: includes/class-bwp-recaptcha.php:289
+msgid "Show the error message"
+msgstr "Mutasd ezt a hibaüzenetet"
+
+#: includes/class-bwp-recaptcha.php:290
+msgid "Akismet Integration"
+msgstr "Akismet Integráció"
+
+#: includes/class-bwp-recaptcha.php:291
+msgid "Integrate with Akismet?"
+msgstr "Integrálni szeretnéd az Akismet-el?"
+
+#: includes/class-bwp-recaptcha.php:292
+msgid "If correct CAPTCHA response"
+msgstr "Ha helyes a CAPTCHA válasz"
+
+#: includes/class-bwp-recaptcha.php:296
+msgid "reCAPTCHA is a free CAPTCHA service that helps to digitize books, newspapers and old time radio shows. You can read more about reCAPTCHA <a href=\"http://www.google.com/recaptcha/learnmore\" target=\"_blank\">here</a>."
+msgstr "reCAPTCHA egy ingyenes CAPTCHA egy ingyenes rendszer, ami CAPTCHA technológiát használ, hogy segítsen digitalizálni régi könyvek és rádióműsorok szövegét, miközben megvédi a weblapokat az automatikus szoftverektől, amelyek korlátozott területekhez akarnak hozzáférni, magukat embernek kiadva (pl. regisztráció). További információ a reCAPTCHA-ról <a href=\"http://www.google.com/recaptcha/learnmore\" target=\"_blank\">itt</a>."
+
+#: includes/class-bwp-recaptcha.php:297
+msgid "<em>This section allows you to determine when to show reCAPTCHA and how this plugin reacts to errors.</em>"
+msgstr "<em>Itt tudod beállítani mikor mutassa a reCAPTCHA-t, és hogy reagáljon a plugin a hibákra.</em>"
+
+#: includes/class-bwp-recaptcha.php:298
+msgid "<em>Integrate with Akismet for better end-user experience. reCAPTCHA is optional and <strong>NO</strong> spam comment will be added to the spam/moderation queue, except likely legitimate comments. This makes the task of identifying sincere comments much easier. This integration is currently in beta stage.</em>"
+msgstr "<em>Akismet-tel való integráció a jobb felhasználói élmény elérése érdekében. A reCAPTCHA nem kötelező és <strong>SEMMILYEN</strong> spam hozzászólás nem fog a szemétszűrési/moderációs listára kerülni, csak a valószínűleg létező személy által írt hozzászólások. Ez nagyban megkönnyíti a valós hozzászólások azonosítását. Az integráció jelenleg béta állapotban van.</em>"
+
+#: includes/class-bwp-recaptcha.php:313
+msgid "Redirect commenter back to the comment form"
+msgstr "Hozzászóló átirányítása a hozzászólási űrlaphoz."
+
+#: includes/class-bwp-recaptcha.php:314
+msgid "Show an error page just like WordPress does"
+msgstr "Egy hibajelző lap mutatása a WordPress-hez hasonlóan."
+
+#: includes/class-bwp-recaptcha.php:317
+msgid "Approve comment immediately"
+msgstr "Hozzászólások automatikus elfogadása"
+
+#: includes/class-bwp-recaptcha.php:318
+msgid "Hold comment in moderation queue"
+msgstr "Hozzászólások moderációs listára tétele"
+
+#: includes/class-bwp-recaptcha.php:319
+msgid "Put comment in spam queue"
+msgstr "Hozzászólások spam listára tétele"
+
+#: includes/class-bwp-recaptcha.php:323
+msgid "enabled for comment forms."
+msgstr "aktiválva a hozzászólások esetén."
+
+#: includes/class-bwp-recaptcha.php:324
+msgid "enabled for registration page."
+msgstr "aktiválva a regisztrációs űrlap esetén."
+
+#: includes/class-bwp-recaptcha.php:325
+msgid "registered users <em>(even without any capabilities)</em>."
+msgstr "regisztrált felhasználók <em>(még jogok nélkül is)</em>."
+
+#: includes/class-bwp-recaptcha.php:326
+msgid "users who can"
+msgstr "Felhasználók, akik képesek"
+
+#: includes/class-bwp-recaptcha.php:327
+msgid "visitors who have at least"
+msgstr "látogatók, akiknek minimum"
+
+#: includes/class-bwp-recaptcha.php:328
+msgid "reCAPTCHA will only show when Akismet identifies a comment as spam. Highly recommended if you do not want to force your visitors to type the captcha every time."
+msgstr "A reCAPTCHA csak akkor jelenik meg, ha az Akismet a hozzászólást spam-nek érzékeli. Nagyon ajánlott, ha nem akarod a látogatókra kényszeríteni a captcha beírását minden hozzászólásuknál."
+
+#: includes/class-bwp-recaptcha.php:331
+msgid "A public key used to request captchas from reCAPTCHA server."
+msgstr "Egy nyilvános kulcs ami captcha-k a reCAPTCHA szerverről való lekérésére szükséges."
+
+#: includes/class-bwp-recaptcha.php:332
+msgid "A private (secret) key used to authenticate user's response."
+msgstr "Egy privát (titkos) kulcs ami a felhasználó válaszát hitelesíti."
+
+#: includes/class-bwp-recaptcha.php:333
+msgid "when redirect commenter back to the comment form."
+msgstr "amikor a hozzászólót a hozzászóláshoz irányítjuk vissza."
+
+#: includes/class-bwp-recaptcha.php:334
+msgid "when show the normal error page with no redirection."
+msgstr "amikor a hibajelentő lapot mutatjuk átirányítás nélkül."
+
+#: includes/class-bwp-recaptcha.php:335
+msgid "approved comment(s)."
+msgstr "elfogadott hozzászólásuk van."
+
+#: includes/class-bwp-recaptcha.php:338
+msgid "<em><strong>Note:</strong> For this plugin to work, you will need a pair of API keys (public and private), which is available for free <a href=\"https://www.google.com/recaptcha/admin/create\" target=\"_blank\">here</a>. Once you have created those two keys for this domain, simply paste them below.</em>"
+msgstr "<em><strong>Megjegyzés:</strong> Ahhoz, hogy ez a plugin működjön, szükséged van két API kulcsra (nyilvános és privát), melyek ingyenesen elérhetők <a href=\"https://www.google.com/recaptcha/admin/create\" target=\"_blank\">innen</a>. Amint hozzájutottál a két kulcshoz, egyszerűen másold be alább.</em>"
+
+#: includes/class-bwp-recaptcha.php:339
+msgid "<em><strong>Note:</strong> Now you may wonder, why put the comment in the spam queue? The benefit is Akismet will be able to mark the comment as False Positive, and thus will not possibly block that comment in the future. However, it is best to just put the comment in moderation queue as next time Akismet will put such comment in moderation queue immediately without the need of a CAPTCHA.</em>"
+msgstr "<em><strong>Megjegyzés:</strong> Most azt kérdezhetnéd, mi értelme a hozzászólást a spam listára tenni? Ez azért lehet előnyös, mert az Akismet így képes a hozzászólást hibás találatnak jelölni, és így elkerülni, hogy következőleg blokkolja a hozzászólást. Ennek ellenére a legjobb, ha a hozzászólást a moderációs listára küldjük, mivel következőleg az Akismet automatikusan a moderációs listára fogja tenni az ilyen hozzászólásokat CAPTCHA használata nélkül.</em>"
+
+#: includes/class-bwp-recaptcha.php:364
+msgid "Choose a theme"
+msgstr "Válassz témát"
+
+#: includes/class-bwp-recaptcha.php:365
+msgid "Use CSS provided by this plugin?"
+msgstr "Használod a plugin beépített CSS-ét?"
+
+#: includes/class-bwp-recaptcha.php:366
+msgid "Load CSS, JS selectively?"
+msgstr "CSS és JS szelektív betöltése"
+
+#: includes/class-bwp-recaptcha.php:367
+msgid "Choose a language for built-in themes"
+msgstr "Nyelv választása a beépített témákhoz"
+
+#: includes/class-bwp-recaptcha.php:368
+msgid "Tabindex for captcha input field"
+msgstr "Tabindex a captcha beviteli mezőhöz"
+
+#: includes/class-bwp-recaptcha.php:369
+msgid "Preview your reCAPTCHA"
+msgstr "reCAPTCHA előnézete"
+
+#: includes/class-bwp-recaptcha.php:373
+msgid "<em>Below you will see how your reCAPTCHA will look. Note that this might differ on your actual pages.<br /></em>"
+msgstr "<em>Alább megtekintheted, hogy fog a reCAPTCHA kinézni. Ez különbözhet a tényleges oldalaidon.<br /></em>"
+
+#: includes/class-bwp-recaptcha.php:377
+msgid "Default Theme (Red)"
+msgstr "Alapértelmezett Téma (Piros)"
+
+#: includes/class-bwp-recaptcha.php:378
+msgid "White Theme"
+msgstr "Fehér Téma"
+
+#: includes/class-bwp-recaptcha.php:379
+msgid "Black Theme"
+msgstr "Fekete Téma"
+
+#: includes/class-bwp-recaptcha.php:380
+msgid "Clean Theme"
+msgstr "Letisztult Téma"
+
+#: includes/class-bwp-recaptcha.php:381
+msgid "Custom Theme (use CSS)"
+msgstr "Egyéni Téma (CSS használata)"
+
+#: includes/class-bwp-recaptcha.php:386
+msgid "This stylesheet is used to style the custom theme as well as the registration page. You can disable this or add appropriate filters to use your own."
+msgstr "Ezt a stíluslapot használja a testre szabott téma és a regisztrációs oldal is. Kikapcsolhatod ezt, vagy magad is hozzáathatsz megfelelő szűrőket."
+
+#: includes/class-bwp-recaptcha.php:387
+msgid "This is only useful when you do not use any minify or cache plugin."
+msgstr "Ez csak akkor hasznos, ha nem használsz semmilyen minify vagy gyorsítótár plugint."
+
+#: includes/class-bwp-recaptcha.php:390
+msgid "Basically, this should be 4 if you place the captcha before the textarea, and 5 if you put it after."
+msgstr "Gyakorlatilag itt 4-nek kell lennie, ha a captcha-t a szövegbeviteli mező elé szeretnéd helyezni és 5-nek, ha utána."
+
+#: includes/class-bwp-recaptcha.php:393
+#, php-format
+msgid "<em><strong>Note:</strong> The four built-in captcha themes will look OK in most WordPress themes; However, some times it is better to control how reCAPTCHA looks using CSS. Please read <a href=\"%s#customization\" target=\"_blank\">this guide</a> if you would like to do so.</em>"
+msgstr "<em><strong>Megjegyzés:</strong> A négy beépített captcha téma megfelelő a legtöbb WordPress témához; Mindazonáltal néha jobb a reCAPTCHA kinézetét CSS segítségével testre szabni. Ha érdekel, kérlek olvasd el <a href=\"%s#customization\" target=\"_blank\">ezt az útmutatót</a>.</em>"
+
+#: includes/class-bwp-recaptcha.php:394
+#, php-format
+msgid "<em><strong>Note:</strong> Above you can select some built-in languages. If you would like to add your own language, please read <a href=\"%s#customization\" target=\"_blank\">this guide</a>.</em>"
+msgstr "<em><strong>Megjegyzés:</strong> Fent választhatsz pár beépített nyelv közül. Ha hozzá szeretnéd adni a saját nyelvedet, kérlek olvasd el <a href=\"%s#customization\" target=\"_blank\">ezt az útmutatót</a>.</em>"
+
+#: includes/class-bwp-recaptcha.php:438
+msgid "Warning"
+msgstr "Figyelmeztetés"
+
+#: includes/class-bwp-recaptcha.php:438
+msgid "API key(s) missing. Please get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a> (free!)"
+msgstr "Az API kulcs(ok) hiányoznak. Kérlek szerezz be egy API kulcsot innen: <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a> (ingyenes!)"
+
+#: includes/class-bwp-recaptcha.php:440
+msgid "Notice"
+msgstr "Értesítés"
+
+#: includes/class-bwp-recaptcha.php:440
+msgid "You are enabling Akismet integration but Akismet is not currently active. Please activate Akismet for the integration to work."
+msgstr "Engedélyezed az Akismet integrációt, de az Akismet jelenleg nem aktív. Kérlek aktiváld az Akismet-et előbb."
+
+#: includes/class-bwp-recaptcha.php:548
+msgid "Your comment was identified as spam, please complete the CAPTCHA below:"
+msgstr "A hozzászólásod spam-ként lett azonosítva, kérlek válaszolj az alábbi CAPTCHA feladványra:"
+
+#: includes/class-bwp-recaptcha.php:580
+msgid "To use reCAPTCHA you must get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a>"
+msgstr "A reCAPTCHA használatához API kulcsot kell szerezned innen: <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a>"
+
+#: includes/class-bwp-recaptcha.php:609
+msgid "<strong>ERROR</strong>: Captcha response is either empty or incorrect."
+msgstr "<strong>HIBA</strong>: A captcha válasz hibás vagy üres."
+
+#: includes/class-bwp-recaptcha.php:611
+msgid "<strong>ERROR</strong>: Unknown captcha error."
+msgstr "<strong>HIBA</strong>: Ismeretlen captcha hiba."
+
+#: includes/class-bwp-recaptcha.php:661
+msgid "this link"
+msgstr "erre a címre"
+
+#: includes/class-bwp-recaptcha.php:663
+msgid "There is some problem with your reCAPTCHA API keys, please double check them."
+msgstr "Valami hiba van a reCAPTCHA API kulcsaiddal, kérlek ellenőrizd őket."
+
+#: includes/class-bwp-recaptcha.php:665
+msgid "Unknown error. Please contact the administrator for more info."
+msgstr "Ismeretlen hiba. További információért kérlek lépj kapcsolatba az adminisztrátorral."
+
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:80
+msgid "Plugin Configurations"
+msgstr "Plugin beállítások"
+
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:398
+msgid "Save Changes"
+msgstr "Változások mentése"
+

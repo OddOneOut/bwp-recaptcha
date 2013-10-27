@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2011 Khang Minh <betterwp.net>
+ * Copyright (c) 2013 Khang Minh <betterwp.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ function bwp_capt_custom_theme_widget()
 /**
 * Helper function to display the captcha below the comment input field in themes using comment_form() function
 *
-* Copyright (c) 2011 João Bruni <jbruni.com.br> - Free software, in the terms of the GNU General Public License.
+* Copyright (c) 2011 Joï¿½o Bruni <jbruni.com.br> - Free software, in the terms of the GNU General Public License.
 */
 function bwp_capt_comment_form($args = array(), $post_id = null)
 {
@@ -106,7 +106,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 	/**
 	 * Constructor
 	 */	
-	function __construct($version = '1.0.1')
+	function __construct($version = '1.0.2')
 	{
 		// Plugin's title
 		$this->plugin_title = 'BetterWP reCAPTCHA';

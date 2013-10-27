@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2011 Khang Minh <betterwp.net>
+ * Copyright (c) 2012 Khang Minh <betterwp.net>
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE VERSION 3.0 OR LATER
  */
  
@@ -90,9 +90,15 @@ class BWP_FRAMEWORK {
 
 	/**
 	 * Other things
-	 */	
+	 */
 	var $wp_ver = '2.8';
 	var $php_ver = '5';
+
+	/**
+	 * Other special variables
+	 */
+	protected $_menu_under_settings = false;
+	protected $_simple_menu = false;
 
 	/**
 	 * Build base properties
@@ -174,7 +180,8 @@ class BWP_FRAMEWORK {
 
 	function show_donation()
 	{
-		$showable = apply_filters('bwp_donation_showable', true);		
+		$showable = apply_filters('bwp_donation_showable', true);
+		$ad_showable = apply_filters('bwp_ad_showable', true);
 ?>
 <div id="bwp-info-place">
 <div id="bwp-donation" style="margin-bottom: 0px;">
@@ -218,17 +225,35 @@ class BWP_FRAMEWORK {
 		}
 ?>
 </div>
-<div id="bwp-seperator">
+<div class="bwp-separator">
 	<div style="height: 10px; width: 5px; background-color: #cccccc; margin: 0 auto;"><!-- --></div>
 </div>
 <div id="bwp-contact">
 	<a class="bwp-rss" href="http://feeds.feedburner.com/BetterWPnet"><?php _e('Latest updates from BetterWP.net!', $this->plugin_dkey); ?></a>
 	<a class="bwp-twitter" href="http://twitter.com/0dd0ne0ut"><?php _e('Follow me on Twitter!', $this->plugin_dkey); ?></a>
 </div>
+<?php
+		if (true == $ad_showable) 
+		{
+?>
+<div class="bwp-separator">
+	<div style="height: 10px; width: 5px; background-color: #cccccc; margin: 0 auto;"><!-- --></div>
+</div>
+<div id="bwp-ads">
+	<p><strong><?php _e('This Plugin is Proudly Sponsored By', $this->plugin_dkey); ?></strong></p>
+	<div style="width: 250px; margin: 0 auto;">
+		<a href="http://managewp.com/?utm_source=<?php echo $this->plugin_key; ?>&amp;utm_medium=Banner&amp;utm_content=mwp250_2&amp;utm_campaign=Plugins">
+			<img src="<?php echo plugin_dir_url($this->plugin_file) . 'includes/bwp-option-page/images/ad_250x250.png'; ?>" />
+		</a>
+	</div>
+</div>
+<?php
+		}
+?>
 </div>
 <?php
 	}
-	
+
 	function show_version()
 	{
 		if (empty($this->plugin_ver)) return '';
@@ -239,8 +264,6 @@ class BWP_FRAMEWORK {
 	{
 		// Build constants
 		$this->build_constants();
-		// Build tabs
-		$this->build_tabs();
 		// Build options
 		$this->build_options();
 		// Load libraries
@@ -248,7 +271,7 @@ class BWP_FRAMEWORK {
 		// Add actions and filters		
 		$this->add_hooks();
 		// Enqueue needed media, conditionally
-		$this->enqueue_media();
+		add_action('init', array($this, 'enqueue_media'));
 		// Load other properties
 		$this->init_properties();
 		// Loaded everything for this plugin, now you can add other things to it, such as stylesheet, etc.
@@ -367,19 +390,24 @@ class BWP_FRAMEWORK {
 
 	function plugin_action_links($links, $file) 
 	{
+		$option_script = (!$this->_menu_under_settings && !$this->_simple_menu) ? 'admin.php' : 'options-general.php';
 		$option_keys = array_values($this->option_keys);
 		if ($file == plugin_basename($this->plugin_file))
-			$links[] = '<a href="admin.php?page=' . $option_keys[0] . '">' . __('Settings') . '</a>';
+			$links[] = '<a href="' . $option_script . '?page=' . $option_keys[0] . '">' . __('Settings') . '</a>';
 
 		return $links;
 	}
 
 	function init_admin()
 	{
+		$this->_menu_under_settings = apply_filters('bwp_menus_under_settings', false);
+
 		add_filter('plugin_action_links', array($this, 'plugin_action_links'), 10, 2);
 
 		if ($this->is_admin_page())
 		{
+			// Build tabs
+			$this->build_tabs();
 			// Load option page builder
 			if (!class_exists('BWP_OPTION_PAGE'))
 				require_once(dirname(__FILE__) . '/bwp-option-page/bwp-option-page.php');
@@ -387,6 +415,7 @@ class BWP_FRAMEWORK {
 			wp_enqueue_style('bwp-option-page',  plugin_dir_url($this->plugin_file) . 'includes/bwp-option-page/css/bwp-option-page.css', array(), '1.0.1');
 			wp_enqueue_script('bwp-paypal-js',  plugin_dir_url($this->plugin_file) . 'includes/bwp-option-page/js/paypal.js', array('jquery'));
 		}
+
 		$this->build_menus();
 	}
 
@@ -400,10 +429,11 @@ class BWP_FRAMEWORK {
 	
 	function build_tabs()
 	{
+		$option_script = (!$this->_menu_under_settings) ? 'admin.php' : 'options-general.php';
 		foreach ($this->option_pages as $key => $page)
 		{
 			$pagelink = (!empty($this->option_keys[$key])) ? $this->option_keys[$key] : $this->extra_option_keys[$key];
-			$this->form_tabs[$page] = get_option('siteurl') . '/wp-admin/admin.php?page=' . $pagelink;
+			$this->form_tabs[$page] = get_option('siteurl') . '/wp-admin/' . $option_script . '?page=' . $pagelink;
 		}
 	}
 
