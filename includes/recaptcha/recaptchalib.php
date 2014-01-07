@@ -100,10 +100,10 @@ function _recaptcha_http_post($host, $path, $data, $port = 80) {
  * @param string $pubkey A public key for reCAPTCHA
  * @param string $error The error given by reCAPTCHA (optional, default is null)
  * @param boolean $use_ssl Should the request be made over ssl? (optional, default is false)
-
+ * @param string $lang language used for recaptcha
  * @return string - The HTML to be embedded in the user's form.
  */
-function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false)
+function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false, $lang = 'en')
 {
 	if ($pubkey == null || $pubkey == '') {
 		die ("To use reCAPTCHA you must get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a>");
@@ -119,10 +119,14 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false)
         if ($error) {
            $errorpart = "&amp;error=" . $error;
         }
-        return '<script type="text/javascript" src="'. $server . '/challenge?k=' . $pubkey . $errorpart . '"></script>
+		// BWP recaptcha update note, @since 1.1.0
+		// added a hl query var to correctly localize the recaptcha text for 
+		// pre-defined themes
+        //return '<script type="text/javascript" src="'. $server . '/challenge?k=' . $pubkey . $errorpart . '"></script>
+        return '<script type="text/javascript" src="'. $server . '/challenge?k=' . $pubkey . $errorpart . '&amp;hl=' . $lang . '"></script>
 
 	<noscript>
-  		<iframe src="'. $server . '/noscript?k=' . $pubkey . $errorpart . '" height="300" width="500"></iframe><br/>
+  		<iframe src="'. $server . '/noscript?k=' . $pubkey . $errorpart . '&amp;hl=' . $lang . '" height="300" width="500"></iframe><br/>
   		<textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
   		<input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
 	</noscript>';
