@@ -1,10 +1,11 @@
-=== Better WordPress reCAPTCHA (support Akismet) ===
+=== Better WordPress reCAPTCHA (support Akismet and Contact Form 7) ===
 Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/bwp-recaptcha/
-Tags: anti-spam, recaptcha, akismet, akismet integration
+Tags: recaptcha, captcha, comment captcha, login captcha, user registration captcha, blog registration captcha, contact form, contact form 7, akismet, akismet integration, anti-spam
 Requires at least: 2.8
 Tested up to: 3.8
 Stable tag: 1.1.0
+License: GPLv3
 
 This plugin utilizes reCAPTCHA (with support for Akismet) to help your blog stay clear of spams.
 
@@ -14,8 +15,11 @@ In the 21th century, spamming could be one of the most annoying problems for a w
 
 As of version 1.1.0, Contact Form 7 is supported out of the box.
 
-*How-to: Add BWP reCAPTCHA to Contact Form 7.* 
-*How-to: Add custom translation to reCAPTCHA.*
+**Useful tutorials:**
+
+*[How-to: Add BWP reCAPTCHA to Contact Form 7.](http://betterwp.net/wordpress-tips/how-to-add-bwp-recaptcha-to-contact-form-7/)*
+
+*[How-to: Add custom translations to reCAPTCHA.](http://betterwp.net/wordpress-tips/how-to-add-custom-translations-to-bwp-recaptcha/)*
 
 **Some Features**
 
@@ -40,18 +44,15 @@ As of version 1.1.0, Contact Form 7 is supported out of the box.
 
 Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using-poedit/) this plugin!
 
-The installation of this plugin will require additional work if you don't use `comment_form()` by default. Please read this plugin's [usage note](http://betterwp.net/wordpress-plugins/bwp-recaptcha/#usage) for more information.
+**reCAPTCHA for comment form**: The installation of this plugin will require additional work if you don't use `comment_form()` by default. Please read this plugin's [usage note](http://betterwp.net/wordpress-plugins/bwp-recaptcha/#usage) for more information.
+
+**reCAPTCHA for login form, user registration form, blog registration form (multi-site)**: reCAPTCHA is added automatically if enabled.
 
 == Installation ==
 
 1. Upload the `bwp-recaptcha` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the Plugins menu in WordPress. After activation, you should see a menu of this plugin on your left. If you can not locate it, click on Settings under the plugin's name.
-3. 
-* **Add reCAPTCHA to comment form**: If you don't use `comment_form()` to print the comment form, please read [this usage note](http://betterwp.net/wordpress-plugins/bwp-recaptcha/#usage). Also, if you would like to have reCAPTCHA appearing below the textarea where your visitors type their comments, simply replace `comment_form()` in `comments.php` with this:
-<pre><code>
-if (function_exists('bwp_capt_comment_form')) {bwp_capt_comment_form();}
-</code></pre>
-* **Add reCAPTCHA to user/site registration form and login form**: added automatically.
+3. Follow steps described in [plugin usage documentation](http://betterwp.net/wordpress-plugins/bwp-recaptcha/#usage) to properly add reCAPTCHA to your desired forms.
 4. Configure the plugin, and add your API keys. You must have API keys for the current domain for this plugin to work.
 5. Say goodbye to spam!
 
@@ -63,7 +64,10 @@ if (function_exists('bwp_capt_comment_form')) {bwp_capt_comment_form();}
 
 == Screenshots ==
 
-1. reCAPTCHA with custom theme
+1. reCAPTCHA added to Comment Form (default reCAPTCHA theme, Twenty Fourteen theme).
+2. reCAPTCHA added to Contact Form 7 (custom reCAPTCHA theme, Twenty Fourteen theme).
+3. reCAPTCHA added to WordPress Login Form (custom reCAPTCHA theme).
+4. reCAPTCHA added to Blog Registration Form (multi-site enabled, 'clean' reCAPTCHA theme, Twenty Fourteen theme).
 
 == Changelog ==
 
@@ -73,9 +77,11 @@ if (function_exists('bwp_capt_comment_form')) {bwp_capt_comment_form();}
 * Added an option to enable reCAPTCHA for login form (`wp-login.php`). This option is disabled by default.
 * Added better support for Multi-site installation. Admin can choose to use main site's key pair or different key pair for a specific site.
 * Added a German translation. Thanks to Andreas Reitberger! 
+* Changed the default tabindex for recaptcha input field to 0 (disable).
 * Fixed localization issue (captcha was not translated correctly.)
+* Other fixes and improvements.
 
-**Note to translators:** new strings are added so please update your translations.
+**Note to translators:** several new strings are added so please update your translations.
 
 = 1.0.2 =
 * Marked as WordPress 3.7 compatible.

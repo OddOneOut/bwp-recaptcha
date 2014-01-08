@@ -123,6 +123,7 @@ class BWP_RECAPTCHA_CF7
 			<?php echo esc_html(__( "Copy this code and paste it into the form left.", 'contact-form-7')); ?><br />
 			<input type="text" name="bwp-recaptcha" class="tag" readonly="readonly" onfocus="this.select()" />
 		</div>
+
 	</form>
 
 </div>

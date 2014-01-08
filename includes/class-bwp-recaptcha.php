@@ -19,7 +19,7 @@
 /**
  * This function is used to output custom reCAPTCHA theme
  *
- * By defining this function in your plugin, you can override this 
+ * By defining this function in your theme/plugin, you can override this 
  * and thus changing the html codes to suit your needs.
  */
 if (!function_exists('bwp_capt_custom_theme_widget'))
@@ -28,7 +28,6 @@ function bwp_capt_custom_theme_widget()
 {
 	global $bwp_capt;
 ?>
-
 		<script type="text/javascript">
 			var RecaptchaOptions = {
 				theme : 'custom',
@@ -51,7 +50,7 @@ function bwp_capt_custom_theme_widget()
 			<div class="recaptcha_text">
 				<span class="recaptcha_only_if_image"><label for="recaptcha_response_field"><em><small><?php _e('Enter the two words in the box:', 'bwp-recaptcha'); ?></small></em></label></span>
 				<span class="recaptcha_only_if_audio"><label for="recaptcha_response_field"><em><small><?php _e('Enter the numbers you hear:', 'bwp-recaptcha'); ?></small></em></label></span>
-				<input type="text" id="recaptcha_response_field" tabindex="4" class="input" name="recaptcha_response_field" />
+				<input type="text" id="recaptcha_response_field" tabindex="<?php echo (int) $bwp_capt->options['input_tab']; ?>" class="input" name="recaptcha_response_field" />
 			</div>
 		</div>
 <?php
@@ -104,6 +103,11 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 	var $is_reg = false;
 
 	/**
+	 * Is signing up (multi-site only)
+	 */
+	var $is_signup = false;
+
+	/**
 	 * Is login 
 	 */
 	var $is_login = false;
@@ -128,7 +132,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 			'input_error' => __('<strong>ERROR:</strong> Incorrect or empty reCAPTCHA response, please try again.', 'bwp-recaptcha'),
 			'input_back' => __('Error: Incorrect or empty reCAPTCHA response, please click the back button on your browser\'s toolbar or click on %s to go back.', 'bwp-recaptcha'),
 			'input_approved' => 1,
-			'input_tab'	=> 4,
+			'input_tab'	=> 0,
 			'enable_comment' => 'yes',
 			'enable_registration' => 'yes',
 			'enable_login' => '',
@@ -171,9 +175,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 			|| (strpos($_SERVER['REQUEST_URI'], 'wp-signup.php') !== false)) // WPMS compatible
 			$this->is_reg = true;
 
-		// only possible since WordPress 3.6.0
-		if (version_compare(get_bloginfo('version'), '3.6', '>=')
-		&& strpos($_SERVER['REQUEST_URI'], 'wp-login.php') !== false && empty($_GET['action']))
+		if (strpos($_SERVER['REQUEST_URI'], 'wp-login.php') !== false && empty($_GET['action']))
 			$this->is_login = true;
 
 		session_start();
@@ -230,18 +232,18 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 
 			if ('yes' == $this->options['enable_registration'] && $this->is_reg)
 			{
-				// registration page
+				// normal user registration page
 				add_action('register_form', array($this, 'add_recaptcha'));
 				add_action('login_head', array($this, 'enqueue_media'));
 				add_filter('registration_errors', array($this, 'check_reg_recaptcha'));
-				// wpms compatible
-				add_action('signup_blogform', array($this, 'add_recaptcha'));
+				// wpms user/site registration page
 				add_action('signup_extra_fields', array($this, 'add_recaptcha'));
-				add_filter('wpmu_validate_user_signup', array($this, 'check_reg_recaptcha'));
-				add_filter('wpmu_validate_blog_signup', array($this, 'check_reg_recaptcha'));
+				add_action('signup_blogform', array($this, 'add_blog_reg_recaptcha'));
+				add_filter('wpmu_validate_user_signup', array($this, 'check_user_reg_recaptcha'));
+				add_filter('wpmu_validate_blog_signup', array($this, 'check_blog_reg_recaptcha'));
 			}
 
-			// only possible since WordPress 3.6.0, and @since 1.1.0
+			// add captcha to login form @since 1.1.0
 			if ('yes' == $this->options['enable_login'] && $this->is_login)
 			{
 				add_action('login_form', array($this, 'add_recaptcha'));
@@ -268,18 +270,18 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 	{
 		if ('yes' == $this->options['enable_css'])
 		{
-			if (('custom' == $this->options['select_theme'] && (is_singular() || (!is_admin() && 'yes' != $this->options['enable_selective'])))
-				|| $this->is_admin_page())
+			if (('custom' == $this->options['select_theme'] 
+			&& (is_singular() || (!is_admin() && 'yes' != $this->options['enable_selective'])))
+			|| $this->is_admin_page())
 				wp_enqueue_style('bwp-capt', BWP_CAPT_CSS . '/bwp-recaptcha.css');
 
-			if ('yes' == $this->options['enable_registration'] && ($this->is_reg || $this->is_login))
-			{
-				if (!function_exists('is_multisite') || !is_multisite())
-				{
-					wp_enqueue_style('bwp-capt', apply_filters('bwp_capt_reg_css', BWP_CAPT_CSS . '/bwp-recaptcha.css', $this->options['select_theme']));
-					add_action('login_head', array($this, 'print_styles_for_login'), 1); // make sure this is soon enough
-					add_action('login_head', array($this, 'print_inline_styles_for_login'), 11); // make sure this is late enough
-				}
+			if (('yes' == $this->options['enable_registration'] && $this->is_reg
+				&& (!function_exists('is_multisite') || !is_multisite()))
+				|| ('yes' == $this->options['enable_login'] && $this->is_login)
+			) {
+				wp_enqueue_style('bwp-capt', apply_filters('bwp_capt_reg_css', BWP_CAPT_CSS . '/bwp-recaptcha.css', $this->options['select_theme']));
+				add_action('login_head', array($this, 'print_styles_for_login'), 1); // make sure this is soon enough
+				add_action('login_head', array($this, 'print_inline_styles_for_login'), 11); // make sure this is late enough
 			}
 		}
 	}
@@ -314,9 +316,10 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 
 	function modify_option_page()
 	{
+		global $blog_id;
 ?>
 		<script type="text/javascript">
-<?php if (function_exists('is_multisite') && is_multisite()) { ?>
+<?php if (function_exists('is_multisite') && is_multisite() && 1 < $blog_id) { ?>
 			var rc_readonly = <?php echo 'yes' == $this->options['use_global_keys'] ? 'true' : 'false'; ?>;
 			jQuery('input[name="input_pubkey"], input[name="input_prikey"]').prop('readOnly', rc_readonly);
 			jQuery('input[name="use_global_keys"]').on('click', function() {
@@ -477,7 +480,7 @@ if (!empty($page))
 				'cb2' => array(__('This is only useful when you do not use any minify or cache plugin.', 'bwp-recaptcha') => 'enable_selective')
 			),
 			'input'	=> array(
-				'input_tab' 	=> array('size' => 3, 'label' => __('Basically, this should be 4 if you place the captcha before the textarea, and 5 if you put it after.', 'bwp-recaptcha'))
+				'input_tab' 	=> array('size' => 3, 'label' => __('Basically, this should be 4 if you place the captcha before the textarea, and 5 if you put it after. Set to 0 to disable.', 'bwp-recaptcha'))
 			),
 			'container' => array(
 				'select_theme' => sprintf(__('<em><strong>Note:</strong> The four built-in captcha themes will look OK in most WordPress themes; However, some times it is better to control how reCAPTCHA looks using CSS. Please read <a href="%s#customization" target="_blank">this guide</a> if you would like to do so.</em>', 'bwp-recaptcha'), BWP_CAPT_PLUGIN_URL),
@@ -502,9 +505,9 @@ if (!empty($page))
 		if (isset($_POST['submit_' . $bwp_option_page->get_form_name()]) && isset($options) && is_array($options))
 		{
 			check_admin_referer($page);
+
 			foreach ($options as $key => &$option)
 			{
-				// [WPMS Compatible]
 				if ($this->is_normal_admin() && in_array($key, $option_super_admin))
 				{
 				}
@@ -524,10 +527,15 @@ if (!empty($page))
 						$option = '';
 				}
 			}
+
 			update_option($page, $options);
-			// [WPMS Compatible]
-			/*if (!$this->is_normal_admin())
-				update_site_option($page, $options);*/
+
+			// Update site options if is super admin and is on main site
+			global $blog_id;
+			if (!$this->is_normal_admin() && $blog_id == 1) {
+				update_site_option($page, $options);
+			}
+
 			// Update options successfully
 			$this->add_notice(__('All options have been saved.', 'bwp-recaptcha'));
 		}
@@ -635,8 +643,9 @@ if (!empty($page))
 
 	/**
 	 * Output the reCAPTCHA HTML, use theme if specified
+	 * @param $errors @since 1.1.0
 	 */
-	function add_recaptcha()
+	function add_recaptcha($errors = false)
 	{
 		$this->load_captcha_library();
 
@@ -645,9 +654,17 @@ if (!empty($page))
 			// make sure we add only one recaptcha instance
 			define('BWP_CAPT_ADDED', true);
 
+			// captcha error can comes from $_GET variable or passed via 
+			// hooks' parameters.
 			$captcha_error = '';
-			if (!empty($_GET['cerror']) && 'incorrect-captcha-sol' == $_GET['cerror'])
+			$extra_class = '';
+			if (!empty($_GET['cerror']) && 'incorrect-captcha-sol' == $_GET['cerror']) {
 				$captcha_error = $_GET['cerror'];
+			} else if (is_wp_error($errors)) {
+				// right now only registration errors are passed this way
+				$captcha_error = $errors->get_error_message('reg-recaptcha-error');
+				$extra_class = ' error';
+			}
 
 			if (!empty($_SESSION['bwp_capt_akismet_needed']) && 'yes' == $_SESSION['bwp_capt_akismet_needed']) {
 ?>
@@ -655,7 +672,7 @@ if (!empty($page))
 <?php
 			} else if (!empty($captcha_error)) {
 ?>
-		<p class="recaptcha_only_if_incorrect_sol"><?php echo $this->options['input_error']; ?></p>
+		<p class="recaptcha_only_if_incorrect_sol<?php echo $extra_class; ?>"><?php echo $this->options['input_error']; ?></p>
 <?php
 			}
 
@@ -700,9 +717,24 @@ if (!empty($page))
 		}
 	}
 
+	function add_blog_reg_recaptcha($errors)
+	{
+		// if user is not logged in, they can choose between signup for account 
+		// or sign up for blog after account creation.
+		if (!is_user_logged_in()) {
+			// if user chooses to signup for blog also, we don't show recaptcha 
+			// again because they have already provided the captcha once.
+		} else {
+			// user is logged in and wants to add a new blog, show captcha if 
+			// needed.
+			$this->add_recaptcha($errors);
+		}
+	}
+
 	/**
 	 * The system must authenticate while checking reCAPTCHA.
 	 * @filter authenticate, @see package WordPress/pluggable.php
+	 * @since 1.1.0
 	 */
 	function authenticate_with_recaptcha($user)
 	{
@@ -716,7 +748,7 @@ if (!empty($page))
 
 		if (!isset($_POST['recaptcha_challenge_field']) || !isset($_POST["recaptcha_response_field"])) {
 
-			$errors->add('login-recaptcha-error', __('<strong>ERROR</strong>: Captcha response is either empty or incorrect.', 'bwp-recaptcha'));
+			$errors->add('login-recaptcha-error', $this->options['input_error']);
 
 		} else {
 
@@ -726,7 +758,7 @@ if (!empty($page))
 				$response = recaptcha_check_answer($this->options['input_prikey'], $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
 				if (!$response->is_valid) {
 					if ($response->error == 'incorrect-captcha-sol')
-						$errors->add('login-recaptcha-error', __('<strong>ERROR</strong>: Captcha response is either empty or incorrect.', 'bwp-recaptcha'));
+						$errors->add('login-recaptcha-error', $this->options['input_error']);
 					else
 						$errors->add('login-recaptcha-error', __('<strong>ERROR</strong>: Unknown captcha error.', 'bwp-recaptcha'));
 				}
@@ -745,7 +777,6 @@ if (!empty($page))
 		return $user;
 	}
 
-	/*
 	/**
 	 * Check whether the captcha response for registration page is valid or not
 	 */
@@ -754,15 +785,14 @@ if (!empty($page))
 		$this->load_captcha_library();
 
 		// if $errors is an array, we're probably checking recaptcha for Multi-Site WP
-		if (is_array($errors))
+		if (is_array($errors) && isset($errors['errors']))
 		{
-			$is_multisite = true;
 			$temp = $errors;
 			$errors = $errors['errors'];
 		}
 
 		if (!isset($_POST['recaptcha_challenge_field']) || !isset($_POST["recaptcha_response_field"])) {
-			$errors->add('recaptcha-error', __('<strong>ERROR</strong>: Captcha response is either empty or incorrect.', 'bwp-recaptcha'));
+			$errors->add('reg-recaptcha-error', $this->options['input_error']);
 			$stop = true;
 		}
 
@@ -773,19 +803,39 @@ if (!empty($page))
 			if (!$response->is_valid)
 			{
 				if ($response->error == 'incorrect-captcha-sol')
-					$errors->add('recaptcha-error', __('<strong>ERROR</strong>: Captcha response is either empty or incorrect.', 'bwp-recaptcha'));
+					$errors->add('reg-recaptcha-error', $this->options['input_error']);
 				else
-					$errors->add('recaptcha-error', __('<strong>ERROR</strong>: Unknown captcha error.', 'bwp-recaptcha'));
+					$errors->add('reg-recaptcha-error', __('<strong>ERROR</strong>: Unknown captcha error.', 'bwp-recaptcha'));
 			}
 		}
 
-		if (isset($is_multisite))
+		if (isset($temp))
 		{
 			$temp['errors'] = $errors;
 			$errors = $temp;
 		}
 
 		return $errors;
+	}
+
+	function check_user_reg_recaptcha($errors)
+	{
+		// user is registering a new blog, we don't need to check anything here.
+		if (isset($_POST['stage']) && 'validate-blog-signup' == $_POST['stage']) {
+			return $errors;
+		} else {
+			return $this->check_reg_recaptcha($errors);
+		}
+	}
+
+	function check_blog_reg_recaptcha($errors)
+	{
+		// (maybe) check for recaptcha error if user is logged in
+		if (!is_user_logged_in()) {
+			return $errors;
+		} else {
+			return $this->check_reg_recaptcha($errors);
+		}
 	}
 
 	function akismet_comment_status()
