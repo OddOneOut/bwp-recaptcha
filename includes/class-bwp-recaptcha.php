@@ -17,61 +17,23 @@
  */
 
 /**
- * This function is used to output custom reCAPTCHA theme
+ * Helper function to display the captcha below the comment input field in themes using comment_form() function
  *
- * By defining this function in your theme/plugin, you can override this 
- * and thus changing the html codes to suit your needs.
+ * Copyright (c) 2011 Jono Bruni <jbruni.com.br> - Free software, in the terms of the GNU General Public License.
  */
-if (!function_exists('bwp_capt_custom_theme_widget'))
-{
-function bwp_capt_custom_theme_widget()
-{
-	global $bwp_capt;
-?>
-		<script type="text/javascript">
-			var RecaptchaOptions = {
-				theme : 'custom',
-				custom_theme_widget: 'recaptcha_widget',
-				tabindex: <?php echo (int) $bwp_capt->options['input_tab']; echo "\n"; ?>
-			};
-		</script>
-		<div id="recaptcha_widget" style="display: none;">
-			<p class="recaptcha_only_if_incorrect_sol">
-				<?php echo $bwp_capt->options['input_error']; ?>
-			</p>
-			<div id="recaptcha_image"></div>
-			<div class="recaptcha_control">
-				<a href="javascript:Recaptcha.reload()" title="<?php _e('Get another challenge', 'bwp-recaptcha'); ?>"><img src="<?php echo BWP_CAPT_IMAGES . '/icon_refresh.png'; ?>" alt="<?php _e('Get another challenge', 'bwp-recaptcha'); ?>" /></a>
-				<span class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type('audio')" title="<?php _e('Get audio reCAPTCHA', 'bwp-recaptcha'); ?>"><img src="<?php echo BWP_CAPT_IMAGES . '/icon_sound.png'; ?>" alt="<?php _e('Get audio reCAPTCHA', 'bwp-recaptcha'); ?>" /></a></span>
-				<span class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type('image')" title="<?php _e('Get image reCAPTCHA', 'bwp-recaptcha'); ?>"><img src="<?php echo BWP_CAPT_IMAGES . '/icon_image.png'; ?>" alt="<?php _e('Get image reCAPTCHA', 'bwp-recaptcha'); ?>" /></a></span>
-				<span><a href="javascript:Recaptcha.showhelp()" title="<?php _e('About reCAPTCHA', 'bwp-recaptcha'); ?>"><img src="<?php echo BWP_CAPT_IMAGES . '/icon_help.png'; ?>" alt="<?php _e('About reCAPTCHA', 'bwp-recaptcha'); ?>" /></a></span>
-			</div>
-
-			<div class="recaptcha_text">
-				<span class="recaptcha_only_if_image"><label for="recaptcha_response_field"><em><small><?php _e('Enter the two words in the box:', 'bwp-recaptcha'); ?></small></em></label></span>
-				<span class="recaptcha_only_if_audio"><label for="recaptcha_response_field"><em><small><?php _e('Enter the numbers you hear:', 'bwp-recaptcha'); ?></small></em></label></span>
-				<input type="text" id="recaptcha_response_field" tabindex="<?php echo (int) $bwp_capt->options['input_tab']; ?>" class="input" name="recaptcha_response_field" />
-			</div>
-		</div>
-<?php
-}
-}
-
-/**
-* Helper function to display the captcha below the comment input field in themes using comment_form() function
-*
-* Copyright (c) 2011 Jono Bruni <jbruni.com.br> - Free software, in the terms of the GNU General Public License.
-*/
 function bwp_capt_comment_form($args = array(), $post_id = null)
 {
 	global $bwp_capt;
 
 	remove_action('comment_form_after_fields', array($bwp_capt, 'add_recaptcha'));
 	remove_action('comment_form_logged_in_after', array($bwp_capt, 'add_recaptcha'));
+	remove_filter('comment_form_defaults', array($bwp_capt, 'add_recaptcha_after_comment_field'));
 
 	ob_start();
+
 	do_action('bwp_recaptcha_add_markups');
 	$recaptcha_html = ob_get_contents();
+
 	ob_end_clean();
 
 	if (isset($args['comment_notes_after']))
@@ -82,25 +44,30 @@ function bwp_capt_comment_form($args = array(), $post_id = null)
 	comment_form($args, $post_id);
 }
 
-if (!class_exists('BWP_FRAMEWORK'))
-	require_once('class-bwp-framework.php');
+if (!class_exists('BWP_FRAMEWORK_IMPROVED'))
+	require_once('class-bwp-framework-improved.php');
 
-class BWP_RECAPTCHA extends BWP_FRAMEWORK {
-
+class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
+{
 	/**
-	 * Language
+	 * reCAPTCHA built-in languages
 	 */
 	var $lang;
 
 	/**
-	 * Capabilities
+	 * User capabilities to bypass captcha
 	 */
 	var $caps;
-	
+
 	/**
-	 * Is registering
+	 * Is registering via wp-login.php
 	 */
 	var $is_reg = false;
+
+	/**
+	 * Captcha error message when registering via wp-login.php
+	 */
+	var $reg_errors = false;
 
 	/**
 	 * Is signing up (multi-site only)
@@ -108,124 +75,262 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 	var $is_signup = false;
 
 	/**
-	 * Is login 
+	 * Is logging in via wp-login.php
 	 */
 	var $is_login = false;
 
 	/**
 	 * Constructor
 	 */
-	function __construct($version = '1.1.0')
+	public function __construct($version = '1.1.1')
 	{
 		// Plugin's title
-		$this->plugin_title = 'BetterWP reCAPTCHA';
+		$this->plugin_title = 'Better WordPress reCAPTCHA';
 		// Plugin's version
 		$this->set_version($version);
+		// Plugin's language domain
+		$this->domain = 'bwp-recaptcha';
 		// Basic version checking
 		if (!$this->check_required_versions())
 			return;
-		
+
 		// Default options
 		$options = array(
-			'input_pubkey' => '',
-			'input_prikey' => '',
-			'input_error' => __('<strong>ERROR:</strong> Incorrect or empty reCAPTCHA response, please try again.', 'bwp-recaptcha'),
-			'input_back' => __('Error: Incorrect or empty reCAPTCHA response, please click the back button on your browser\'s toolbar or click on %s to go back.', 'bwp-recaptcha'),
-			'input_approved' => 1,
-			'input_tab'	=> 0,
-			'enable_comment' => 'yes',
-			'enable_registration' => 'yes',
-			'enable_login' => '',
-			'enable_akismet' => '',
-			'enable_selective' => 'yes',
-			'enable_css' => 'yes',
-			'use_global_keys' => 'yes',
-			'select_lang' => 'en',
-			'select_theme' => 'red',
-			'select_cap' => 'manage_options',
-			'select_response' => 'redirect',
+			'input_pubkey'         => '',
+			'input_prikey'         => '',
+			'input_error'          => __('<strong>ERROR:</strong> Incorrect or '
+				. 'empty reCAPTCHA response, please try again.', $this->domain),
+			'input_back'           => __('Error: Incorrect or empty reCAPTCHA response, '
+				. 'please click the back button on your browser\'s toolbar or '
+				. 'click on %s to go back.', $this->domain),
+			'input_approved'       => 1,
+			'input_tab'            => 0,
+			'enable_comment'       => 'yes',
+			'enable_registration'  => 'yes',
+			'enable_login'         => '',
+			'enable_akismet'       => '',
+			'enable_css'           => 'yes',
+			'use_global_keys'      => 'yes',
+			'select_lang'          => 'en',
+			'select_theme'         => 'red',
+			'select_cap'           => 'manage_options',
+			'select_cf7_tag'       => 'bwp-recaptcha',
+			'select_response'      => 'redirect',
+			'select_position'      => 'after_comment_field',
 			'select_akismet_react' => 'hold',
-			'hide_registered' => 'yes',
-			'hide_cap' => '',
-			'hide_approved' => 'yes'
+			'hide_registered'      => 'yes',
+			'hide_cap'             => '',
+			'hide_approved'        => 'yes'
 		);
 
-		$this->build_properties('BWP_CAPT', 'bwp-recaptcha', $options, 'BetterWP reCAPTCHA', dirname(dirname(__FILE__)) . '/bwp-recaptcha.php', 'http://betterwp.net/wordpress-plugins/bwp-recaptcha/', false);
-		
-		$this->add_option_key('BWP_CAPT_OPTION_GENERAL', 'bwp_capt_general', __('General Options', 'bwp-recaptcha'));
-		$this->add_option_key('BWP_CAPT_OPTION_THEME', 'bwp_capt_theme', __('Theme Options', 'bwp-recaptcha'));
+		$this->add_option_key('BWP_CAPT_OPTION_GENERAL', 'bwp_capt_general',
+			__('General Options', $this->domain)
+		);
+		$this->add_option_key('BWP_CAPT_OPTION_THEME', 'bwp_capt_theme',
+			__('Theme Options', $this->domain)
+		);
 
+		$this->build_properties('BWP_CAPT', $this->domain, $options,
+			'BetterWP reCAPTCHA', dirname(dirname(__FILE__)) . '/bwp-recaptcha.php',
+			'http://betterwp.net/wordpress-plugins/bwp-recaptcha/', false);
+	}
+
+	private function _load_template_functions()
+	{
+		if (!function_exists('bwp_capt_custom_theme_widget')) :
+
+		/**
+		 * Output custom reCAPTCHA theme
+		 *
+		 * By defining this function in your theme/plugin, you can override this
+		 * and thus changing the html codes to suit your needs.
+		 *
+		 * @return void
+		 */
+		function bwp_capt_custom_theme_widget()
+		{
+			global $bwp_capt;
+		?>
+				<script type="text/javascript">
+					var RecaptchaOptions = {
+						theme : 'custom',
+						custom_theme_widget: 'recaptcha_widget',
+						tabindex: <?php echo (int) $bwp_capt->options['input_tab']; echo "\n"; ?>
+					};
+				</script>
+				<div id="recaptcha_widget" style="display: none;">
+					<p class="recaptcha_only_if_incorrect_sol">
+						<?php echo $bwp_capt->options['input_error']; ?>
+					</p>
+					<div id="recaptcha_image"></div>
+					<div class="recaptcha_control">
+						<a href="javascript:Recaptcha.reload()" title="<?php _e('Get another challenge', $bwp_capt->domain); ?>"><img src="<?php echo BWP_CAPT_IMAGES . '/icon_refresh.png'; ?>" alt="<?php _e('Get another challenge', $bwp_capt->domain); ?>" /></a>
+						<span class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type('audio')" title="<?php _e('Get audio reCAPTCHA', $bwp_capt->domain); ?>"><img src="<?php echo BWP_CAPT_IMAGES . '/icon_sound.png'; ?>" alt="<?php _e('Get audio reCAPTCHA', $bwp_capt->domain); ?>" /></a></span>
+						<span class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type('image')" title="<?php _e('Get image reCAPTCHA', $bwp_capt->domain); ?>"><img src="<?php echo BWP_CAPT_IMAGES . '/icon_image.png'; ?>" alt="<?php _e('Get image reCAPTCHA', $bwp_capt->domain); ?>" /></a></span>
+						<span><a href="javascript:Recaptcha.showhelp()" title="<?php _e('About reCAPTCHA', $bwp_capt->domain); ?>"><img src="<?php echo BWP_CAPT_IMAGES . '/icon_help.png'; ?>" alt="<?php _e('About reCAPTCHA', $bwp_capt->domain); ?>" /></a></span>
+					</div>
+
+					<div class="recaptcha_text">
+						<span class="recaptcha_only_if_image"><label for="recaptcha_response_field"><em><small><?php _e('Enter the two words in the box:', $bwp_capt->domain); ?></small></em></label></span>
+						<span class="recaptcha_only_if_audio"><label for="recaptcha_response_field"><em><small><?php _e('Enter the numbers you hear:', $bwp_capt->domain); ?></small></em></label></span>
+						<input type="text" id="recaptcha_response_field" tabindex="<?php echo (int) $bwp_capt->options['input_tab']; ?>" class="input" name="recaptcha_response_field" />
+					</div>
+				</div>
+		<?php
+		}
+
+		endif;
+	}
+
+	private function _set_session_data($key, $value)
+	{
+		// use $_SESSION, if $_SESSION isn't available there's no alternative
+		// for now
+		if (!isset($_SESSION))
+		{
+			return;
+		}
+
+		$_SESSION[$key] = trim($value);
+	}
+
+	private function _unset_session_data($key)
+	{
+		if (isset($_SESSION[$key]))
+		{
+			unset($_SESSION[$key]);
+		}
+	}
+
+	/**
+	 * Checks if captcha is required based on akismet integration
+	 *
+	 * @since 1.1.1
+	 * @return bool
+	 */
+	private function _is_captcha_required()
+	{
+		if (!defined('AKISMET_VERSION') || 'yes' != $this->options['enable_akismet'])
+			return true;
+
+		if ($this->_is_comment_spam())
+			return true;
+
+		return false;
+	}
+
+	private function _is_comment_spam()
+	{
+		if (isset($_SESSION['bwp_capt_comment_is_spam'])
+			&& 'yes' == $_SESSION['bwp_capt_comment_is_spam']
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	protected function pre_init_properties()
+	{
 		$this->lang = array(
-			__('English', 'bwp-recaptcha') => 'en',
-			__('Dutch', 'bwp-recaptcha') => 'nl',
-			__('French', 'bwp-recaptcha') => 'fr',
-			__('German', 'bwp-recaptcha') => 'de',
-			__('Portuguese', 'bwp-recaptcha') => 'pt',
-			__('Russian', 'bwp-recaptcha') => 'ru',
-			__('Spanish', 'bwp-recaptcha') => 'es',
-			__('Turkish', 'bwp-recaptcha') => 'tr'
+			__('English', $this->domain)    => 'en',
+			__('Dutch', $this->domain)      => 'nl',
+			__('French', $this->domain)     => 'fr',
+			__('German', $this->domain)     => 'de',
+			__('Italian', $this->domain)    => 'it',
+			__('Portuguese', $this->domain) => 'pt',
+			__('Russian', $this->domain)    => 'ru',
+			__('Spanish', $this->domain)    => 'es',
+			__('Turkish', $this->domain)    => 'tr'
 		);
 
 		$this->caps = apply_filters('bwp_capt_bypass_caps', array(
-			__('Read Profile', 'bwp-recaptcha') => 'read',
-			__('Manage Options', 'bwp-recaptcha') => 'manage_options'
+			__('Read Profile', $this->domain)   => 'read',
+			__('Manage Options', $this->domain) => 'manage_options'
 		));
 
-		if ((strpos($_SERVER['REQUEST_URI'], 'wp-login.php') !== false && !empty($_GET['action']) && 'register' == $_GET['action'])
-			|| (strpos($_SERVER['REQUEST_URI'], 'wp-signup.php') !== false)) // WPMS compatible
+		// @since 1.1.0 init public and private keys based on multi-site setting
+		$this->init_captcha_keys();
+
+		if (strpos($_SERVER['REQUEST_URI'], 'wp-login.php') !== false
+			&& !empty($_REQUEST['action']) && 'register' == $_REQUEST['action']
+		) {
+			// whether user is requesting regular user registration page
 			$this->is_reg = true;
+		}
 
-		if (strpos($_SERVER['REQUEST_URI'], 'wp-login.php') !== false && empty($_GET['action']))
+		if (strpos($_SERVER['REQUEST_URI'], 'wp-signup.php') !== false)
+		{
+			// whether user is requesting wp-signup page (multi-site page for
+			// user/site registration)
+			$this->is_signup = true;
+		}
+
+		if (strpos($_SERVER['REQUEST_URI'], 'wp-login.php') !== false
+			&& empty($_REQUEST['action'])
+		) {
+			// whether user is requesting the wp-login page
 			$this->is_login = true;
-
-		session_start();
-
-		$this->init();
-
-		// only load style when needed
-		add_action('template_redirect', array($this, 'enqueue_media'));
-	}
-
-	function load_captcha_library()
-	{
-		if (!function_exists('recaptcha_get_html')) {
-			require_once(dirname(__FILE__) . '/recaptcha/recaptchalib.php');
 		}
 	}
 
-	function add_hooks()
+	protected function pre_init_hooks()
 	{
-		if ((!defined('AKISMET_VERSION') || $this->options['enable_akismet'] != 'yes') && isset($_SESSION['bwp_capt_akismet_needed']))
-			unset($_SESSION['bwp_capt_akismet_needed']);
+		if (!is_admin() && !isset($_SESSION))
+		{
+			// start a session to store Akismet and comment data between
+			// requests, only on front end and when applicable
+			if (headers_sent() && (!defined('WP_DEBUG') || !WP_DEBUG))
+				return;
 
-		// add support for Contact Form 7 (CF7) automatically
-		if (defined('WPCF7_VERSION')) {
-			include_once(dirname(__FILE__) . '/class-bwp-recaptcha-cf7.php');
+			session_start();
+		}
+	}
+
+	protected function init_hooks()
+	{
+		// load custom template function at this stage to make it pluggable
+		$this->_load_template_functions();
+
+		if (defined('WPCF7_VERSION'))
+		{
+			// add support for Contact Form 7 (CF7) automatically if CF7 is
+			// installed and activated
+			include_once dirname(__FILE__) . '/class-bwp-recaptcha-cf7.php';
 			BWP_RECAPTCHA_CF7::init($this);
 		}
-
-		// init public and private keys based on multi-site setting, @since 1.1.0
-		$this->init_captcha_keys();
 
 		if (!empty($this->options['input_pubkey']) && !empty($this->options['input_prikey']))
 		{
 			if ('yes' == $this->options['enable_comment'])
 			{
-				// if user chooses to integrate with akismet, only show recaptcha when comment is marked as spam
-				if (defined('AKISMET_VERSION') && 'yes' == $this->options['enable_akismet'] && (empty($_SESSION['bwp_capt_akismet_needed']) || 'yes' != $_SESSION['bwp_capt_akismet_needed']))
+				if (!$this->_is_captcha_required())
 				{
+					// if user chooses to integrate with akismet, only show
+					// recaptcha when comment is marked as spam
 					add_action('akismet_spam_caught', array($this, 'add_recaptcha_after_akismet'));
 				}
 				else if (!$this->user_can_bypass())
 				{
 					// this action needs to be added manually into your theme file, i.e. comments.php
 					add_action('bwp_recaptcha_add_markups', array($this, 'add_recaptcha'));
-					// action for themes using the comment_form() functions added in WordPress 3.0
-					add_action('comment_form_after_fields', array($this, 'add_recaptcha'));
-					add_action('comment_form_logged_in_after', array($this, 'add_recaptcha'));
+
+					if ($this->options['select_position'] == 'after_fields')
+					{
+						// show captcha after website field
+						add_action('comment_form_after_fields', array($this, 'add_recaptcha'));
+						add_action('comment_form_logged_in_after', array($this, 'add_recaptcha'));
+					}
+					elseif ($this->options['select_position'] == 'after_comment_field')
+					{
+						// show captcha after comment field (default @since 1.1.1)
+						add_filter('comment_form_defaults', array($this, 'add_recaptcha_after_comment_field'));
+					}
+
 					// fill the comment textarea
-					add_action('comment_form', array($this, 'fill_comment_content'));
-					// check the captcha
+					add_filter('comment_form_field_comment', array($this, 'fill_comment_content'));
+
+					// check entered captcha for comment form
 					add_action('pre_comment_on_post', array($this, 'check_recaptcha'));
 				}
 			}
@@ -234,8 +339,11 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 			{
 				// normal user registration page
 				add_action('register_form', array($this, 'add_recaptcha'));
-				add_action('login_head', array($this, 'enqueue_media'));
 				add_filter('registration_errors', array($this, 'check_reg_recaptcha'));
+			}
+
+			if ('yes' == $this->options['enable_registration'] && $this->is_signup)
+			{
 				// wpms user/site registration page
 				add_action('signup_extra_fields', array($this, 'add_recaptcha'));
 				add_action('signup_blogform', array($this, 'add_blog_reg_recaptcha'));
@@ -243,22 +351,24 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 				add_filter('wpmu_validate_blog_signup', array($this, 'check_blog_reg_recaptcha'));
 			}
 
-			// add captcha to login form @since 1.1.0
 			if ('yes' == $this->options['enable_login'] && $this->is_login)
 			{
+				// @since 1.1.0 add captcha to login form
 				add_action('login_form', array($this, 'add_recaptcha'));
-				add_action('login_head', array($this, 'enqueue_media'));
-				// the 40 priority is to ensure that we run the filter after 
+
+				// the priority of 15 is to ensure that we run the filter before
 				// WordPress authenticates the user.
-				add_filter('authenticate', array($this, 'authenticate_with_recaptcha'), 40);
+				add_filter('authenticate', array($this, 'authenticate_with_recaptcha'), 15);
 			}
 		}
 	}
 
-	function init_captcha_keys()
+	protected function init_captcha_keys()
 	{
-		if (function_exists('is_multisite') && is_multisite()) {
-			if ('yes' == $this->options['use_global_keys']) {
+		if (self::is_multisite())
+		{
+			if ('yes' == $this->options['use_global_keys'])
+			{
 				$site_options = get_site_option(BWP_CAPT_OPTION_GENERAL);
 				$this->options['input_pubkey'] = $site_options['input_pubkey'];
 				$this->options['input_prikey'] = $site_options['input_prikey'];
@@ -266,38 +376,55 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 		}
 	}
 
-	function enqueue_media()
+	protected function enqueue_media()
 	{
+		if ($this->is_admin_page(BWP_CAPT_OPTION_GENERAL))
+		{
+			// some JS to toggle fields' visibility in General Options page
+			wp_enqueue_script('bwp-recaptcha', BWP_CAPT_JS . '/bwp-recaptcha.js', array('jquery'));
+		}
+
 		if ('yes' == $this->options['enable_css'])
 		{
-			if (('custom' == $this->options['select_theme'] 
-			&& (is_singular() || (!is_admin() && 'yes' != $this->options['enable_selective'])))
-			|| $this->is_admin_page())
-				wp_enqueue_style('bwp-capt', BWP_CAPT_CSS . '/bwp-recaptcha.css');
+			// load default CSS if needed
+			$theme        = $this->options['select_theme'];
+			$bwp_capt_css = apply_filters('bwp_capt_css', BWP_CAPT_CSS . '/bwp-recaptcha.css');
 
-			if (('yes' == $this->options['enable_registration'] && $this->is_reg
-				&& (!function_exists('is_multisite') || !is_multisite()))
+			if ('custom' == $this->options['select_theme']
+				&& ($this->is_admin_page(BWP_CAPT_OPTION_THEME) || !is_admin())
+			) {
+				// load default CSS for custom theme
+				wp_enqueue_style('bwp-capt', $bwp_capt_css);
+			}
+
+			if (('yes' == $this->options['enable_registration'] && $this->is_reg)
 				|| ('yes' == $this->options['enable_login'] && $this->is_login)
 			) {
-				wp_enqueue_style('bwp-capt', apply_filters('bwp_capt_reg_css', BWP_CAPT_CSS . '/bwp-recaptcha.css', $this->options['select_theme']));
-				add_action('login_head', array($this, 'print_styles_for_login'), 1); // make sure this is soon enough
 				add_action('login_head', array($this, 'print_inline_styles_for_login'), 11); // make sure this is late enough
 			}
 		}
 	}
 
-	function print_styles_for_login()
+	public function load_captcha_library()
 	{
-		wp_print_styles('bwp-capt');
+		if (!function_exists('recaptcha_get_html')
+			|| !function_exists('recaptcha_check_answer')
+		) {
+			require_once(dirname(__FILE__) . '/recaptcha/recaptchalib.php');
+		}
 	}
-	
-	function print_inline_styles_for_login()
+
+	public function print_inline_styles_for_login()
 	{
-		$login_width = ('clean' == $this->options['select_theme']) ? 482 : 362;
+		$login_width = 'clean' == $this->options['select_theme'] ? 482 : 362;
 ?>
 		<style type="text/css">
 			#login {
 				width: <?php echo $login_width; ?>px;
+			}
+			#recaptcha_widget_div {
+				margin-bottom: 15px;
+				zoom: 1;
 			}
 		</style>
 <?php
@@ -306,20 +433,42 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 	/**
 	 * Build the Menus
 	 */
-	function build_menus()
+	protected function build_menus()
 	{
-		add_menu_page(__('Better WordPress reCAPTCHA', 'bwp-recaptcha'), 'BWP reCAPT', BWP_CAPT_CAPABILITY, BWP_CAPT_OPTION_GENERAL, array($this, 'build_option_pages'), BWP_CAPT_IMAGES . '/icon_menu.png');
-		// Sub menus
-		add_submenu_page(BWP_CAPT_OPTION_GENERAL, __('BWP reCAPTCHA General Options', 'bwp-recaptcha'), __('General Options', 'bwp-recaptcha'), BWP_CAPT_CAPABILITY, BWP_CAPT_OPTION_GENERAL, array($this, 'build_option_pages'));
-		add_submenu_page(BWP_CAPT_OPTION_GENERAL, __('BWP reCAPTCHA Theme Options', 'bwp-recaptcha'), __('Theme Options', 'bwp-recaptcha'), BWP_CAPT_CAPABILITY, BWP_CAPT_OPTION_THEME, array($this, 'build_option_pages'));
+		add_menu_page(
+			__('Better WordPress reCAPTCHA', $this->domain),
+			'BWP reCAPT',
+			BWP_CAPT_CAPABILITY,
+			BWP_CAPT_OPTION_GENERAL,
+			array($this, 'build_option_pages'),
+			BWP_CAPT_IMAGES . '/icon_menu.png'
+		);
+
+		add_submenu_page(
+			BWP_CAPT_OPTION_GENERAL,
+			__('BWP reCAPTCHA General Options', $this->domain),
+			__('General Options', $this->domain),
+			BWP_CAPT_CAPABILITY,
+			BWP_CAPT_OPTION_GENERAL,
+			array($this, 'build_option_pages')
+		);
+
+		add_submenu_page(
+			BWP_CAPT_OPTION_GENERAL,
+			__('BWP reCAPTCHA Theme Options', $this->domain),
+			__('Theme Options', $this->domain),
+			BWP_CAPT_CAPABILITY,
+			BWP_CAPT_OPTION_THEME,
+			array($this, 'build_option_pages')
+		);
 	}
 
-	function modify_option_page()
+	public function modify_option_page()
 	{
 		global $blog_id;
 ?>
 		<script type="text/javascript">
-<?php if (function_exists('is_multisite') && is_multisite() && 1 < $blog_id) { ?>
+<?php if (self::is_multisite() && 1 < $blog_id) { ?>
 			var rc_readonly = <?php echo 'yes' == $this->options['use_global_keys'] ? 'true' : 'false'; ?>;
 			jQuery('input[name="input_pubkey"], input[name="input_prikey"]').prop('readOnly', rc_readonly);
 			jQuery('input[name="use_global_keys"]').on('click', function() {
@@ -341,211 +490,391 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK {
 	 *
 	 * Utilizes BWP Option Page Builder (@see BWP_OPTION_PAGE)
 	 */
-	function build_option_pages()
+	public function build_option_pages()
 	{
 		if (!current_user_can(BWP_CAPT_CAPABILITY))
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
-		// Init the class
-		$page = $_GET['page'];
-		$bwp_option_page = new BWP_OPTION_PAGE($page, $this->site_options, 'bwp-recaptcha');
+		$page            = $_GET['page'];
+		$bwp_option_page = new BWP_OPTION_PAGE($page, $this->site_options, $this->domain);
 
 		$options = array();
 
-if (!empty($page))
-{
-	if ($page == BWP_CAPT_OPTION_GENERAL)
-	{
-		$bwp_option_page->set_current_tab(1);
-
-		// Option Structures - Form
-		$form = array(
-			'items'			=> array('heading', 'section', 'checkbox', 'input', 'input', 'heading', 'section', 'select', 'input', 'input', 'heading', 'checkbox', 'select'),
-			'item_labels'	=> array
-			(
-				__('What is reCAPTCHA?', 'bwp-recaptcha'),
-				__('This plugin will be', 'bwp-recaptcha'),
-				__('Use main site\'s keys', 'bwp-recaptcha'),
-				__('Public Key', 'bwp-recaptcha'),
-				__('Private Key', 'bwp-recaptcha'),
-				__('Visibility Options (applied to comment forms)', 'bwp-recaptcha'),
-				__('Hide the CAPTCHA for', 'bwp-recaptcha'),
-				__('If wrong or empty response', 'bwp-recaptcha'),
-				__('Show the error message', 'bwp-recaptcha'),
-				__('Show the error message', 'bwp-recaptcha'),
-				__('Akismet Integration (applied to comment forms)', 'bwp-recaptcha'),
-				__('Integrate with Akismet?', 'bwp-recaptcha'),
-				__('If correct CAPTCHA response', 'bwp-recaptcha')
-			),
-			'item_names'	=> array('h1', 'sec1', 'cb7', 'input_pubkey', 'input_prikey', 'h2', 'sec2', 'select_response', 'input_error', 'input_back', 'h3', 'cb6', 'select_akismet_react'),
-			'heading'			=> array(
-				'h1'	=> __('reCAPTCHA is a free CAPTCHA service that helps to digitize books, newspapers and old time radio shows. You can read more about reCAPTCHA <a href="http://www.google.com/recaptcha/learnmore" target="_blank">here</a>.', 'bwp-recaptcha'),
-				'h2'	=> __('<em>This section allows you to determine when to show reCAPTCHA and how this plugin reacts to errors.</em>', 'bwp-recaptcha'),
-				'h3'	=> __('<em>Integrate with Akismet for better end-user experience. reCAPTCHA is optional and <strong>NO</strong> spam comment will be added to the spam/moderation queue, except likely legitimate comments. This makes the task of identifying sincere comments much easier. This integration is currently in beta stage.</em>', 'bwp-recaptcha')
-			),
-			'sec1' => array(
-				array('checkbox', 'name' => 'cb1'),
-				array('checkbox', 'name' => 'cb2'),
-				array('checkbox', 'name' => 'cb8')
-			),
-			'sec2' => array(
-				array('checkbox', 'name' => 'cb3'),
-				array('checkbox', 'name' => 'cb4'),
-				array('checkbox', 'name' => 'cb5')
-			),
-			'select' => array(
-				'select_lang' => $this->lang,
-				'select_cap' => $this->caps,
-				'select_response' => array(
-					__('Redirect commenter back to the comment form', 'bwp-recaptcha') => 'redirect',
-					__('Show an error page just like WordPress does', 'bwp-recaptcha') => 'back'
-				),
-				'select_akismet_react' => array(
-					__('Approve comment immediately', 'bwp-recaptcha') => '1',
-					__('Hold comment in moderation queue', 'bwp-recaptcha') => 'hold',
-					__('Put comment in spam queue', 'bwp-recaptcha') => 'spam'
-				)
-			),
-			'checkbox'	=> array(
-				'cb1' => array(__('enabled for comment forms.', 'bwp-recaptcha') => 'enable_comment'),
-				'cb2' => array(__('enabled for registration form (user/site registration).', 'bwp-recaptcha') => 'enable_registration'),
-				'cb8' => array(__('enabled for login form.', 'bwp-recaptcha') => 'enable_login'),
-				'cb3' => array(__('registered users <em>(even without any capabilities)</em>.', 'bwp-recaptcha') => 'hide_registered'),
-				'cb4' => array(__('users who can', 'bwp-recaptcha') => 'hide_cap'),
-				'cb5' => array(__('visitors who have at least', 'bwp-recaptcha') => 'hide_approved'),
-				'cb6' => array(__('reCAPTCHA will only show when Akismet identifies a comment as spam. Highly recommended if you do not want to force your visitors to type the captcha every time.', 'bwp-recaptcha') => 'enable_akismet'),
-				'cb7' => array(__('uncheck to use different key pairs for this site.', 'bwp-recaptcha') => 'use_global_keys')
-			),
-			'input'	=> array(
-				'input_pubkey' 	=> array('size' => 30, 'label' => __('A public key used to request captchas from reCAPTCHA server.', 'bwp-recaptcha')),
-				'input_prikey' 	=> array('size' => 30, 'label' => __('A private (secret) key used to authenticate user\'s response.', 'bwp-recaptcha')),
-				'input_error' 	=> array('size' => 90, 'label' => __('when redirect commenter back to the comment form (or when used in other forms such as contact forms).', 'bwp-recaptcha')),
-				'input_back' 	=> array('size' => 90, 'label' => __('when show the normal error page with no redirection.', 'bwp-recaptcha')),
-				'input_approved' => array('size' => 3, 'label' => __('approved comment(s).', 'bwp-recaptcha')),
-			),
-			'container' => array(
-				'cb2' => __('<em><strong>Note:</strong> For this plugin to work, you will need a pair of API keys (public and private), which is available for free <a href="https://www.google.com/recaptcha/admin/create" target="_blank">here</a>. Once you have created those two keys for this domain, simply paste them below.</em>', 'bwp-recaptcha'),
-				'select_akismet_react' => __('<em><strong>Note:</strong> Now you may wonder, why put the comment in the spam queue? The benefit is Akismet will be able to mark the comment as False Positive, and thus will not possibly block that comment in the future. However, it is best to just put the comment in moderation queue as next time Akismet will put such comment in moderation queue immediately without the need of a CAPTCHA.</em>', 'bwp-recaptcha')
-			),
-			'inline_fields' => array(
-				'cb4' => array('select_cap' => 'select'),
-				'cb5' => array('input_approved' => 'input')
-			)
-		);
-		
-		// Get the default options
-		$options = $bwp_option_page->get_options(array('use_global_keys', 'input_pubkey', 'input_prikey', 'input_error', 'input_approved', 'select_cap', 'hide_registered', 'hide_cap', 'hide_approved', 'enable_registration', 'enable_login', 'enable_comment', 'input_back', 'select_response', 'enable_akismet', 'select_akismet_react'), $this->options);
-
-		// Get option from the database
-		$options = $bwp_option_page->get_db_options($page, $options);
-
-		$option_formats = array('input_approved' => 'int', 'input_error' => 'html', 'input_back' => 'html');
-		$option_super_admin = array();
-
-		// show appropriate fields based on multi-site setting
-		add_action('bwp_option_action_before_submit_button', array($this, 'modify_option_page'));
-	}
-	else if ($page == BWP_CAPT_OPTION_THEME)
-	{
-		$bwp_option_page->set_current_tab(2);
-		
-		// Option Structures - Form
-		$form = array(
-			'items'			=> array('select', 'checkbox', 'checkbox', 'select', 'input', 'heading'),
-			'item_labels'	=> array
-			(
-				__('Choose a theme', 'bwp-recaptcha'),
-				__('Use CSS provided by this plugin?', 'bwp-recaptcha'),
-				__('Load CSS, JS selectively?', 'bwp-recaptcha'),
-				__('Choose a language for built-in themes', 'bwp-recaptcha'),
-				__('Tabindex for captcha input field', 'bwp-recaptcha'),
-				__('Preview your reCAPTCHA', 'bwp-recaptcha')
-			),
-			'item_names'	=> array('select_theme', 'cb1', 'cb2', 'select_lang', 'input_tab', 'h1'),
-			'heading' => array(
-				'h1' => __('<em>Below you will see how your reCAPTCHA will look. Note that this might differ on your actual pages.<br /></em>', 'bwp-recaptcha')
-			),
-			'select' => array(
-				'select_theme' => array(
-					__('Default Theme (Red)', 'bwp-recaptcha') => 'red',
-					__('White Theme', 'bwp-recaptcha') => 'white',
-					__('Black Theme', 'bwp-recaptcha') => 'blackglass',
-					__('Clean Theme', 'bwp-recaptcha') => 'clean',
-					__('Custom Theme (use CSS)', 'bwp-recaptcha') => 'custom'
-				),
-				'select_lang' => $this->lang
-			),
-			'checkbox'	=> array(
-				'cb1' => array(__('This stylesheet is used to style the custom theme as well as the registration page. You can disable this or add appropriate filters to use your own.', 'bwp-recaptcha') => 'enable_css'),
-				'cb2' => array(__('This is only useful when you do not use any minify or cache plugin.', 'bwp-recaptcha') => 'enable_selective')
-			),
-			'input'	=> array(
-				'input_tab' 	=> array('size' => 3, 'label' => __('Basically, this should be 4 if you place the captcha before the textarea, and 5 if you put it after. Set to 0 to disable.', 'bwp-recaptcha'))
-			),
-			'container' => array(
-				'select_theme' => sprintf(__('<em><strong>Note:</strong> The four built-in captcha themes will look OK in most WordPress themes; However, some times it is better to control how reCAPTCHA looks using CSS. Please read <a href="%s#customization" target="_blank">this guide</a> if you would like to do so.</em>', 'bwp-recaptcha'), BWP_CAPT_PLUGIN_URL),
-				'select_lang' => sprintf(__('<em><strong>Note:</strong> Above you can select some built-in languages. If you would like to add your own language, please read <a href="%s#customization" target="_blank">this guide</a>.</em>', 'bwp-recaptcha'), BWP_CAPT_PLUGIN_URL)
-			)
-		);
-
-		// Get the default options
-		$options = $bwp_option_page->get_options(array('select_lang', 'select_theme', 'input_tab', 'enable_css', 'enable_selective'), $this->options);
-
-		// Get option from the database
-		$options = $bwp_option_page->get_db_options($page, $options);
-		
-		$option_formats = array('input_tab' => 'int');
-		$option_super_admin = array();
-		
-		// preview reCAPTCHA
-		add_action('bwp_option_action_before_submit_button', array($this, 'add_recaptcha'));
-	}
-}
-		// Get option from user input
-		if (isset($_POST['submit_' . $bwp_option_page->get_form_name()]) && isset($options) && is_array($options))
+		if (!empty($page))
 		{
+			if ($page == BWP_CAPT_OPTION_GENERAL)
+			{
+				$bwp_option_page->set_current_tab(1);
+
+				// Option Structures - Form
+				$form = array(
+					'items' => array(
+						'heading',
+						'checkbox',
+						'input',
+						'input',
+						'heading',
+						'section',
+						'section',
+						'heading',
+						'select',
+						'select',
+						'input',
+						'input',
+						'heading',
+						'checkbox',
+						'select',
+						'heading',
+						'select'
+					),
+					'item_labels' => array(
+						__('reCAPTCHA API Keys', $this->domain),
+						__('Use main site\'s keys', $this->domain),
+						__('Public Key', $this->domain),
+						__('Private Key', $this->domain),
+						__('Plugin Functionality', $this->domain),
+						__('Enable this plugin for', $this->domain),
+						__('Hide captcha for', $this->domain),
+						__('reCAPTCHA for comment form', $this->domain),
+						__('Captcha position', $this->domain),
+						__('If invalid captcha response', $this->domain),
+						__('Invalid captcha error message', $this->domain),
+						__('Invalid captcha error message', $this->domain),
+						__('Akismet Integration for comment form', $this->domain),
+						__('Integrate with Akismet?', $this->domain),
+						__('If correct captcha response', $this->domain),
+						__('Contact Form 7 Integration', $this->domain),
+						__('Captcha shortcode tag', $this->domain)
+					),
+					'item_names' => array(
+						'h1',
+						'cb7',
+						'input_pubkey',
+						'input_prikey',
+						'heading_func',
+						'sec1',
+						'sec2',
+						'h2',
+						'select_position',
+						'select_response',
+						'input_error',
+						'input_back',
+						'h3',
+						'cb6',
+						'select_akismet_react',
+						'heading_cf7',
+						'select_cf7_tag'
+					),
+					'heading' => array(
+						'h1' => '<em>' . sprintf(
+							__('For this plugin to work, you will need '
+							. 'a pair of API keys (public and private), '
+							. 'which is available for free <a href="%s" target="_blank">here</a>. '
+							. 'Once you have created those two keys for this domain, '
+							. 'simply paste them below.</em>', $this->domain),
+							'https://www.google.com/recaptcha/admin/create'),
+						'heading_func' => '<em>' . __('Control how this plugin works.', $this->domain) . '</em>',
+						'h2' => '<em>' . __('Settings that are applied to '
+							. 'comment forms only.', $this->domain) . '</em>',
+						'h3' => '<em>' . __('Integrate with Akismet for better end-user experience.', $this->domain) . '</em>',
+						'heading_cf7' => '<em>' . __('Add reCAPTCHA to Contact Form 7. '
+							. 'This only works if you have Contact Form 7 activated.', $this->domain) . '</em>'
+					),
+					'sec1' => array(
+						array('checkbox', 'name' => 'cb1'),
+						array('checkbox', 'name' => 'cb2'),
+						array('checkbox', 'name' => 'cb8')
+					),
+					'sec2' => array(
+						array('checkbox', 'name' => 'cb3'),
+						array('checkbox', 'name' => 'cb4'),
+						array('checkbox', 'name' => 'cb5')
+					),
+					'select' => array(
+						'select_lang' => $this->lang,
+						'select_cap' => $this->caps,
+						'select_position' => array(
+							__('After comment field', $this->domain) => 'after_comment_field',
+							__('After form fields (name, email, website)', $this->domain) => 'after_fields'
+						),
+						'select_response' => array(
+							__('Redirect commenter back to the comment form with error message', $this->domain) => 'redirect',
+							__('Show an error page just like WordPress does', $this->domain) => 'back'
+						),
+						'select_akismet_react' => array(
+							__('Approve comment immediately', $this->domain) => '1',
+							__('Hold comment in moderation queue', $this->domain) => 'hold'
+						),
+						'select_cf7_tag' => array(
+							__('Use "bwp-recaptcha" shortcode tag', $this->domain) => 'bwp-recaptcha',
+							__('Use "recaptcha" shortcode tag', $this->domain) => 'recaptcha'
+						)
+					),
+					'checkbox'	=> array(
+						'cb1' => array(
+							__('Comment form.', $this->domain) => 'enable_comment'
+						),
+						'cb2' => array(
+							__('Registration form (user/site registration).', $this->domain) => 'enable_registration'
+						),
+						'cb8' => array(
+							__('Login form.', $this->domain) => 'enable_login'
+						),
+						'cb3' => array(
+							__('registered users <em>(even without any capabilities)</em>.', $this->domain) => 'hide_registered'
+						),
+						'cb4' => array(
+							__('users who can', $this->domain) => 'hide_cap'
+						),
+						'cb5' => array(
+							__('visitors who have at least', $this->domain) => 'hide_approved'
+						),
+						'cb6' => array(
+							__('A captcha is only shown when Akismet identifies a comment as spam. '
+							. 'Highly recommended if you do not want to '
+							. 'force your visitors to enter a captcha every time.', $this->domain) => 'enable_akismet'
+						),
+						'cb7' => array(
+							__('uncheck to use different key pairs for this site.', $this->domain) => 'use_global_keys'
+						)
+					),
+					'input'	=> array(
+						'input_pubkey'   => array(
+							'size' => 50,
+							'label' => '<br />' . __('A public key used to '
+								. 'request captchas from reCAPTCHA server.', $this->domain)
+						),
+						'input_prikey'   => array(
+							'size' => 50,
+							'label' => '<br />' . __('A private (secret) key used to '
+								. 'authenticate user\'s response.', $this->domain)
+						),
+						'input_error'    => array(
+							'size' => 90,
+							/* 'label' => '<br />' . __('when redirect commenter back to the comment form.', $this->domain) */
+						),
+						'input_back'     => array(
+							'size' => 90,
+							/* 'label' => '<br />' . __('when show the normal error page with no redirection.', $this->domain) */
+						),
+						'input_approved' => array(
+							'size' => 3,
+							'label' => __('approved comment(s).', $this->domain)
+						),
+					),
+					'container' => array(
+						'cb8'                  => ''
+					),
+					'post' => array(
+						'select_akismet_react' => '<br /><span style="display:inline-block;margin-top:5px;">'
+							. __('It is best to put comments identified as spam in moderation queue '
+							. 'so you are able to review and instruct '
+							. 'Akismet to correctly handle similar comments in the future.</em>', $this->domain)
+							. '</span>'
+					),
+					'inline_fields' => array(
+						'cb4' => array('select_cap' => 'select'),
+						'cb5' => array('input_approved' => 'input')
+					)
+				);
+
+				// Get the default options
+				$options = $bwp_option_page->get_options(array(
+					'use_global_keys',
+					'input_pubkey',
+					'input_prikey',
+					'input_error',
+					'input_approved',
+					'select_cap',
+					'hide_registered',
+					'hide_cap',
+					'hide_approved',
+					'enable_registration',
+					'enable_login',
+					'enable_comment',
+					'input_back',
+					'select_position',
+					'select_cf7_tag',
+					'select_response',
+					'enable_akismet',
+					'select_akismet_react'
+				), $this->options);
+
+				// Get option from the database
+				$options = $bwp_option_page->get_db_options($page, $options);
+
+				$option_formats = array(
+					'input_approved' => 'int',
+					'input_error' => 'html',
+					'input_back' => 'html'
+				);
+
+				$option_super_admin = array();
+
+				// show appropriate fields based on multi-site setting
+				add_action('bwp_option_action_before_submit_button', array($this, 'modify_option_page'));
+			}
+			else if ($page == BWP_CAPT_OPTION_THEME)
+			{
+				$bwp_option_page->set_current_tab(2);
+
+				// Option Structures - Form
+				$form = array(
+					'items' => array(
+						'select',
+						'checkbox',
+						'select',
+						'input',
+						'heading'
+					),
+					'item_labels' => array(
+						__('reCAPTCHA theme', $this->domain),
+						__('Use default CSS', $this->domain),
+						__('Language for built-in themes', $this->domain),
+						__('Tabindex for captcha input field', $this->domain),
+						__('Preview your reCAPTCHA', $this->domain)
+					),
+					'item_names' => array(
+						'select_theme',
+						'cb1',
+						'select_lang',
+						'input_tab',
+						'h1'
+					),
+					'heading' => array(
+						'h1' => __('<em>Below you will see how your reCAPTCHA will look. '
+							. 'Note that this might differ on your actual pages.<br /></em>', $this->domain)
+					),
+					'select' => array(
+						'select_theme' => array(
+							__('Default Theme (Red)', $this->domain)    => 'red',
+							__('White Theme', $this->domain)            => 'white',
+							__('Black Theme', $this->domain)            => 'blackglass',
+							__('Clean Theme', $this->domain)            => 'clean',
+							__('Custom Theme (use CSS)', $this->domain) => 'custom'
+						),
+						'select_lang' => $this->lang
+					),
+					'checkbox' => array(
+						'cb1' => array(
+							sprintf(__('This is for Custom Theme only. '
+								. 'Disable this and add your own CSS to style the Custom Theme. '
+								. 'More info <a href="%s#customization" target="_blank">here</a>.', $this->domain),
+								BWP_CAPT_PLUGIN_URL) => 'enable_css'
+						),
+						'cb2' => array(
+							__('This is only useful when you do not use any minify or cache plugin.', $this->domain) => 'enable_selective'
+						)
+					),
+					'input'	=> array(
+						'input_tab' => array(
+							'size' => 3,
+							'label' => '<br />' . __('This should be 4 if you '
+							. 'place the captcha before the textarea, '
+							. 'and 5 if you put it after. Set to 0 to disable.', $this->domain)
+						)
+					),
+					'container' => array(
+					),
+					'post' => array(
+						'select_lang' => sprintf(__('If you would like to add custom translations, '
+							. 'please read <a href="%s" target="_blank">this dedicated tip</a>.', $this->domain),
+							'http://betterwp.net/wordpress-tips/how-to-add-custom-translations-to-bwp-recaptcha/')
+					)
+				);
+
+				// Get the default options
+				$options = $bwp_option_page->get_options(array(
+					'select_lang',
+					'select_theme',
+					'input_tab',
+					'enable_css',
+				), $this->options);
+
+				// Get option from the database
+				$options = $bwp_option_page->get_db_options($page, $options);
+
+				$option_formats = array(
+					'input_tab' => 'int'
+				);
+
+				$option_super_admin = array();
+
+				// preview reCAPTCHA
+				add_action('bwp_option_action_before_submit_button', array($this, 'add_recaptcha'));
+			}
+		}
+
+		// Get option from user input
+		if (isset($_POST['submit_' . $bwp_option_page->get_form_name()])
+			&& isset($options) && is_array($options))
+		{
+			// basic security check
 			check_admin_referer($page);
 
 			foreach ($options as $key => &$option)
 			{
-				if ($this->is_normal_admin() && in_array($key, $option_super_admin))
+				if (isset($_POST[$key]))
 				{
+					$bwp_option_page->format_field($key, $option_formats);
+					$option = trim(stripslashes($_POST[$key]));
 				}
 				else
 				{
-					if (isset($_POST[$key]))
-						$bwp_option_page->format_field($key, $option_formats);
 					if (!isset($_POST[$key]))
+					{
+						// for checkboxes that are not checked
 						$option = '';
-					else if (isset($option_formats[$key]) && 0 == $_POST[$key] && 'int' == $option_formats[$key])
-						$option = 0;
-					else if (isset($option_formats[$key]) && empty($_POST[$key]) && 'int' == $option_formats[$key])
+					}
+					else if (isset($option_formats[$key])
+						&& 'int' == $option_formats[$key]
+						&& ('' === $_POST[$key] || 0 > $_POST[$key])
+					) {
+						// expect integer but received empty string or negative integer
 						$option = $this->options_default[$key];
-					else if (!empty($_POST[$key])) // should add more validation here though
-						$option = trim(stripslashes($_POST[$key]));
-					else
-						$option = '';
+					}
 				}
 			}
 
+			// update per-blog options
 			update_option($page, $options);
 
-			// Update site options if is super admin and is on main site
 			global $blog_id;
-			if (!$this->is_normal_admin() && $blog_id == 1) {
+			if (!$this->is_normal_admin() && $blog_id == 1)
+			{
+				// Update site options if is super admin and is on main site
 				update_site_option($page, $options);
 			}
 
+			// refresh the options property to include updated options
+			$this->options = array_merge($this->options, $options);
+
 			// Update options successfully
-			$this->add_notice(__('All options have been saved.', 'bwp-recaptcha'));
+			$this->add_notice(__('All options have been saved.', $this->domain));
 		}
 
-		// show notice if one of the api keys is missing
-		$this->options = array_merge($this->options, $options);
-		if (empty($this->options['input_pubkey']) || empty($this->options['input_prikey']))
-			$this->add_notice('<strong>' . __('Warning') . ':</strong> ' . __("API key(s) missing. Please get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a> (free!)", 'bwp-recaptcha'));
+		if (empty($this->options['input_pubkey'])
+			|| empty($this->options['input_prikey'])
+		) {
+			// add notices if recaptcha API keys are missing
+			$this->add_notice(
+				'<strong>' . __('Warning') . ':</strong> '
+				. sprintf(__('API key(s) missing. Please get an API key from '
+				. '<a href="%1$s">%1$s</a> (free!)', $this->domain),
+				'https://www.google.com/recaptcha/admin/create')
+			);
+		}
+
 		if ('yes' == $this->options['enable_akismet'] && !defined('AKISMET_VERSION'))
-			$this->add_notice('<strong>' . __('Notice') . ':</strong> ' . __('You are enabling Akismet integration but Akismet is not currently active. Please activate Akismet for the integration to work.', 'bwp-recaptcha'));
+		{
+			// add a notice if Akismet integration is enabled but Akismet
+			// plugin is not installed
+			$this->add_notice(
+				'<strong>' . __('Notice') . ':</strong> '
+				. __('You are enabling Akismet integration but Akismet is not currently active. '
+				. 'Please activate Akismet for the integration to work.', $this->domain)
+			);
+		}
 
 		// Assign the form and option array
 		$bwp_option_page->init($form, $options, $this->form_tabs);
@@ -557,59 +886,78 @@ if (!empty($page))
 	/**
 	 * Get the link to the current comment page
 	 */
-	function get_current_comment_page_link()
+	protected function get_current_comment_page_link()
 	{
 		global $wp_rewrite;
-	
-		if ( !is_singular() || !get_option('page_comments') )
+
+		if (!is_singular() || !get_option('page_comments'))
 			return;
-	
+
 		$page = get_query_var('cpage');
 		if (empty($page))
 			$page = 1;
-	
+
 		$redirect_to = '';
-	
+
 		if ($wp_rewrite->using_permalinks())
 			$redirect_to = user_trailingslashit(trailingslashit(get_permalink()) . 'comment-page-%#%');
 		else
 			$redirect_to = add_query_arg('cpage','%#%', get_permalink());
-		
+
 		$redirect_to .= '#respond';
-	
+
 		return str_replace('%#%', $page, $redirect_to);
 	}
 
 	/**
 	 * Check to see whether the current user can post without captcha
+	 *
+	 * @return bool
 	 */
-	function user_can_bypass()
+	public function user_can_bypass()
 	{
 		global $wpdb;
 
 		if ('yes' == $this->options['hide_registered'] && is_user_logged_in())
+			// do not show captcha to logged in users
 			return true;
-		if ('yes' == $this->options['hide_cap'] && !empty($this->options['select_cap']) && current_user_can($this->options['select_cap']))
+
+		if ('yes' == $this->options['hide_cap']
+			&& !empty($this->options['select_cap'])
+			&& current_user_can($this->options['select_cap']))
+		{
+			// user must have certain capabilities in order to bypass captcha
 			return true;
+		}
+
 		if ('yes' == $this->options['hide_approved'])
 		{
 			$commenter = wp_get_current_commenter();
 			foreach ($commenter as $key => &$commenter_field)
 			{
 				$commenter_field = trim(strip_tags($commenter_field));
+
 				// if one of the fields (except url) is empty return false
 				if ($key != 'comment_author_url' && empty($commenter_field))
 					return false;
 			}
-			// should we use comment_author_url?
-			$bwp_query = 
+
+			// take into account comment author url as well
+			$bwp_query =
 				'SELECT COUNT(comment_ID)
 					FROM ' . $wpdb->comments . '
 					WHERE comment_approved = 1' . "
-						AND comment_author = %s AND comment_author_email = %s AND comment_author_url = %s
+						AND comment_author = %s
+						AND comment_author_email = %s
+						AND comment_author_url = %s
 						AND comment_type = ''
 				";
-			$approved_count = $wpdb->get_var($wpdb->prepare($bwp_query, $commenter['comment_author'], $commenter['comment_author_email'], $commenter['comment_author_url']));
+
+			$approved_count = $wpdb->get_var($wpdb->prepare($bwp_query,
+				$commenter['comment_author'],
+				$commenter['comment_author_email'],
+				$commenter['comment_author_url']));
+
 			// has more approved comments than required?
 			if ($approved_count >= $this->options['input_approved'])
 				return true;
@@ -618,34 +966,49 @@ if (!empty($page))
 		return false;
 	}
 
-	function fill_comment_content_callback($matches)
+	/**
+	 * Make text safe to edit inside textarea
+	 *
+	 * This function will be removed once requirement is moved to WP 3.1.
+	 *
+	 * @since 1.1.1
+	 * @return string
+	 */
+	private function _esc_textarea($text)
 	{
-		return '%' . dechex(ord($matches[1]));
+		return htmlspecialchars($text, ENT_QUOTES, get_option('blog_charset'));
 	}
 
-	function fill_comment_content()
+	public function fill_comment_content($comment_field)
 	{
-		// put the comment content back if possible
+		if ('back' == $this->options['select_response'])
+		{
+			// no need to refill the comment contents if no redirection is involved
+			return $comment_field;
+		}
+
 		if (!empty($_SESSION['bwp_capt_comment']))
 		{
-			// borrow from the plugin wp-recaptcha, wp-recaptcha.php:582
-			$comment = preg_replace_callback('/([\\/\(\)\+\;\'])/', array($this, 'fill_comment_content_callback'), $_SESSION['bwp_capt_comment']);
-			$comment = preg_replace('/\\r\\n/m', '\\\n', $comment);
-?>
-		<script type="text/javascript">
-			if (document.getElementById('comment'))
-				document.getElementById('comment').value = unescape('<?php echo $comment; ?>');
-		</script>
-<?php
-			unset($_SESSION['bwp_capt_comment']);
+			// put the comment content back if possible
+			$comment_text  = stripslashes($_SESSION['bwp_capt_comment']);
+			$comment_field = preg_replace('#(<textarea\s[^>]*>)(.*?)(</textarea>)#uis',
+				'$1' . $this->_esc_textarea($comment_text) . '$3',
+				$comment_field
+			);
+
+			$this->_unset_session_data('bwp_capt_comment');
 		}
+
+		return $comment_field;
 	}
 
 	/**
 	 * Output the reCAPTCHA HTML, use theme if specified
+	 *
 	 * @param $errors @since 1.1.0
+	 * @return void
 	 */
-	function add_recaptcha($errors = false)
+	public function add_recaptcha($errors = false)
 	{
 		$this->load_captcha_library();
 
@@ -654,32 +1017,53 @@ if (!empty($page))
 			// make sure we add only one recaptcha instance
 			define('BWP_CAPT_ADDED', true);
 
-			// captcha error can comes from $_GET variable or passed via 
+			// captcha error can comes from $_GET variable or passed via
 			// hooks' parameters.
 			$captcha_error = '';
-			$extra_class = '';
-			if (!empty($_GET['cerror']) && 'incorrect-captcha-sol' == $_GET['cerror']) {
+			$extra_class   = '';
+
+			if (!empty($_GET['cerror']) && 'incorrect-captcha-sol' == $_GET['cerror'])
+			{
 				$captcha_error = $_GET['cerror'];
-			} else if (is_wp_error($errors)) {
+			}
+			else if (is_wp_error($errors))
+			{
 				// right now only registration errors are passed this way
 				$captcha_error = $errors->get_error_message('reg-recaptcha-error');
-				$extra_class = ' error';
+				$extra_class   = ' error';
 			}
 
-			if (!empty($_SESSION['bwp_capt_akismet_needed']) && 'yes' == $_SESSION['bwp_capt_akismet_needed']) {
+			if ($this->_is_comment_spam())
+			{
 ?>
-		<p class="bwp-capt-spam-identified"><?php _e('Your comment was identified as spam, please complete the CAPTCHA below:', 'bwp-recaptcha'); ?></p>
-<?php
-			} else if (!empty($captcha_error)) {
-?>
-		<p class="recaptcha_only_if_incorrect_sol<?php echo $extra_class; ?>"><?php echo $this->options['input_error']; ?></p>
+		<p class="bwp-capt-spam-identified">
+			<?php _e('Your comment was identified as spam, '
+			. 'please complete the CAPTCHA below:', $this->domain); ?>
+		</p>
 <?php
 			}
 
 			do_action('bwp_capt_before_add_captcha');
 
+?>
+		<style type="text/css">
+			/* this is to prevent the iframe from showing up in Chrome */
+			iframe[src="about:blank"] {
+				display: none;
+			}
+		</style>
+<?php
 			if ($this->options['select_theme'] != 'custom')
 			{
+
+				if (!empty($captcha_error))
+				{
+?>
+		<p class="recaptcha_only_if_incorrect_sol<?php echo $extra_class; ?>">
+			<?php echo $this->options['input_error']; ?>
+		</p>
+<?php
+				}
 ?>
 		<script type="text/javascript">
 			var RecaptchaOptions = (typeof CustomRecaptchaOptions === 'undefined') ? {
@@ -694,118 +1078,206 @@ if (!empty($page))
 ?>
 			} : CustomRecaptchaOptions;
 		</script>
-<?php 
-			} 
+<?php
+			}
 			else
+			{
 				bwp_capt_custom_theme_widget();
-			
-			if ('redirect' == $this->options['select_response']  && !is_admin())
+			}
+
+			if ('redirect' == $this->options['select_response'] && !is_admin())
 			{
 ?>
-			<input type="hidden" name="error_redirect_to" value="<?php esc_attr_e($this->get_current_comment_page_link()); ?>" />
+			<input type="hidden" name="error_redirect_to"
+				value="<?php esc_attr_e($this->get_current_comment_page_link()); ?>" />
 <?php
 			}
 
-			$use_ssl = (isset($_SERVER['HTTPS']) && 'on' == $_SERVER['HTTPS']) ? true : false;
+			$use_ssl = is_ssl() ? true : false;
 
 			if (!empty($this->options['input_pubkey']))
-				echo recaptcha_get_html($this->options['input_pubkey'], $captcha_error, $use_ssl, $this->options['select_lang']);
+			{
+				echo recaptcha_get_html(
+					$this->options['input_pubkey'],
+					$captcha_error,
+					$use_ssl,
+					$this->options['select_lang']
+				);
+			}
 			else if (current_user_can('manage_options'))
-				_e("To use reCAPTCHA you must get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a>", 'bwp-recaptcha');
+			{
+				// if user is an admin show the actual error
+				printf(__('To use reCAPTCHA you must get an API key from '
+					. '<a href="%1$s">%1$s</a>', $this->domain),
+					'https://www.google.com/recaptcha/admin/create');
+			}
 			else
 				echo '';
 		}
 	}
 
-	function add_blog_reg_recaptcha($errors)
+	/**
+	 * Adds captcha to below comment field
+	 *
+	 * @since 1.1.1
+	 * @return string
+	 */
+	public function add_recaptcha_after_comment_field($form_defaults)
 	{
-		// if user is not logged in, they can choose between signup for account 
+		ob_start();
+
+		do_action('bwp_recaptcha_add_markups');
+		$recaptcha_html = ob_get_contents();
+
+		ob_end_clean();
+
+		$form_defaults['comment_notes_after'] = !isset($form_defaults['comment_notes_after'])
+			? $recaptcha_html : $form_defaults['comment_notes_after'] . $recaptcha_html;
+
+		return $form_defaults;
+	}
+
+	/**
+	 * Adds a captcha to blog registration page
+	 *
+	 * @since 1.1.0
+	 * @return void
+	 */
+	public function add_blog_reg_recaptcha($errors)
+	{
+		// if user is not logged in, they can choose between signup for account
 		// or sign up for blog after account creation.
-		if (!is_user_logged_in()) {
-			// if user chooses to signup for blog also, we don't show recaptcha 
+		if (!is_user_logged_in())
+		{
+			// if user chooses to signup for blog also, we don't show recaptcha
 			// again because they have already provided the captcha once.
-		} else {
-			// user is logged in and wants to add a new blog, show captcha if 
-			// needed.
+		}
+		elseif (!$this->user_can_bypass())
+		{
+			// user is logged in and wants to add a new blog, show captcha if
+			// user can not bypass
 			$this->add_recaptcha($errors);
 		}
 	}
 
 	/**
-	 * The system must authenticate while checking reCAPTCHA.
-	 * @filter authenticate, @see package WordPress/pluggable.php
+	 * Authenticates the user using captcha when logging in
+	 *
+	 * @filter authenticate, @see ::wp-signon in package WordPress/pluggable.php
 	 * @since 1.1.0
+	 * @return WP_User
 	 */
-	function authenticate_with_recaptcha($user)
+	public function authenticate_with_recaptcha($user)
 	{
-		if (!isset($_POST['wp-submit'])) {
+		if (empty($_POST['log']) && empty($_POST['pwd']))
+		{
 			return $user;
 		}
 
-		// if the $user object itself is a WP_Error object, we simply append 
+		// if the $user object itself is a WP_Error object, we simply append
 		// errors to it, otherwise we create a new one.
 		$errors = is_wp_error($user) ? $user : new WP_Error();
 
-		if (!isset($_POST['recaptcha_challenge_field']) || !isset($_POST["recaptcha_response_field"])) {
-
+		if (!isset($_POST['recaptcha_challenge_field'])
+			|| !isset($_POST["recaptcha_response_field"])
+		) {
+			// captcha response is empty, show error message
 			$errors->add('login-recaptcha-error', $this->options['input_error']);
-
-		} else {
-
+		}
+		else
+		{
 			$this->load_captcha_library();
 
-			if (function_exists('recaptcha_check_answer')) {
-				$response = recaptcha_check_answer($this->options['input_prikey'], $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
-				if (!$response->is_valid) {
+			if (function_exists('recaptcha_check_answer'))
+			{
+				// check catpcha response error using recaptcha's PHP library
+				$response = recaptcha_check_answer(
+					$this->options['input_prikey'],
+					$_SERVER['REMOTE_ADDR'],
+					$_POST['recaptcha_challenge_field'],
+					$_POST['recaptcha_response_field']
+				);
+
+				if (!$response->is_valid)
+				{
+					// incorrect captcha response show error message
 					if ($response->error == 'incorrect-captcha-sol')
+					{
 						$errors->add('login-recaptcha-error', $this->options['input_error']);
+					}
 					else
-						$errors->add('login-recaptcha-error', __('<strong>ERROR</strong>: Unknown captcha error.', 'bwp-recaptcha'));
+					{
+						$errors->add('login-recaptcha-error', '<strong>'
+							. __('ERROR', $this->domain) . '</strong>: '
+							. __('Unknown captcha error.', $this->domain));
+					}
 				}
 			}
-
 		}
 
-		// WordPress actually logs the user in regardless of captcha response
-		// (which is kinda dumb), so we have to work around a bit here.
 		$errorCodes = $errors->get_error_codes();
-		if (0 < sizeof($errorCodes) && !is_wp_error($user)) {
-			$user = $errors;
-			wp_clear_auth_cookie();
+		if (in_array('login-recaptcha-error', $errorCodes))
+		{
+			// invalid recaptcha detected, exit the login process and
+			$user = is_wp_error($user) ? $user : $errors;
+
+			// do not allow WordPress to try authenticating the user, either
+			// using cookie or username/password pair
+			remove_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
+			remove_filter('authenticate', 'wp_authenticate_cookie', 30, 3);
 		}
 
 		return $user;
 	}
 
 	/**
-	 * Check whether the captcha response for registration page is valid or not
+	 * Check captcha response on registration page
+	 *
+	 * This function should be used on both user registration page (single or
+	 * multisite) and blog registration page (multisite).
+	 *
+	 * @since 1.1.0
+	 * @return WP_Error
 	 */
-	function check_reg_recaptcha($errors)
+	public function check_reg_recaptcha($errors)
 	{
 		$this->load_captcha_library();
 
-		// if $errors is an array, we're probably checking recaptcha for Multi-Site WP
 		if (is_array($errors) && isset($errors['errors']))
 		{
+			// if $errors is an array, we're probably checking recaptcha for Multi-Site WP
 			$temp = $errors;
 			$errors = $errors['errors'];
 		}
 
-		if (!isset($_POST['recaptcha_challenge_field']) || !isset($_POST["recaptcha_response_field"])) {
+		if (!isset($_POST['recaptcha_challenge_field'])
+			|| !isset($_POST["recaptcha_response_field"])
+		) {
 			$errors->add('reg-recaptcha-error', $this->options['input_error']);
 			$stop = true;
 		}
 
 		if (empty($stop) && function_exists('recaptcha_check_answer'))
 		{
-			$response = recaptcha_check_answer($this->options['input_prikey'], $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
+			$response = recaptcha_check_answer(
+				$this->options['input_prikey'],
+				$_SERVER['REMOTE_ADDR'],
+				$_POST['recaptcha_challenge_field'],
+				$_POST['recaptcha_response_field']
+			);
 
 			if (!$response->is_valid)
 			{
 				if ($response->error == 'incorrect-captcha-sol')
+				{
 					$errors->add('reg-recaptcha-error', $this->options['input_error']);
+				}
 				else
-					$errors->add('reg-recaptcha-error', __('<strong>ERROR</strong>: Unknown captcha error.', 'bwp-recaptcha'));
+				{
+					$errors->add('reg-recaptcha-error', '<strong>'
+						. __('ERROR', $this->domain) . '</strong>: '
+						. __('Unknown captcha error.', $this->domain));
+				}
 			}
 		}
 
@@ -818,103 +1290,150 @@ if (!empty($page))
 		return $errors;
 	}
 
-	function check_user_reg_recaptcha($errors)
+	public function check_user_reg_recaptcha($errors)
 	{
-		// user is registering a new blog, we don't need to check anything here.
-		if (isset($_POST['stage']) && 'validate-blog-signup' == $_POST['stage']) {
+		if (isset($_POST['stage']) && 'validate-blog-signup' == $_POST['stage'])
+		{
+			// user is registering a new blog, we don't need to check anything
+			// because captcha is not required at this stage
 			return $errors;
-		} else {
+		}
+		else
+		{
 			return $this->check_reg_recaptcha($errors);
 		}
 	}
 
-	function check_blog_reg_recaptcha($errors)
+	public function check_blog_reg_recaptcha($errors)
 	{
-		// (maybe) check for recaptcha error if user is logged in
-		if (!is_user_logged_in()) {
+		if (!is_user_logged_in())
+		{
 			return $errors;
-		} else {
+		}
+		elseif (!$this->user_can_bypass())
+		{
+			// check captcha response if needed
 			return $this->check_reg_recaptcha($errors);
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * Check captcha response for comment forms
+	 *
+	 * @return void
+	 */
+	public function check_recaptcha($comment_post_ID)
+	{
+		$this->load_captcha_library();
+
+		$response = recaptcha_check_answer(
+			$this->options['input_prikey'],
+			$_SERVER['REMOTE_ADDR'],
+			$_POST['recaptcha_challenge_field'],
+			$_POST['recaptcha_response_field']
+		);
+
+		if (!$response->is_valid)
+		{
+			if (isset($_POST['comment']))
+				$this->_set_session_data('bwp_capt_comment', $_POST['comment']);
+
+			if ('redirect' == $this->options['select_response'])
+			{
+				// since we haven't added the comment yet, we need to find
+				// the link to the current comment page the visitor is on
+				$location = !empty($_POST['error_redirect_to'])
+					? $_POST['error_redirect_to']
+					: get_permalink($comment_post_ID) . '#respond';
+				$location = add_query_arg('cerror', $response->error, $location);
+
+				wp_safe_redirect($location);
+				exit;
+			}
+			else if ('back' == $this->options['select_response'])
+			{
+				if ('incorrect-captcha-sol' == $response->error)
+				{
+					wp_die(sprintf($this->options['input_back'],
+						' <a href="javascript:history.go(-1);">'
+						. __('this link', $this->domain)
+						. '</a>'));
+				}
+				else if (current_user_can('manage_options'))
+				{
+					// show actual error only to admin
+					wp_die(__('There is some problem with your reCAPTCHA API keys, '
+						. 'please double check them.', $this->domain));
+				}
+				else
+				{
+					wp_die(__('Unknown error. Please contact an administrator '
+						. 'for more info.', $this->domain));
+				}
+			}
+		}
+		else
+		{
+			if ($this->_is_comment_spam())
+			{
+				// spam comments are handled by recaptcha so we do not increase
+				// Akismet spam counter
+				add_filter('akismet_spam_count_incr', create_function('', 'return 0;'), 11);
+
+				// workaround for remove_filter function
+				add_filter('pre_comment_approved', array($this, 'akismet_comment_status'), 10);
+				add_filter('pre_comment_approved', array($this, 'akismet_comment_status'), 11);
+			}
+
+			// reset Akistmet-related data, next comment should be checked
+			// again from the beginning
+			$this->_unset_session_data('bwp_capt_comment');
+			$this->_unset_session_data('bwp_capt_comment_is_spam');
 		}
 	}
 
-	function akismet_comment_status()
+	public function akismet_comment_status()
 	{
-		$bwp_capt_cs = (!empty($this->options['select_akismet_react'])) ? $this->options['select_akismet_react'] : '0';
-		$bwp_capt_cs = ('hold' == $bwp_capt_cs) ? '0' : $bwp_capt_cs;
+		$bwp_capt_cs = $this->options['select_akismet_react'];
+		$bwp_capt_cs = 'hold' == $bwp_capt_cs ? '0' : $bwp_capt_cs;
+
+		if (defined('BWP_CAPT_AKISMET_COMMENT_STATUS')
+			&& BWP_CAPT_AKISMET_COMMENT_STATUS == 'spam'
+		) {
+			// @since 1.1.1 put comment into spam queue is no longer an option
+			// but can still be forced
+			return 'spam';
+		}
+
 		return $bwp_capt_cs;
 	}
 
 	/**
-	 * Check whether the captcha response for comment form is valid or not
+	 * Adds recaptcha to comment form if akismet marks a comment as spam
+	 *
+	 * @return void
 	 */
-	function check_recaptcha($comment_post_ID)
+	public function add_recaptcha_after_akismet()
 	{
-		$this->load_captcha_library();
+		$comment_post_ID = isset($_POST['comment_post_ID'])
+			? (int) $_POST['comment_post_ID']
+			: 0;
 
-		if (function_exists('recaptcha_check_answer'))
-		{
-			$response = recaptcha_check_answer($this->options['input_prikey'], $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
+		$this->_set_session_data('bwp_capt_comment_is_spam', 'yes');
 
-			if (!$response->is_valid)
-			{
-				session_regenerate_id();
+		if (isset($_POST['comment']))
+			$this->_set_session_data('bwp_capt_comment', $_POST['comment']);
 
-				// @todo need improvement
-				if (!empty($_POST['comment']))
-					$_SESSION['bwp_capt_comment'] = trim($_POST['comment']);
+		$location_hash = $this->options['select_position'] == 'after_comment_field'
+			? 'comment' : 'respond';
 
-				if ('redirect' == $this->options['select_response'])
-				{
-					// since we haven't add the comment yet, we need to find the link to the current comment page the visitor is on
-					$location = (!empty($_POST['error_redirect_to'])) ? $_POST['error_redirect_to'] : get_permalink($comment_post_ID) . '#respond';
-					$location = add_query_arg('cerror', $response->error, $location);
-					wp_safe_redirect($location);
-					exit;
-				}
-				else if ('back' == $this->options['select_response'])
-				{
-					if ('incorrect-captcha-sol' == $response->error)
-						wp_die(sprintf($this->options['input_back'], '<a href="javascript:history.go(-1);">' . __('this link', 'bwp-recaptcha') . '</a>'));
-					else if (current_user_can('manage_options'))
-						wp_die(__('There is some problem with your reCAPTCHA API keys, please double check them.', 'bwp-recaptcha'));
-					else
-						wp_die(__('Unknown error. Please contact the administrator for more info.', 'bwp-recaptcha'));
-				}
-			}
-			else
-			{
-				if (isset($_SESSION['bwp_capt_akismet_needed']) && $_SESSION['bwp_capt_akismet_needed'] == 'yes')
-				{
-					// override akismet functions
-					add_filter('akismet_spam_count_incr', create_function('', 'return 0;'), 11);
-					// workaround for remove_filter function
-					add_filter('pre_comment_approved',  array($this, 'akismet_comment_status'), 10);
-					add_filter('pre_comment_approved',  array($this, 'akismet_comment_status'), 11);
-				}
-				if (isset($_SESSION['bwp_capt_comment'])) unset($_SESSION['bwp_capt_comment']);
-				if (isset($_SESSION['bwp_capt_akismet_needed'])) unset($_SESSION['bwp_capt_akismet_needed']);
-			}
-		}
-	}
+		$location = !empty($_POST['error_redirect_to'])
+			? $_POST['error_redirect_to']
+			: get_permalink($comment_post_ID) . '#' . $location_hash;
 
-	/**
-	 * Attempt to integrate Akismet with this plugin
-	 */
-	function add_recaptcha_after_akismet()
-	{
-		$comment_post_ID = isset($_POST['comment_post_ID']) ? (int) $_POST['comment_post_ID'] : 0;
-
-		session_regenerate_id();
-		$_SESSION['bwp_capt_akismet_needed'] = 'yes';
-
-		// need improvement
-		if (!empty($_POST['comment']))
-			$_SESSION['bwp_capt_comment'] = trim($_POST['comment']);
-
-		$location = (!empty($_POST['error_redirect_to'])) ? $_POST['error_redirect_to'] : get_permalink($comment_post_ID) . '#respond';
 		wp_safe_redirect($location);
 		exit;
 	}
 }
-

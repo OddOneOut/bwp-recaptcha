@@ -1,10 +1,15 @@
 === Better WordPress reCAPTCHA (support Akismet and Contact Form 7) ===
+
 Contributors: OddOneOut
+
 Donate link: http://betterwp.net/wordpress-plugins/bwp-recaptcha/
-Tags: recaptcha, captcha, comment captcha, login captcha, user registration captcha, blog registration captcha, contact form, contact form 7, akismet, akismet integration, anti-spam
+
 Requires at least: 2.8
+
 Tested up to: 3.8
+
 Stable tag: 1.1.0
+
 License: GPLv3
 
 This plugin utilizes reCAPTCHA (with support for Akismet) to help your blog stay clear of spams.
@@ -73,7 +78,7 @@ Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using
 
 = 1.1.0 =
 * Marked as WordPress 3.8 compatible.
-* Added official support for Contact Form 7, users no longer have to install third-party plugins to integrate BWP reCAPTCHA and Contact Form 7. More info here.
+* Added official support for Contact Form 7, users no longer have to install third-party plugins to integrate BWP reCAPTCHA and Contact Form 7. More info [here](http://betterwp.net/wordpress-tips/how-to-add-bwp-recaptcha-to-contact-form-7/).
 * Added an option to enable reCAPTCHA for login form (`wp-login.php`). This option is disabled by default.
 * Added better support for Multi-site installation. Admin can choose to use main site's key pair or different key pair for a specific site.
 * Added a German translation. Thanks to Andreas Reitberger! 

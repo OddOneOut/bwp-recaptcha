@@ -127,7 +127,7 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false, $lang = '
 
 	<noscript>
   		<iframe src="'. $server . '/noscript?k=' . $pubkey . $errorpart . '&amp;hl=' . $lang . '" height="300" width="500"></iframe><br/>
-  		<textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+  		<textarea style="display:none" name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
   		<input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
 	</noscript>';
 }
@@ -138,10 +138,12 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false, $lang = '
 /**
  * A ReCaptchaResponse is returned from recaptcha_check_answer()
  */
-class ReCaptchaResponse {
-        var $is_valid;
-        var $error;
-}
+if (!class_exists('ReCaptchaResponse')) :
+	class ReCaptchaResponse {
+			var $is_valid;
+			var $error;
+	}
+endif;
 
 
 /**
