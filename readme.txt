@@ -95,7 +95,7 @@ Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using
 * Fixed an issue where a hidden iframe is adding margin to bottom of page in Google Chrome and Safari. This is merely a workaround solution so hopefully Google will fix this issue in reCAPTCHA
 * Fixed an issue where captcha is only checked after username and password is correct on login form
 * Fixed an issue where a bot can bypass recaptcha on user registration form
-* Fixed an issue where some PHP warnings are shown. Note that this fix might cause Akismet integration to fail, so users are advised to monitor plugin test this update first if Akismet integration is enabled
+* Fixed an issue where some PHP warnings are shown. Note that this fix might cause Akismet integration to fail, so users are advised to test this update first if Akismet integration is enabled
 * Updated German translation, thanks to Andreas Reitberger!
 * Updated French translation, thanks to Raoul Pierr!
 * WordPress 3.9 compatible
