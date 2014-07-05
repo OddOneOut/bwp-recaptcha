@@ -82,7 +82,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 	/**
 	 * Constructor
 	 */
-	public function __construct($version = '1.1.1')
+	public function __construct($version = '1.1.2')
 	{
 		// Plugin's title
 		$this->plugin_title = 'Better WordPress reCAPTCHA';
@@ -302,8 +302,12 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 
 		if (!empty($this->options['input_pubkey']) && !empty($this->options['input_prikey']))
 		{
+			// this action needs to be added when a captcha is manually needed
+			add_action('bwp_recaptcha_add_markups', array($this, 'add_recaptcha'));
+
 			if ('yes' == $this->options['enable_comment'])
 			{
+				// add captcha to comment form
 				if (!$this->_is_captcha_required())
 				{
 					// if user chooses to integrate with akismet, only show
@@ -312,9 +316,6 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 				}
 				else if (!$this->user_can_bypass())
 				{
-					// this action needs to be added manually into your theme file, i.e. comments.php
-					add_action('bwp_recaptcha_add_markups', array($this, 'add_recaptcha'));
-
 					if ($this->options['select_position'] == 'after_fields')
 					{
 						// show captcha after website field

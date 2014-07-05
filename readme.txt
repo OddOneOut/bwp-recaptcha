@@ -4,7 +4,7 @@ Donate link: http://betterwp.net/wordpress-plugins/bwp-recaptcha/
 Tags: recaptcha, captcha, comment captcha, login captcha, user registration captcha, blog registration captcha, contact form, contact form 7, akismet, akismet integration, akismet captcha, anti-spam, antispam
 Requires at least: 3.0
 Tested up to: 3.9
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv3 or later
 
 This plugin utilizes Google reCAPTCHA to help your blog stay clear of spams. You can use this plugin with Akismet and Contact Form 7.
@@ -83,6 +83,9 @@ Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using
 4. reCAPTCHA added to Blog Registration Form (multi-site enabled, 'clean' reCAPTCHA theme, Twenty Fourteen theme).
 
 == Changelog ==
+
+= 1.1.2 =
+* Fixed an issue where captcha is not displayed but still checked when added to a Contact Form 7 form.
 
 = 1.1.1 =
 * You can now choose to add captcha below comment text area without using a theme function. More info [here](http://betterwp.net/wordpress-plugins/bwp-recaptcha/#usage)
