@@ -280,7 +280,7 @@ class BWP_FRAMEWORK_IMPROVED {
 <div id="bwp-ads">
 	<p><strong><?php _e('This Plugin is Proudly Sponsored By', $this->plugin_dkey); ?></strong></p>
 	<div style="width: 250px; margin: 0 auto;">
-		<a href="http://managewp.com/?utm_source=<?php echo $this->plugin_key; ?>&amp;utm_medium=Banner&amp;utm_content=mwp250_2&amp;utm_campaign=Plugins">
+		<a href="http://bit.ly/<?php echo $this->plugin_dkey; ?>-mwp" target="_blank">
 			<img src="<?php echo $this->plugin_wp_url . 'includes/bwp-option-page/images/ad_250x250.png'; ?>" />
 		</a>
 	</div>
@@ -563,7 +563,7 @@ class BWP_FRAMEWORK_IMPROVED {
 			wp_enqueue_style(
 				'bwp-option-page',
 				$this->plugin_wp_url . 'includes/bwp-option-page/css/bwp-option-page.css',
-				self::is_multisite() ? array('wp-admin') : array(),
+				self::is_multisite() || class_exists('JCP_UseGoogleLibraries') ? array('wp-admin') : array(),
 				'1.1.0'
 			);
 

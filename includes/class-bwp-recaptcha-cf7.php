@@ -164,7 +164,7 @@ class BWP_RECAPTCHA_CF7
 	 * @return void
 	 * @access public
 	 */
-	public static function renderCf7BWPRecaptchaTagPane(&$contactForm)
+	public static function renderCf7BWPRecaptchaTagPane($contactForm)
 	{
 		self::_renderCf7TagPane('bwp-recaptcha');
 	}
@@ -175,7 +175,7 @@ class BWP_RECAPTCHA_CF7
 	 * @return void
 	 * @access public
 	 */
-	public static function renderCf7RecaptchaTagPane(&$contactForm)
+	public static function renderCf7RecaptchaTagPane($contactForm)
 	{
 		self::_renderCf7TagPane('recaptcha');
 	}

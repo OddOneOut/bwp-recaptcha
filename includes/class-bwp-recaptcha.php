@@ -80,9 +80,14 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 	var $is_login = false;
 
 	/**
+	 * User has enough approved comments, no captcha needed
+	 */
+	var $user_is_approved = false;
+
+	/**
 	 * Constructor
 	 */
-	public function __construct($version = '1.1.2')
+	public function __construct($version = '1.1.3')
 	{
 		// Plugin's title
 		$this->plugin_title = 'Better WordPress reCAPTCHA';
@@ -931,6 +936,12 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 			return true;
 		}
 
+		if ($this->user_is_approved)
+		{
+			// save one db query
+			return true;
+		}
+
 		if ('yes' == $this->options['hide_approved'])
 		{
 			$commenter = wp_get_current_commenter();
@@ -961,7 +972,10 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 
 			// has more approved comments than required?
 			if ($approved_count >= $this->options['input_approved'])
+			{
+				$this->user_is_approved = true;
 				return true;
+			}
 		}
 
 		return false;
@@ -1011,6 +1025,9 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 	 */
 	public function add_recaptcha($errors = false)
 	{
+		if ($this->user_can_bypass())
+			return '';
+
 		$this->load_captcha_library();
 
 		if (!defined('BWP_CAPT_ADDED'))
