@@ -254,7 +254,7 @@ class BWP_RECAPTCHA_CF7
 	 * Validate captcha returned by the Contact Form
 	 *
 	 * @access public
-	 * @uses WPCF7_Shortcode class
+	 * @uses WPCF7_Validation class
 	 * @uses reCAPTCHA PHP library
 	 */
 	public static function validateCaptcha($result, $tag)
@@ -275,8 +275,8 @@ class BWP_RECAPTCHA_CF7
 		if (!isset($_POST['recaptcha_challenge_field'])
 			|| !isset($_POST['recaptcha_response_field'])
 		) {
-			$result['valid'] = false;
-			$result['reason'][$name] = $rc->options['input_error'];
+			$result->invalidate($tag, $rc->options['input_error']);
+			return $result;
 		}
 
 		// load the recaptcha PHP library just in case
@@ -291,8 +291,7 @@ class BWP_RECAPTCHA_CF7
 
 		if (!$response->is_valid) {
 			// invalid captcha response, show an error message
-			$result['valid'] = false;
-			$result['reason'][$name] = $rc->options['input_error'];
+			$result->invalidate($tag, $rc->options['input_error']);
 		}
 
 		return $result;
