@@ -254,7 +254,7 @@ class BWP_RECAPTCHA_CF7
 	 * Validate captcha returned by the Contact Form
 	 *
 	 * @access public
-	 * @uses WPCF7_Shortcode class
+	 * @uses WPCF7_Validation class
 	 * @uses reCAPTCHA PHP library
 	 */
 	public static function validateCaptcha($result, $tag)
