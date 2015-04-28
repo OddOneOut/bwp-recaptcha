@@ -276,7 +276,7 @@ class BWP_RECAPTCHA_CF7
 			|| !isset($_POST['recaptcha_response_field'])
 		) {
 			$result['valid'] = false;
-			$result['reason'][$name] = $rc->options['input_error'];
+			$result['reason'] = array($name => $rc->options['input_error']);
 		}
 
 		// load the recaptcha PHP library just in case
@@ -292,7 +292,7 @@ class BWP_RECAPTCHA_CF7
 		if (!$response->is_valid) {
 			// invalid captcha response, show an error message
 			$result['valid'] = false;
-			$result['reason'][$name] = $rc->options['input_error'];
+			$result['reason'] = array($name => $rc->options['input_error']);
 		}
 
 		return $result;
