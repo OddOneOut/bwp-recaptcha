@@ -27,7 +27,8 @@ function bwp_capt_comment_form($args = array(), $post_id = null)
 
 	remove_action('comment_form_after_fields', array($bwp_capt, 'add_recaptcha'));
 	remove_action('comment_form_logged_in_after', array($bwp_capt, 'add_recaptcha'));
-	remove_filter('comment_form_defaults', array($bwp_capt, 'add_recaptcha_after_comment_field'));
+	remove_filter('comment_form_defaults', array($bwp_capt, 'add_recaptcha_after_comment_field'), 11);
+	remove_filter('comment_form_submit_field', array($bwp_capt, 'add_recaptcha_before_submit_field'));
 
 	ob_start();
 
@@ -37,7 +38,7 @@ function bwp_capt_comment_form($args = array(), $post_id = null)
 	ob_end_clean();
 
 	if (isset($args['comment_notes_after']))
-		$args['comment_notes_after'] .= $recaptcha_html;
+		$args['comment_notes_after'] .= "\n" . $recaptcha_html;
 	else
 		$args['comment_notes_after'] = $recaptcha_html;
 
@@ -294,15 +295,11 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 
 	protected function init_hooks()
 	{
-		// load custom template function at this stage to make it pluggable
-		$this->_load_template_functions();
+		$this->init_cf7_captcha();
 
-		if (defined('WPCF7_VERSION'))
-		{
-			// add support for Contact Form 7 (CF7) automatically if CF7 is
-			// installed and activated
-			include_once dirname(__FILE__) . '/class-bwp-recaptcha-cf7.php';
-			BWP_RECAPTCHA_CF7::init($this);
+		// user can bypass captcha, nothing to do
+		if ($this->user_can_bypass()) {
+			return;
 		}
 
 		if (!empty($this->options['input_pubkey']) && !empty($this->options['input_prikey']))
@@ -311,73 +308,98 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 			add_action('bwp_recaptcha_add_markups', array($this, 'add_recaptcha'));
 
 			if ('yes' == $this->options['enable_comment'])
-			{
-				// add captcha to comment form
-				if (!$this->_is_captcha_required())
-				{
-					// if user chooses to integrate with akismet, only show
-					// recaptcha when comment is marked as spam
-					add_action('akismet_spam_caught', array($this, 'add_recaptcha_after_akismet'));
-				}
-				else if (!$this->user_can_bypass())
-				{
-					if ($this->options['select_position'] == 'after_fields')
-					{
-						// show captcha after website field
-						add_action('comment_form_after_fields', array($this, 'add_recaptcha'));
-						add_action('comment_form_logged_in_after', array($this, 'add_recaptcha'));
-					}
-					elseif ($this->options['select_position'] == 'after_comment_field')
-					{
-						/**
-						 * show captcha after comment field (default @since 1.1.1)
-						 *
-						 * @since 2.0.0 and @since WordPress 4.2.0
-						 * there's a new filter to add recaptcha that doesn't
-						 * rely on the fragile `comment_notes_after`, we will
-						 * use that if possible
-						 */
-						if (version_compare($this->get_current_wp_version(), '4.2', '>='))
-							add_filter('comment_form_submit_button', array($this, 'add_recaptcha_before_submit_field'));
-						else
-							// otherwise use the `comment_notes_after` arg
-							add_filter('comment_form_defaults', array($this, 'add_recaptcha_after_comment_field'), 11);
-					}
-
-					// fill the comment textarea
-					add_filter('comment_form_field_comment', array($this, 'fill_comment_content'));
-
-					// check entered captcha for comment form
-					add_action('pre_comment_on_post', array($this, 'check_recaptcha'));
-				}
-			}
+				$this->init_comment_form_captcha();
 
 			if ('yes' == $this->options['enable_registration'] && $this->is_reg)
-			{
-				// normal user registration page
-				add_action('register_form', array($this, 'add_recaptcha'));
-				add_filter('registration_errors', array($this, 'check_reg_recaptcha'));
-			}
+				$this->init_registration_form_captcha();
 
 			if ('yes' == $this->options['enable_registration'] && $this->is_signup)
-			{
-				// wpms user/site registration page
-				add_action('signup_extra_fields', array($this, 'add_recaptcha'));
-				add_action('signup_blogform', array($this, 'add_blog_reg_recaptcha'));
-				add_filter('wpmu_validate_user_signup', array($this, 'check_user_reg_recaptcha'));
-				add_filter('wpmu_validate_blog_signup', array($this, 'check_blog_reg_recaptcha'));
-			}
+				$this->init_multisite_registration_form_captcha();
 
 			if ('yes' == $this->options['enable_login'] && $this->is_login)
-			{
-				// @since 1.1.0 add captcha to login form
-				add_action('login_form', array($this, 'add_recaptcha'));
-
-				// the priority of 15 is to ensure that we run the filter before
-				// WordPress authenticates the user.
-				add_filter('authenticate', array($this, 'authenticate_with_recaptcha'), 15);
-			}
+				$this->init_login_form_captcha();
 		}
+	}
+
+	protected function init_cf7_captcha()
+	{
+		if (defined('WPCF7_VERSION'))
+		{
+			// add support for Contact Form 7 (CF7) automatically if CF7 is
+			// installed and activated
+			include_once dirname(__FILE__) . '/class-bwp-recaptcha-cf7.php';
+			BWP_RECAPTCHA_CF7::init($this);
+		}
+	}
+
+	protected function init_comment_form_captcha()
+	{
+		// add captcha to comment form, two modes are available:
+		// 1. without akismet integration
+		// 2. with akismet integration
+		if (!$this->_is_captcha_required())
+		{
+			// if user chooses to integrate with akismet, only show
+			// recaptcha when comment is marked as spam
+			add_action('akismet_spam_caught', array($this, 'add_recaptcha_after_akismet'));
+		}
+		else
+		{
+			if ($this->options['select_position'] == 'after_fields')
+			{
+				// show captcha after website field
+				add_action('comment_form_after_fields', array($this, 'add_recaptcha'));
+				add_action('comment_form_logged_in_after', array($this, 'add_recaptcha'));
+			}
+			elseif ($this->options['select_position'] == 'after_comment_field')
+			{
+				/**
+				 * show captcha after comment field (default @since 1.1.1)
+				 *
+				 * @since 2.0.0 and @since WordPress 4.2.0
+				 * there's a new filter to add recaptcha that doesn't
+				 * rely on the fragile `comment_notes_after`, we will
+				 * use that if possible
+				 */
+				if (version_compare($this->get_current_wp_version(), '4.2', '>='))
+					add_filter('comment_form_submit_field', array($this, 'add_recaptcha_before_submit_field'));
+				else
+					// otherwise use the `comment_notes_after` arg
+					add_filter('comment_form_defaults', array($this, 'add_recaptcha_after_comment_field'), 11);
+			}
+
+			// fill the comment textarea
+			add_filter('comment_form_field_comment', array($this, 'fill_comment_content'));
+
+			// check entered captcha for comment form
+			add_action('pre_comment_on_post', array($this, 'check_recaptcha'));
+		}
+	}
+
+	protected function init_login_form_captcha()
+	{
+		// @since 1.1.0 add captcha to login form
+		add_action('login_form', array($this, 'add_recaptcha'));
+
+		// the priority of 15 is to ensure that we run the filter before
+		// WordPress authenticates the user.
+		add_filter('authenticate', array($this, 'authenticate_with_recaptcha'), 15);
+	}
+
+	protected function init_registration_form_captcha()
+	{
+		// normal user registration page
+		add_action('register_form', array($this, 'add_recaptcha'));
+		add_filter('registration_errors', array($this, 'check_reg_recaptcha'));
+	}
+
+	protected function init_multisite_registration_form_captcha()
+	{
+		// wpms user/site registration page
+		add_action('signup_extra_fields', array($this, 'add_recaptcha'));
+		add_action('signup_blogform', array($this, 'add_blog_reg_recaptcha'));
+		add_filter('wpmu_validate_user_signup', array($this, 'check_multisite_user_reg_recaptcha'));
+		add_filter('wpmu_validate_blog_signup', array($this, 'check_multisite_blog_reg_recaptcha'));
 	}
 
 	protected function init_captcha_keys()
