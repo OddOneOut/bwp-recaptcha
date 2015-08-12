@@ -329,8 +329,19 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 					}
 					elseif ($this->options['select_position'] == 'after_comment_field')
 					{
-						// show captcha after comment field (default @since 1.1.1)
-						add_filter('comment_form_defaults', array($this, 'add_recaptcha_after_comment_field'));
+						/**
+						 * show captcha after comment field (default @since 1.1.1)
+						 *
+						 * @since 2.0.0 and @since WordPress 4.2.0
+						 * there's a new filter to add recaptcha that doesn't
+						 * rely on the fragile `comment_notes_after`, we will
+						 * use that if possible
+						 */
+						if (version_compare($this->get_current_wp_version(), '4.2', '>='))
+							add_filter('comment_form_submit_button', array($this, 'add_recaptcha_before_submit_field'));
+						else
+							// otherwise use the `comment_notes_after` arg
+							add_filter('comment_form_defaults', array($this, 'add_recaptcha_after_comment_field'), 11);
 					}
 
 					// fill the comment textarea
@@ -1132,15 +1143,45 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 			else
 				echo '';
 		}
+
 	}
 
 	/**
 	 * Adds captcha to below comment field
 	 *
+	 * This is fragile because themes can define their own
+	 * `comment_notes_after` arg which override this one. In such case one must
+	 * use `bwp_capt_comment_form()` instead of `comment_form()`
+	 *
 	 * @since 1.1.1
 	 * @return string
 	 */
 	public function add_recaptcha_after_comment_field($form_defaults)
+	{
+		$recaptcha_html = $this->get_recaptcha_html();
+
+		$form_defaults['comment_notes_after'] = !isset($form_defaults['comment_notes_after'])
+			? $recaptcha_html : $form_defaults['comment_notes_after'] . "\n" . $recaptcha_html;
+
+		return $form_defaults;
+	}
+
+	/**
+	 * Adds captcha to just before the submit field
+	 *
+	 * This makes use of the `comment_form_submit_button` filter
+	 *
+	 * @since 2.0.0
+	 * @return string
+	 */
+	public function add_recaptcha_before_submit_field($submit_field)
+	{
+		$recaptcha_html = $this->get_recaptcha_html();
+
+		return $recaptcha_html . "\n" . $submit_field;
+	}
+
+	protected function get_recaptcha_html()
 	{
 		ob_start();
 
@@ -1149,10 +1190,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 
 		ob_end_clean();
 
-		$form_defaults['comment_notes_after'] = !isset($form_defaults['comment_notes_after'])
-			? $recaptcha_html : $form_defaults['comment_notes_after'] . $recaptcha_html;
-
-		return $form_defaults;
+		return $recaptcha_html;
 	}
 
 	/**
