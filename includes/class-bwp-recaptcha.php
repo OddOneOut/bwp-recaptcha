@@ -45,9 +45,6 @@ function bwp_capt_comment_form($args = array(), $post_id = null)
 	comment_form($args, $post_id);
 }
 
-if (!class_exists('BWP_FRAMEWORK_IMPROVED'))
-	require_once('class-bwp-framework-improved.php');
-
 class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 {
 	/**
@@ -100,11 +97,12 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 	/**
 	 * Constructor
 	 */
-	public function __construct($version = '1.1.3')
+	public function __construct($version = '2.0.0-beta')
 	{
 		// Plugin's title
 		$this->plugin_title = 'Better WordPress reCAPTCHA';
 		// Plugin's version
+		$this->set_version('5.3.2', 'php');
 		$this->set_version($version);
 		// Plugin's language domain
 		$this->domain = 'bwp-recaptcha';
@@ -242,7 +240,6 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 
 	protected function load_libraries()
 	{
-		require_once __DIR__ . '/provider/abstract-provider.php';
 		$this->provider = BWP_Recaptcha_Provider::create($this);
 	}
 

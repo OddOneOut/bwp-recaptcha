@@ -37,7 +37,6 @@ abstract class BWP_Recaptcha_Provider
 		);
 
 		if ('yes' == $options['use_recaptcha_v1']) {
-			require_once __DIR__ . '/v1.php';
 			return new BWP_Recaptcha_Provider_V1($providerOptions, $domain);
 		} else {
 			$providerOptions = array_merge($providerOptions, array(
@@ -47,7 +46,6 @@ abstract class BWP_Recaptcha_Provider
 				'position' => $options['select_v2_jsapi_position']
 			));
 
-			require_once __DIR__ . '/v2.php';
 			return new BWP_Recaptcha_Provider_V2($providerOptions, $domain);
 		}
     }

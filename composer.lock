@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4c1c2c611eb4cc3134485206b05bdfba",
+    "hash": "7d7cc68d17224c2b892ccaa1a8aad12a",
     "packages": [
         {
             "name": "google/recaptcha",
@@ -50,12 +50,49 @@
                 "spam"
             ],
             "time": "2015-03-16 13:45:08"
+        },
+        {
+            "name": "kminh/bwp-framework",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kminh/bwp-framework",
+                "reference": "4342cbe1d996c783d46d03f661ddbcbdd9a9449c"
+            },
+            "require": {
+                "php": "~5.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "license": [
+                "GPLv3"
+            ],
+            "authors": [
+                {
+                    "name": "Khang Minh",
+                    "email": "kminhfoss@gmail.com"
+                }
+            ],
+            "description": "Base codes for BWP WordPress Plugins",
+            "homepage": "http://betterwp.net",
+            "time": "2015-08-13 09:50:17"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "kminh/bwp-framework": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

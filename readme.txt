@@ -3,7 +3,7 @@ Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/bwp-recaptcha/
 Tags: recaptcha, captcha, comment captcha, login captcha, user registration captcha, blog registration captcha, contact form, contact form 7, akismet, akismet integration, akismet captcha, anti-spam, antispam
 Requires at least: 3.0
-Tested up to: 3.9
+Tested up to: 4.2
 Stable tag: 1.1.3
 License: GPLv3 or later
 

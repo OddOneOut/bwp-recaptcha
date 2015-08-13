@@ -19,5 +19,4 @@ if (class_exists('BWP_RECAPTCHA') || !defined('ABSPATH'))
 require_once __DIR__ . '/vendor/autoload.php';
 
 // Init the plugin
-require_once dirname(__FILE__) . '/includes/class-bwp-recaptcha.php';
 $bwp_capt = new BWP_RECAPTCHA();

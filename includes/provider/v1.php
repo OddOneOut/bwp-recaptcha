@@ -5,8 +5,6 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE VERSION 3.0 OR LATER
  */
 
-require_once __DIR__ . '/abstract-provider.php';
-
 /**
  * This is the provider used for recaptcha v1
  *
