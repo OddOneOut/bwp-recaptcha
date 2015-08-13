@@ -45,7 +45,7 @@ function bwp_capt_comment_form($args = array(), $post_id = null)
 	comment_form($args, $post_id);
 }
 
-class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
+class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 {
 	/**
 	 * reCAPTCHA built-in languages
@@ -467,9 +467,10 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 	public function modify_option_page()
 	{
 		global $blog_id;
+
+		if (self::is_multisite() && 1 < $blog_id) :
 ?>
 		<script type="text/javascript">
-<?php if (self::is_multisite() && 1 < $blog_id) { ?>
 			var rc_readonly = <?php echo 'yes' == $this->options['use_global_keys'] ? 'true' : 'false'; ?>;
 			jQuery('input[name="input_pubkey"], input[name="input_prikey"]').prop('readOnly', rc_readonly);
 			jQuery('input[name="use_global_keys"]').on('click', function() {
@@ -479,11 +480,9 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 					jQuery('input[name="input_pubkey"], input[name="input_prikey"]').prop('readOnly', false);
 				}
 			});
-<?php } else { ?>
-			jQuery('input[name="use_global_keys"]').parents('li.bwp-clear').hide();
-<?php } ?>
 		</script>
 <?php
+		endif;
 	}
 
 	/**
@@ -497,9 +496,9 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 			wp_die(__('You do not have sufficient permissions to access this page.'));
 
 		$page            = $_GET['page'];
-		$bwp_option_page = new BWP_OPTION_PAGE($page, $this->site_options, $this->domain);
+		$bwp_option_page = new BWP_OPTION_PAGE_V2($page, $this);
 
-		$options = array();
+		$form_options = array();
 
 		if (!empty($page))
 		{
@@ -551,7 +550,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 					),
 					'item_names' => array(
 						'h1',
-						'cb7',
+						'use_global_keys',
 						'input_pubkey',
 						'input_prikey',
 						'heading_func',
@@ -636,7 +635,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 							. 'Highly recommended if you do not want to '
 							. 'force your visitors to enter a captcha every time.', $this->domain) => 'enable_akismet'
 						),
-						'cb7' => array(
+						'use_global_keys' => array(
 							__('uncheck to use different key pairs for this site.', $this->domain) => 'use_global_keys'
 						),
 						'use_recaptcha_v1' => array(
@@ -681,11 +680,19 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 					'inline_fields' => array(
 						'cb4' => array('select_cap' => 'select'),
 						'cb5' => array('input_approved' => 'input')
+					),
+					'env' => array(
+						'use_global_keys' => 'multisite'
+					),
+					'formats' => array(
+						'input_approved' => 'int',
+						'input_error'    => 'html',
+						'input_back'     => 'html'
 					)
 				);
 
-				// Get the default options
-				$options = $bwp_option_page->get_options(array(
+				// options that should be handled by this form
+				$form_options = array(
 					'use_global_keys',
 					'use_recaptcha_v1',
 					'input_pubkey',
@@ -705,18 +712,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 					'select_response',
 					'enable_akismet',
 					'select_akismet_react'
-				), $this->options);
-
-				// Get option from the database
-				$options = $bwp_option_page->get_db_options($page, $options);
-
-				$option_formats = array(
-					'input_approved' => 'int',
-					'input_error' => 'html',
-					'input_back' => 'html'
 				);
-
-				$option_super_admin = array();
 
 				// show appropriate fields based on multi-site setting
 				add_action('bwp_option_action_before_submit_button', array($this, 'modify_option_page'));
@@ -726,7 +722,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 				$bwp_option_page->set_current_tab(2);
 
 				// @since 2.0.0 differnet settings for different recaptcha
-				$form = $this->options['use_recaptcha_v1'] ? array(
+				$form = $this->options['use_recaptcha_v1'] == 'yes' ? array(
 					'items' => array(
 						'select',
 						'checkbox',
@@ -837,75 +833,33 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 					)
 				);
 
-				// Get the default options
-				$options = $bwp_option_page->get_options(array(
-					'select_lang',
-					'select_theme',
-					'input_tab',
-					'enable_css',
-				), $this->options);
+				$form_options = $this->options['use_recaptcha_v1'] == 'yes'
+					? array(
+						'select_lang',
+						'select_theme',
+						'input_tab',
+						'enable_css'
+					) : array(
+						'select_v2_theme',
+						'select_v2_size',
+						'select_v2_lang',
+						'input_tab'
+					);
 
-				// Get option from the database
-				$options = $bwp_option_page->get_db_options($page, $options);
-
-				$option_formats = array(
+				$form['formats'] = array(
 					'input_tab' => 'int'
 				);
-
-				$option_super_admin = array();
 
 				// preview reCAPTCHA
 				add_action('bwp_option_action_before_submit_button', array($this, 'add_recaptcha'));
 			}
 		}
 
-		// Get option from user input
-		if (isset($_POST['submit_' . $bwp_option_page->get_form_name()])
-			&& isset($options) && is_array($options))
-		{
-			// basic security check
-			check_admin_referer($page);
+		// assign the form and option array
+		$bwp_option_page->init($form, $form_options);
 
-			foreach ($options as $key => &$option)
-			{
-				if (isset($_POST[$key]))
-				{
-					$bwp_option_page->format_field($key, $option_formats);
-					$option = trim(stripslashes($_POST[$key]));
-				}
-				else
-				{
-					if (!isset($_POST[$key]))
-					{
-						// for checkboxes that are not checked
-						$option = '';
-					}
-					else if (isset($option_formats[$key])
-						&& 'int' == $option_formats[$key]
-						&& ('' === $_POST[$key] || 0 > $_POST[$key])
-					) {
-						// expect integer but received empty string or negative integer
-						$option = $this->options_default[$key];
-					}
-				}
-			}
-
-			// update per-blog options
-			update_option($page, $options);
-
-			global $blog_id;
-			if (!$this->is_normal_admin() && $blog_id == 1)
-			{
-				// Update site options if is super admin and is on main site
-				update_site_option($page, $options);
-			}
-
-			// refresh the options property to include updated options
-			$this->options = array_merge($this->options, $options);
-
-			// Update options successfully
-			$this->add_notice(__('All options have been saved.', $this->domain));
-		}
+		if (isset($_POST['submit_' . $bwp_option_page->get_form_name()]))
+			$bwp_option_page->submit_html_form();
 
 		if (empty($this->options['input_pubkey'])
 			|| empty($this->options['input_prikey'])
@@ -930,10 +884,6 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_IMPROVED
 			);
 		}
 
-		// Assign the form and option array
-		$bwp_option_page->init($form, $options, $this->form_tabs);
-
-		// Build the option page
 		$bwp_option_page->generate_html_form();
 	}
 

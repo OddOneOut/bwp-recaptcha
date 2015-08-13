@@ -132,20 +132,6 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false, $lang = '
 	</noscript>';
 }
 
-
-
-
-/**
- * A ReCaptchaResponse is returned from recaptcha_check_answer()
- */
-if (!class_exists('ReCaptchaResponse')) :
-	class ReCaptchaResponse {
-			var $is_valid;
-			var $error;
-	}
-endif;
-
-
 /**
   * Calls an HTTP POST function to verify if the user's guess was correct
   * @param string $privkey
