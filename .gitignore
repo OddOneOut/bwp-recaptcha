@@ -1,5 +1,7 @@
 /.settings
 /.buildpath
 /.project
+/vendor
 \.*
 \*.un
+*.otl

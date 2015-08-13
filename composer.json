@@ -1,0 +1,7 @@
+{
+    "require": {
+        "google/recaptcha": "^1.1"
+    },
+    "require-dev": {
+    }
+}
