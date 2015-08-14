@@ -28,9 +28,11 @@ class BWP_Recaptcha_Provider_V1 extends BWP_Recaptcha_Provider
 			// captcha error can comes from $_GET variable or passed via
 			// hooks' parameters.
 			$captchaError = '';
+			$captchaErrorCode = null;
 
 			if (!empty($_GET['cerror'])) {
-				$captchaError = $this->getErrorMessage($_GET['cerror']);
+				$captchaError     = $this->getErrorMessageFromCode($_GET['cerror']);
+				$captchaErrorCode = $_GET['cerror'];
 			} elseif (isset($errors) && is_wp_error($errors)) {
 				$captchaError = $errors->get_error_message('recaptcha-error');
 			}
@@ -76,7 +78,7 @@ class BWP_Recaptcha_Provider_V1 extends BWP_Recaptcha_Provider
 			if (!empty($this->options['secret_key'])) {
 				echo recaptcha_get_html(
 					$this->options['site_key'],
-					$captchaError,
+					$captchaErrorCode,
 					is_ssl() ? true : false,
 					$this->options['language']
 				);

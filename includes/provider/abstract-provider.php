@@ -77,10 +77,8 @@ abstract class BWP_Recaptcha_Provider
 		return $this->domain;
 	}
 
-	public function getErrorMessage($errorCode)
+	public function getErrorMessage($error)
 	{
-		$error = $this->processError($errorCode);
-
 		if ('invalid-response' == $error) {
 			return $this->options['invalid_response_message'];
 		} elseif ('invalid-keys' == $error && current_user_can('manage_options')) {
@@ -90,6 +88,12 @@ abstract class BWP_Recaptcha_Provider
 			return __('Unknown error. Please contact an administrator '
 				. 'for more info.', $this->domain);
 		}
+	}
+
+	public function getErrorMessageFromCode($errorCode)
+	{
+		$error = $this->processError($errorCode);
+		return $this->getErrorMessage($error);
 	}
 
 	protected function getIpAddress()

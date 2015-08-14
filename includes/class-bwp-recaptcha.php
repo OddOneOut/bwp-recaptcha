@@ -258,9 +258,10 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 
 	protected function init_hooks()
 	{
-		$this->init_cf7_captcha();
+		// init addons
+		$this->init_addons();
 
-		// user can bypass captcha, nothing to do
+		// user can bypass captcha, nothing else to do
 		if ($this->user_can_bypass()) {
 			return;
 		}
@@ -284,15 +285,24 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 		}
 	}
 
-	protected function init_cf7_captcha()
+	/**
+	 * Init cf7 addon if applicable
+	 */
+	protected function init_cf7_addon()
 	{
 		if (defined('WPCF7_VERSION'))
 		{
 			// add support for Contact Form 7 (CF7) automatically if CF7 is
 			// installed and activated
-			include_once dirname(__FILE__) . '/class-bwp-recaptcha-cf7.php';
-			BWP_RECAPTCHA_CF7::init($this);
+			// @since 2.0.0 this should use appropriate class for current
+			// version of recaptcha
+			BWP_Recaptcha_CF7_V1::init($this);
 		}
+	}
+
+	protected function init_addons()
+	{
+		$this->init_cf7_addon();
 	}
 
 	protected function init_comment_form_captcha()
@@ -1123,7 +1133,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 				}
 				else
 				{
-					wp_die($this->provider->getErrorMessage($errorCode));
+					wp_die($this->provider->getErrorMessage($error));
 				}
 			}
 
@@ -1178,8 +1188,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 
 		if ($captchaErrors = $this->provider->verify())
 		{
-			$captchaErrorCode = current(array_keys($captchaErrors));
-			$errors->add('recaptcha-error', $this->provider->getErrorMessage($captchaErrorCode));
+			$errors->add('recaptcha-error', $this->provider->getErrorMessage(current($captchaErrors)));
 
 			// invalid recaptcha detected, the returned $user object should be
 			// a WP_Error object
@@ -1212,10 +1221,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	public function check_reg_recaptcha(WP_Error $errors)
 	{
 		if ($captchaErrors = $this->provider->verify())
-		{
-			$captchaErrorCode = current(array_keys($captchaErrors));
-			$errors->add('recaptcha-error', $this->provider->getErrorMessage($captchaErrorCode));
-		}
+			$errors->add('recaptcha-error', $this->provider->getErrorMessage(current($captchaErrors)));
 
 		return $errors;
 	}

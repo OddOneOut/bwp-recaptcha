@@ -15,8 +15,14 @@ License: GPLv3
 if (class_exists('BWP_RECAPTCHA') || !defined('ABSPATH'))
 	return;
 
-// Dependencies
+// dependencies
 require_once __DIR__ . '/vendor/autoload.php';
 
-// Init the plugin
+// @since 2.0.0 we hook to 'init' action with a priority of 9 to make sure the
+// plugin loads before Contact Form 7 loads
+add_filter('bwp_capt_init_priority', function() {
+	return 9;
+});
+
+// init the plugin
 $bwp_capt = new BWP_RECAPTCHA();
