@@ -321,8 +321,8 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			if ($this->options['select_position'] == 'after_fields')
 			{
 				// show captcha after website field
-				add_action('comment_form_after_fields', array($this, 'add_recaptcha'));
-				add_action('comment_form_logged_in_after', array($this, 'add_recaptcha'));
+				add_action('comment_form_after_fields', array($this, 'add_comment_recaptcha'));
+				add_action('comment_form_logged_in_after', array($this, 'add_comment_recaptcha'));
 			}
 			elseif ($this->options['select_position'] == 'after_comment_field')
 			{
@@ -640,8 +640,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 							__('uncheck to use different key pairs for this site.', $this->domain) => 'use_global_keys'
 						),
 						'use_recaptcha_v1' => array(
-							__('check this if you don\'t need the "no captcha reCAPTCHA" '
-							. 'or you need global key support.', $this->domain) => 'use_recaptcha_v1'
+							__('check this if you prefer the oldschool recaptcha.', $this->domain) => 'use_recaptcha_v1'
 						)
 					),
 					'input'	=> array(
@@ -1033,18 +1032,28 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	 */
 	public function add_recaptcha($errors = '')
 	{
+		$errors = !is_wp_error($errors) ? new WP_Error() : $errors;
+		$this->provider->renderCaptcha($errors);
+	}
+
+	/**
+	 * Add captcha to the comment form
+	 *
+	 * @since 2.0.0
+	 */
+	public function add_comment_recaptcha()
+	{
 		if ($this->_is_comment_spam())
 		{
 ?>
-	<p class="bwp-capt-spam-identified">
-		<?php _e('Your comment was identified as spam, '
-		. 'please complete the CAPTCHA below:', $this->domain); ?>
-	</p>
+		<p class="bwp-capt-spam-identified">
+			<?php _e('Your comment was identified as spam, '
+			. 'please complete the CAPTCHA below:', $this->domain); ?>
+		</p>
 <?php
 		}
 
-		$errors = !is_wp_error($errors) ? new WP_Error() : $errors;
-		$this->provider->renderCaptcha($errors);
+		$this->add_recaptcha();
 
 		// with this we can redirect to the previous comment url, with support
 		// for previous comment page
@@ -1052,10 +1061,9 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 		{
 ?>
 		<input type="hidden" name="error_redirect_to"
-		    value="<?php esc_attr_e($this->get_current_comment_page_link()); ?>" />
+			value="<?php esc_attr_e($this->get_current_comment_page_link()); ?>" />
 <?php
 		}
-
 	}
 
 	/**
@@ -1070,7 +1078,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	 */
 	public function add_recaptcha_after_comment_field($form_defaults)
 	{
-		$recaptcha_html = $this->get_recaptcha_html();
+		$recaptcha_html = $this->get_comment_recaptcha_html();
 
 		$form_defaults['comment_notes_after'] = !isset($form_defaults['comment_notes_after'])
 			? $recaptcha_html : $form_defaults['comment_notes_after'] . "\n" . $recaptcha_html;
@@ -1088,7 +1096,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	 */
 	public function add_recaptcha_before_comment_submit_field($submit_field)
 	{
-		$recaptcha_html = $this->get_recaptcha_html();
+		$recaptcha_html = $this->get_comment_recaptcha_html();
 
 		return $recaptcha_html . "\n" . $submit_field;
 	}
@@ -1157,11 +1165,11 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 		$this->_unset_session_data('bwp_capt_comment_is_spam');
 	}
 
-	protected function get_recaptcha_html()
+	protected function get_comment_recaptcha_html()
 	{
 		ob_start();
 
-		do_action('bwp_recaptcha_add_markups');
+		$this->add_comment_recaptcha();
 		$recaptcha_html = ob_get_contents();
 
 		ob_end_clean();
