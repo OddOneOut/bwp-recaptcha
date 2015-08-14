@@ -134,7 +134,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			'select_cf7_tag'           => 'bwp-recaptcha',
 			'select_response'          => 'redirect',
 			'select_position'          => 'after_comment_field',
-			'select_v2_lang'           => 'en',
+			'select_v2_lang'           => '', // @since 2.0.0, default to empty (auto detected)
 			'select_v2_theme'          => 'light', // @since 2.0.0 'light' or 'dark'
 			'select_v2_size'           => 'normal', // @since 2.0.0
 			'select_v2_jsapi_position' => 'on_demand', // @since 2.0.0 load on all pages or only when needed
@@ -807,7 +807,9 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 							_x('Normal', 'recaptcha v2 normal size', $this->domain) => 'normal',
 							_x('Compact', 'recaptcha v2 compact size', $this->domain) => 'compact'
 						),
-						'select_v2_lang' => $this->v2_lang,
+						'select_v2_lang' => array_merge(array(
+							_x('Auto-detected', 'recaptcha v2 language', $this->domain) => ''
+						), $this->v2_lang),
 						/* 'select_v2_jsapi_position' => array( */
 						/* 	__('When needed', $this->domain) => 'on_demand', */
 						/* 	__('Globally', $this->domain)    => 'globally', */

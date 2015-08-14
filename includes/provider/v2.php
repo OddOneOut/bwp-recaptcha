@@ -35,7 +35,11 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 		// include the script tag to load recaptcha's api js if needed, but
 		// make sure that we only do that once
 		if ($this->options['position'] == 'on_demand' && $this->instanceCount == 1) {
-			$src = $this->jsSrc . '?hl=' . $this->options['language'];
+			// add a forced language if needed
+			$src = !empty($this->options['language'])
+				? $this->jsSrc . '?hl=' . urlencode($this->options['language'])
+				: $this->jsSrc;
+
 			$output[] = '<script src="' . $src . '" async defer></script>';
 		}
 
