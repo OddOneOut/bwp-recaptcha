@@ -441,7 +441,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			'BWP reCAPT',
 			BWP_CAPT_CAPABILITY,
 			BWP_CAPT_OPTION_GENERAL,
-			array($this, 'build_option_pages'),
+			array($this, 'show_option_page'),
 			BWP_CAPT_IMAGES . '/icon_menu.png'
 		);
 
@@ -451,7 +451,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			__('General Options', $this->domain),
 			BWP_CAPT_CAPABILITY,
 			BWP_CAPT_OPTION_GENERAL,
-			array($this, 'build_option_pages')
+			array($this, 'show_option_page')
 		);
 
 		add_submenu_page(
@@ -460,7 +460,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			__('Theme Options', $this->domain),
 			BWP_CAPT_CAPABILITY,
 			BWP_CAPT_OPTION_THEME,
-			array($this, 'build_option_pages')
+			array($this, 'show_option_page')
 		);
 	}
 
@@ -485,26 +485,17 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 		endif;
 	}
 
-	/**
-	 * Build the option pages
-	 *
-	 * Utilizes BWP Option Page Builder (@see BWP_OPTION_PAGE)
-	 */
-	public function build_option_pages()
+	protected function build_option_page()
 	{
-		if (!current_user_can(BWP_CAPT_CAPABILITY))
-			wp_die(__('You do not have sufficient permissions to access this page.'));
-
-		$page            = $_GET['page'];
-		$bwp_option_page = new BWP_OPTION_PAGE_V2($page, $this);
-
+		$page         = $this->get_current_admin_page();
+		$option_page  = $this->curren_option_page;
 		$form_options = array();
 
 		if (!empty($page))
 		{
 			if ($page == BWP_CAPT_OPTION_GENERAL)
 			{
-				$bwp_option_page->set_current_tab(1);
+				$option_page->set_current_tab(1);
 
 				// Option Structures - Form
 				$form = array(
@@ -719,7 +710,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			}
 			else if ($page == BWP_CAPT_OPTION_THEME)
 			{
-				$bwp_option_page->set_current_tab(2);
+				$option_page->set_current_tab(2);
 
 				// @since 2.0.0 differnet settings for different recaptcha
 				$form = $this->options['use_recaptcha_v1'] == 'yes' ? array(
@@ -856,11 +847,11 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 		}
 
 		// assign the form and option array
-		$bwp_option_page->init($form, $form_options);
+		$option_page->init($form, $form_options);
+	}
 
-		if (isset($_POST['submit_' . $bwp_option_page->get_form_name()]))
-			$bwp_option_page->submit_html_form();
-
+	public function show_option_page()
+	{
 		if (empty($this->options['input_pubkey'])
 			|| empty($this->options['input_prikey'])
 		) {
@@ -884,7 +875,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			);
 		}
 
-		$bwp_option_page->generate_html_form();
+		$this->curren_option_page->generate_html_form();
 	}
 
 	/**
