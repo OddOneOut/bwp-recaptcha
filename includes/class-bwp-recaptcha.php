@@ -125,6 +125,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			'enable_registration'      => '',
 			'enable_login'             => '',
 			'enable_akismet'           => '',
+			'enable_cf7'               => 'yes', // @since 2.0.0
 			'enable_auto_fill_comment' => '',
 			'enable_css'               => 'yes',
 			'use_recaptcha_v1'         => '', // @since 2.0.0 whether to use recaptcha v1
@@ -316,7 +317,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	 */
 	protected function init_cf7_addon()
 	{
-		if (defined('WPCF7_VERSION'))
+		if (defined('WPCF7_VERSION') && 'yes' == $this->options['enable_cf7'])
 		{
 			// add support for Contact Form 7 (CF7) automatically if CF7 is
 			// installed and activated
@@ -559,7 +560,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						'checkbox',
 						'select',
 						'heading',
-						'select'
+						'checkbox'
 					),
 					'item_labels' => array(
 						__('reCAPTCHA API Keys', $this->domain),
@@ -580,7 +581,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						__('Integrate with Akismet?', $this->domain),
 						__('If correct captcha response', $this->domain),
 						__('Contact Form 7 Integration', $this->domain),
-						__('Captcha shortcode tag', $this->domain)
+						__('Integrate with Contact Form 7?', $this->domain)
 					),
 					'item_names' => array(
 						'h1',
@@ -601,7 +602,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						'cb6',
 						'select_akismet_react',
 						'heading_cf7',
-						'select_cf7_tag'
+						'enable_cf7'
 					),
 					'heading' => array(
 						'h1' => '<em>' . sprintf(
@@ -685,6 +686,9 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 								__('This feature requires an active <a target="_blank" href="%s">PHP session</a>.', $this->domain),
 								'http://php.net/manual/en/intro.session.php'
 							) => 'enable_auto_fill_comment'
+						),
+						'enable_cf7' => array(
+							__('With this you can use the <code>recaptcha</code> shortcode tag in your Contact Form 7 forms.', $this->domain) => 'enable_cf7'
 						)
 					),
 					'input'	=> array(
@@ -752,7 +756,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 					'enable_auto_fill_comment',
 					'input_back',
 					'select_position',
-					'select_cf7_tag',
+					'enable_cf7',
 					'select_response',
 					'enable_akismet',
 					'select_akismet_react'
