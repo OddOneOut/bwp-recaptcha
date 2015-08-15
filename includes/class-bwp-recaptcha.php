@@ -125,6 +125,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			'enable_registration'      => '',
 			'enable_login'             => '',
 			'enable_akismet'           => '',
+			'enable_auto_fill_comment' => '',
 			'enable_css'               => 'yes',
 			'use_recaptcha_v1'         => '', // @since 2.0.0 whether to use recaptcha v1
 			'use_global_keys'          => 'yes',
@@ -156,24 +157,61 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			'http://betterwp.net/wordpress-plugins/bwp-recaptcha/', false);
 	}
 
-	private function _set_session_data($key, $value)
+	/**
+	 * Init a PHP session
+	 *
+	 * @since 2.0.0
+	 */
+	private function _init_session()
 	{
-		// use $_SESSION, if $_SESSION isn't available there's no alternative
-		// for now
-		if (!isset($_SESSION))
+		if (('redirect' == $this->options['select_response']
+				&& 'yes' == $this->options['enable_auto_fill_comment']
+			|| $this->_is_akismet_integration_enabled())
+		) {
+			// should init session
+		}
+		else
 		{
+			// session not needed
 			return;
 		}
 
+		// do not init session in admin or when session is already active
+		if (!is_admin() && !isset($_SESSION))
+		{
+			// do not init a session if headers are already sent, but we will
+			// still start the session in debug mode
+			if (headers_sent() && (!defined('WP_DEBUG') || !WP_DEBUG))
+				return;
+
+			session_start();
+		}
+	}
+
+	private function _set_session_data($key, $value)
+	{
+		// init session on demand
+		$this->_init_session();
+
+		if (!isset($_SESSION))
+			return;
+
 		$_SESSION[$key] = trim($value);
+	}
+
+	private function _get_session_data($key)
+	{
+		// init session on demand
+		$this->_init_session();
+
+		if (isset($_SESSION[$key]))
+			return $_SESSION[$key];
 	}
 
 	private function _unset_session_data($key)
 	{
 		if (isset($_SESSION[$key]))
-		{
 			unset($_SESSION[$key]);
-		}
 	}
 
 	/**
@@ -197,11 +235,10 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	 */
 	private function _is_previous_comment_spam()
 	{
-		if (isset($_SESSION['bwp_capt_previous_comment_is_spam'])
-			&& 'yes' == $_SESSION['bwp_capt_previous_comment_is_spam']
-		) {
+		$is_spam = $this->_get_session_data('bwp_capt_previous_comment_is_spam');
+
+		if ($is_spam && 'yes' == $is_spam)
 			return true;
-		}
 
 		return false;
 	}
@@ -243,19 +280,6 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	protected function load_libraries()
 	{
 		$this->provider = BWP_Recaptcha_Provider::create($this);
-	}
-
-	protected function pre_init_hooks()
-	{
-		if (!is_admin() && !isset($_SESSION))
-		{
-			// start a session to store Akismet and comment data between
-			// requests, only on front end and when applicable
-			if (headers_sent() && (!defined('WP_DEBUG') || !WP_DEBUG))
-				return;
-
-			session_start();
-		}
 	}
 
 	protected function init_hooks()
@@ -345,7 +369,11 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			}
 
 			// fill the comment textarea with previously submitted comment
-			add_filter('comment_form_field_comment', array($this, 'fill_comment_field_with_previous_comment'));
+			if ('redirect' == $this->options['select_response']
+				&& 'yes' == $this->options['enable_auto_fill_comment']
+			) {
+				add_filter('comment_form_field_comment', array($this, 'fill_comment_field_with_previous_comment'));
+			}
 
 			// check entered captcha for comment form
 			add_action('pre_comment_on_post', array($this, 'check_comment_recaptcha'));
@@ -524,6 +552,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						'heading',
 						'select',
 						'select',
+						'checkbox',
 						'input',
 						'input',
 						'heading',
@@ -544,6 +573,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						__('reCAPTCHA for comment form', $this->domain),
 						__('Captcha position', $this->domain),
 						__('If invalid captcha response', $this->domain),
+						__('Auto fill comment field', $this->domain),
 						__('Invalid captcha error message', $this->domain),
 						__('Invalid captcha error message', $this->domain),
 						__('Akismet Integration for comment form', $this->domain),
@@ -564,6 +594,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						'h2',
 						'select_position',
 						'select_response',
+						'enable_auto_fill_comment',
 						'input_error',
 						'input_back',
 						'h3',
@@ -582,7 +613,9 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						'heading_func' => '<em>' . __('Control how this plugin works.', $this->domain) . '</em>',
 						'h2' => '<em>' . __('Settings that are applied to '
 							. 'comment forms only.', $this->domain) . '</em>',
-						'h3' => '<em>' . __('Integrate with Akismet for better end-user experience.', $this->domain) . '</em>',
+						'h3' => '<em>' . __('Integrate the comment form with Akismet for better end-user experience.', $this->domain) . ' '
+							. sprintf(__('This feature requires an active <a target="_blank" href="%s">PHP session</a>.', $this->domain), 'http://php.net/manual/en/intro.session.php')
+							. '</em>',
 						'heading_cf7' => '<em>' . __('Add reCAPTCHA to Contact Form 7. '
 							. 'This only works if you have Contact Form 7 activated.', $this->domain) . '</em>'
 					),
@@ -644,6 +677,14 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						),
 						'use_recaptcha_v1' => array(
 							__('check this if you prefer the oldschool recaptcha.', $this->domain) => 'use_recaptcha_v1'
+						),
+						'enable_auto_fill_comment' => array(
+							__('After redirected, auto fill the comment field with previous comment.', $this->domain)
+							. ' '
+							. sprintf(
+								__('This feature requires an active <a target="_blank" href="%s">PHP session</a>.', $this->domain),
+								'http://php.net/manual/en/intro.session.php'
+							) => 'enable_auto_fill_comment'
 						)
 					),
 					'input'	=> array(
@@ -674,11 +715,10 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						'cb8' => ''
 					),
 					'post' => array(
-						'select_akismet_react' => '<br /><span style="display:inline-block;margin-top:5px;">'
+						'select_akismet_react' => '<br />'
 							. __('It is best to put comments identified as spam in moderation queue '
 							. 'so you are able to review and instruct '
 							. 'Akismet to correctly handle similar comments in the future.</em>', $this->domain)
-							. '</span>'
 					),
 					'inline_fields' => array(
 						'cb4' => array('select_cap' => 'select'),
@@ -709,6 +749,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 					'enable_registration',
 					'enable_login',
 					'enable_comment',
+					'enable_auto_fill_comment',
 					'input_back',
 					'select_position',
 					'select_cf7_tag',
@@ -985,42 +1026,6 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	}
 
 	/**
-	 * Make text safe to edit inside textarea
-	 *
-	 * This function will be removed once requirement is moved to WP 3.1.
-	 *
-	 * @since 1.1.1
-	 * @return string
-	 */
-	private function _esc_textarea($text)
-	{
-		return htmlspecialchars($text, ENT_QUOTES, get_option('blog_charset'));
-	}
-
-	public function fill_comment_field_with_previous_comment($comment_field)
-	{
-		if ('back' == $this->options['select_response'])
-		{
-			// no need to refill the comment contents if no redirection is involved
-			return $comment_field;
-		}
-
-		if (!empty($_SESSION['bwp_capt_previous_comment']))
-		{
-			// put the comment content back if possible
-			$comment_text  = stripslashes($_SESSION['bwp_capt_previous_comment']);
-			$comment_field = preg_replace('#(<textarea\s[^>]*>)(.*?)(</textarea>)#uis',
-				'$1' . $this->_esc_textarea($comment_text) . '$3',
-				$comment_field
-			);
-
-			$this->_unset_session_data('bwp_capt_previous_comment');
-		}
-
-		return $comment_field;
-	}
-
-	/**
 	 * Output the reCAPTCHA HTML, use theme if specified
 	 *
 	 * This function is used in almost every situation where a captcha is
@@ -1158,6 +1163,38 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	}
 
 	/**
+	 * Make text safe to edit inside textarea
+	 *
+	 * This function will be removed once requirement is moved to WP 3.1.
+	 *
+	 * @since 1.1.1
+	 * @return string
+	 */
+	private function _esc_textarea($text)
+	{
+		return htmlspecialchars($text, ENT_QUOTES, get_option('blog_charset'));
+	}
+
+	public function fill_comment_field_with_previous_comment($comment_field)
+	{
+		$previous_comment = $this->_get_session_data('bwp_capt_previous_comment');
+
+		if (!empty($previous_comment))
+		{
+			// put the comment content back if possible
+			$comment_text  = stripslashes($previous_comment);
+			$comment_field = preg_replace('#(<textarea\s[^>]*>)(.*?)(</textarea>)#uis',
+				'$1' . $this->_esc_textarea($comment_text) . '$3',
+				$comment_field
+			);
+
+			$this->_unset_session_data('bwp_capt_previous_comment');
+		}
+
+		return $comment_field;
+	}
+
+	/**
 	 * Check captcha response for comment forms
 	 *
 	 * @param int $comment_post_ID
@@ -1170,10 +1207,10 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			$errorCode = current(array_keys($errors));
 
 			// save the previous comment in session so we can use it to fill
-			// the comment field later on, but only do this if we're
-			// redirecting back to the comment form
-			if ('redirect' == $this->options['select_response'])
-			{
+			// the comment field later on, but only do this when needed
+			if ('redirect' == $this->options['select_response']
+				&& 'yes' == $this->options['enable_auto_fill_comment']
+			) {
 				$this->_set_session_data('bwp_capt_previous_comment', isset($_POST['comment']) ? $_POST['comment'] : '');
 			}
 
@@ -1209,22 +1246,25 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			return;
 		}
 
-		// recaptcha is valid, and previous comment is considered spam
-		if ($this->_is_previous_comment_spam())
+		if ($this->_is_akismet_integration_enabled())
 		{
-			// do not increase Akismet spam counter
-			add_filter('akismet_spam_count_incr', create_function('', 'return 0;'), 11);
+			// recaptcha is valid, and previous comment is considered spam
+			if ($this->_is_previous_comment_spam())
+			{
+				// do not increase Akismet spam counter
+				add_filter('akismet_spam_count_incr', create_function('', 'return 0;'), 11);
 
-			// use the correct status for the marked-as-spam comment, use
-			// workaround for remove_filter function
-			add_filter('pre_comment_approved', array($this, 'akismet_comment_status'), 10);
-			add_filter('pre_comment_approved', array($this, 'akismet_comment_status'), 11);
+				// use the correct status for the marked-as-spam comment, use
+				// workaround for remove_filter function
+				add_filter('pre_comment_approved', array($this, 'akismet_comment_status'), 10);
+				add_filter('pre_comment_approved', array($this, 'akismet_comment_status'), 11);
+			}
+
+			// reset Akismet-related data, next comment should be checked again
+			// from the beginning
+			$this->_unset_session_data('bwp_capt_previous_comment');
+			$this->_unset_session_data('bwp_capt_previous_comment_is_spam');
 		}
-
-		// reset Akismet-related data, next comment should be checked again
-		// from the beginning
-		$this->_unset_session_data('bwp_capt_previous_comment');
-		$this->_unset_session_data('bwp_capt_previous_comment_is_spam');
 	}
 
 	protected function get_comment_recaptcha_html()
