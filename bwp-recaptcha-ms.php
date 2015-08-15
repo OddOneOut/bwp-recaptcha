@@ -1,3 +1,2 @@
 <?php
-include_once(dirname(__FILE__). '/bwp-recaptcha/bwp-recaptcha.php');
-?>
+include_once __DIR__ . '/bwp-recaptcha/bwp-recaptcha.php';

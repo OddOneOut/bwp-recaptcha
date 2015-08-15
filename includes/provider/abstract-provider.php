@@ -23,7 +23,7 @@ abstract class BWP_Recaptcha_Provider
 	}
 
 	public static function create(BWP_RECAPTCHA $plugin)
-    {
+	{
 		$options = $plugin->options;
 		$domain  = $plugin->domain;
 
@@ -48,7 +48,7 @@ abstract class BWP_Recaptcha_Provider
 
 			return new BWP_Recaptcha_Provider_V2($providerOptions, $domain);
 		}
-    }
+	}
 
 	/**
 	 * Render the recaptcha

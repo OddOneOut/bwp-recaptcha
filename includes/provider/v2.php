@@ -38,11 +38,11 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 		$this->_registerHooks();
 	}
 
-    /**
-     * {@inheritDoc}
-     */
+	/**
+	 * {@inheritDoc}
+	 */
 	public function renderCaptcha(WP_Error $errors = null, $formId = null)
-    {
+	{
 		$output = array();
 		$formId = $this->_getUniqueFormId($formId);
 
@@ -72,11 +72,11 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 		do_action('bwp_capt_before_add_captcha');
 
 		echo implode("\n", $output);
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
+	/**
+	 * {@inheritDoc}
+	 */
 	public function verify($userResponse = null)
 	{
 		$userResponse = $userResponse ?: (!empty($_POST['g-recaptcha-response'])
