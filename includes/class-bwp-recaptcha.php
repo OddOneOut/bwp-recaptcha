@@ -177,26 +177,28 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	}
 
 	/**
-	 * Checks if captcha is required based on akismet integration
+	 * Whether akismet integration is enabled
 	 *
 	 * @since 1.1.1
 	 * @return bool
 	 */
-	private function _is_captcha_required()
+	private function _is_akismet_integration_enabled()
 	{
-		if (!defined('AKISMET_VERSION') || 'yes' != $this->options['enable_akismet'])
-			return true;
-
-		if ($this->_is_comment_spam())
+		if (defined('AKISMET_VERSION') && 'yes' == $this->options['enable_akismet'])
 			return true;
 
 		return false;
 	}
 
-	private function _is_comment_spam()
+	/**
+	 * Whether the system has marked a previous comment as spam
+	 *
+	 * @return bool
+	 */
+	private function _is_previous_comment_spam()
 	{
-		if (isset($_SESSION['bwp_capt_comment_is_spam'])
-			&& 'yes' == $_SESSION['bwp_capt_comment_is_spam']
+		if (isset($_SESSION['bwp_capt_previous_comment_is_spam'])
+			&& 'yes' == $_SESSION['bwp_capt_previous_comment_is_spam']
 		) {
 			return true;
 		}
@@ -310,13 +312,11 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 
 	protected function init_comment_form_captcha()
 	{
-		// add captcha to comment form, two modes are available:
-		// 1. without akismet integration
-		// 2. with akismet integration
-		if (!$this->_is_captcha_required())
+		// if user chooses to integrate with akismet, and previous comment is
+		// not marked as spam
+		if ($this->_is_akismet_integration_enabled() && !$this->_is_previous_comment_spam())
 		{
-			// if user chooses to integrate with akismet, only show
-			// recaptcha when comment is marked as spam
+			// only add a recaptcha once akismet has identified a comment as spam
 			add_action('akismet_spam_caught', array($this, 'add_recaptcha_after_akismet'));
 		}
 		else
@@ -330,13 +330,13 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			elseif ($this->options['select_position'] == 'after_comment_field')
 			{
 				/**
-				 * show captcha after comment field (default @since 1.1.1)
-				 *
-				 * @since 2.0.0 and @since WordPress 4.2.0
-				 * there's a new filter to add recaptcha that doesn't
-				 * rely on the fragile `comment_notes_after`, we will
-				 * use that if possible
-				 */
+					* show captcha after comment field (default @since 1.1.1)
+					*
+					* @since 2.0.0 and @since WordPress 4.2.0
+					* there's a new filter to add recaptcha that doesn't
+					* rely on the fragile `comment_notes_after`, we will
+					* use that if possible
+					*/
 				if (version_compare($this->get_current_wp_version(), '4.2', '>='))
 					add_filter('comment_form_submit_field', array($this, 'add_recaptcha_before_comment_submit_field'));
 				else
@@ -344,8 +344,8 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 					add_filter('comment_form_defaults', array($this, 'add_recaptcha_after_comment_field'), 11);
 			}
 
-			// fill the comment textarea
-			add_filter('comment_form_field_comment', array($this, 'fill_comment_content'));
+			// fill the comment textarea with previously submitted comment
+			add_filter('comment_form_field_comment', array($this, 'fill_comment_field_with_previous_comment'));
 
 			// check entered captcha for comment form
 			add_action('pre_comment_on_post', array($this, 'check_comment_recaptcha'));
@@ -997,7 +997,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 		return htmlspecialchars($text, ENT_QUOTES, get_option('blog_charset'));
 	}
 
-	public function fill_comment_content($comment_field)
+	public function fill_comment_field_with_previous_comment($comment_field)
 	{
 		if ('back' == $this->options['select_response'])
 		{
@@ -1005,16 +1005,16 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			return $comment_field;
 		}
 
-		if (!empty($_SESSION['bwp_capt_comment']))
+		if (!empty($_SESSION['bwp_capt_previous_comment']))
 		{
 			// put the comment content back if possible
-			$comment_text  = stripslashes($_SESSION['bwp_capt_comment']);
+			$comment_text  = stripslashes($_SESSION['bwp_capt_previous_comment']);
 			$comment_field = preg_replace('#(<textarea\s[^>]*>)(.*?)(</textarea>)#uis',
 				'$1' . $this->_esc_textarea($comment_text) . '$3',
 				$comment_field
 			);
 
-			$this->_unset_session_data('bwp_capt_comment');
+			$this->_unset_session_data('bwp_capt_previous_comment');
 		}
 
 		return $comment_field;
@@ -1047,7 +1047,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	 */
 	public function add_comment_recaptcha()
 	{
-		if ($this->_is_comment_spam())
+		if ($this->_is_previous_comment_spam())
 		{
 ?>
 		<p class="bwp-capt-spam-identified">
@@ -1106,6 +1106,58 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	}
 
 	/**
+	 * This overrides Akismet's filter on the 'pre_comment_approved' hook
+	 *
+	 * This allows us to control a comment's status even if it is marked as
+	 * spam by Akismet.
+	 *
+	 * @see Akismet::last_comment_status
+	 */
+	public function akismet_comment_status()
+	{
+		$bwp_capt_cs = $this->options['select_akismet_react'];
+		$bwp_capt_cs = 'hold' == $bwp_capt_cs ? '0' : $bwp_capt_cs;
+
+		if (defined('BWP_CAPT_AKISMET_COMMENT_STATUS')
+			&& BWP_CAPT_AKISMET_COMMENT_STATUS == 'spam'
+		) {
+			// @since 1.1.1 put comment into spam queue is no longer an option
+			// but can still be forced
+			return 'spam';
+		}
+
+		return $bwp_capt_cs;
+	}
+
+	/**
+	 * Marks that we need a recaptcha because akismet has told us that
+	 * previous comment is considered spam
+	 *
+	 * This should redirect the commenter back to the comment form
+	 *
+	 * @return void
+	 */
+	public function add_recaptcha_after_akismet()
+	{
+		$comment_post_ID = isset($_POST['comment_post_ID'])
+			? (int) $_POST['comment_post_ID']
+			: 0;
+
+		$this->_set_session_data('bwp_capt_previous_comment_is_spam', 'yes');
+		$this->_set_session_data('bwp_capt_previous_comment', isset($_POST['comment']) ? $_POST['comment'] : '');
+
+		$location_hash = $this->options['select_position'] == 'after_comment_field'
+			? 'comment' : 'respond';
+
+		$location = !empty($_POST['error_redirect_to'])
+			? $_POST['error_redirect_to']
+			: get_permalink($comment_post_ID) . '#' . $location_hash;
+
+		wp_safe_redirect($location);
+		exit;
+	}
+
+	/**
 	 * Check captcha response for comment forms
 	 *
 	 * @param int $comment_post_ID
@@ -1117,8 +1169,13 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			$error     = current($errors);
 			$errorCode = current(array_keys($errors));
 
-			if (isset($_POST['comment']))
-				$this->_set_session_data('bwp_capt_comment', $_POST['comment']);
+			// save the previous comment in session so we can use it to fill
+			// the comment field later on, but only do this if we're
+			// redirecting back to the comment form
+			if ('redirect' == $this->options['select_response'])
+			{
+				$this->_set_session_data('bwp_capt_previous_comment', isset($_POST['comment']) ? $_POST['comment'] : '');
+			}
 
 			if ('redirect' == $this->options['select_response'])
 			{
@@ -1152,12 +1209,13 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			return;
 		}
 
-		if ($this->_is_comment_spam())
+		// recaptcha is valid, and previous comment is considered spam
+		if ($this->_is_previous_comment_spam())
 		{
-			// spam comments are handled by recaptcha so we do not increase
-			// Akismet spam counter
+			// do not increase Akismet spam counter
 			add_filter('akismet_spam_count_incr', create_function('', 'return 0;'), 11);
 
+			// use the correct status for the marked-as-spam comment, use
 			// workaround for remove_filter function
 			add_filter('pre_comment_approved', array($this, 'akismet_comment_status'), 10);
 			add_filter('pre_comment_approved', array($this, 'akismet_comment_status'), 11);
@@ -1165,8 +1223,8 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 
 		// reset Akismet-related data, next comment should be checked again
 		// from the beginning
-		$this->_unset_session_data('bwp_capt_comment');
-		$this->_unset_session_data('bwp_capt_comment_is_spam');
+		$this->_unset_session_data('bwp_capt_previous_comment');
+		$this->_unset_session_data('bwp_capt_previous_comment_is_spam');
 	}
 
 	protected function get_comment_recaptcha_html()
@@ -1305,48 +1363,5 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			$result['errors'] = $this->check_reg_recaptcha($result['errors']);
 
 		return $result;
-	}
-
-	public function akismet_comment_status()
-	{
-		$bwp_capt_cs = $this->options['select_akismet_react'];
-		$bwp_capt_cs = 'hold' == $bwp_capt_cs ? '0' : $bwp_capt_cs;
-
-		if (defined('BWP_CAPT_AKISMET_COMMENT_STATUS')
-			&& BWP_CAPT_AKISMET_COMMENT_STATUS == 'spam'
-		) {
-			// @since 1.1.1 put comment into spam queue is no longer an option
-			// but can still be forced
-			return 'spam';
-		}
-
-		return $bwp_capt_cs;
-	}
-
-	/**
-	 * Adds recaptcha to comment form if akismet marks a comment as spam
-	 *
-	 * @return void
-	 */
-	public function add_recaptcha_after_akismet()
-	{
-		$comment_post_ID = isset($_POST['comment_post_ID'])
-			? (int) $_POST['comment_post_ID']
-			: 0;
-
-		$this->_set_session_data('bwp_capt_comment_is_spam', 'yes');
-
-		if (isset($_POST['comment']))
-			$this->_set_session_data('bwp_capt_comment', $_POST['comment']);
-
-		$location_hash = $this->options['select_position'] == 'after_comment_field'
-			? 'comment' : 'respond';
-
-		$location = !empty($_POST['error_redirect_to'])
-			? $_POST['error_redirect_to']
-			: get_permalink($comment_post_ID) . '#' . $location_hash;
-
-		wp_safe_redirect($location);
-		exit;
 	}
 }
