@@ -19,29 +19,34 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 	protected $jsSrc = 'https://www.google.com/recaptcha/api.js';
 
 	/**
-	 * Number of recaptcha instances rendered
+	 * A list of instances created
+	 *
+	 * This array should contain ids of form that a recaptcha instance belongs
+	 * to, e.g. 'cf7-form1', the key of the array will then be used to
+	 * construct the widget id to be used with `grecaptcha.render()` and
+	 * `grecaptcha.reset()`. @see
+	 * https://developers.google.com/recaptcha/docs/display#example
+	 *
+	 * @var array
 	 */
-	protected $instanceCount;
+	protected $instances = array();
+
+	public function __construct(array $options, $domain)
+	{
+		parent::__construct($options, $domain);
+
+		$this->_registerHooks();
+	}
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-	public function renderCaptcha(WP_Error $errors = null)
+	public function renderCaptcha(WP_Error $errors = null, $formId = null)
     {
-		$this->instanceCount++;
-
 		$output = array();
+		$formId = $this->_getUniqueFormId($formId);
 
-		// include the script tag to load recaptcha's api js if needed, but
-		// make sure that we only do that once
-		if ($this->options['position'] == 'on_demand' && $this->instanceCount == 1) {
-			// add a forced language if needed
-			$src = !empty($this->options['language'])
-				? $this->jsSrc . '?hl=' . urlencode($this->options['language'])
-				: $this->jsSrc;
-
-			$output[] = '<script src="' . $src . '" async defer></script>';
-		}
+		$this->instances[] = $formId;
 
 		if (!empty($_GET['cerror'])) {
 			$captchaError = $this->getErrorMessageFromCode($_GET['cerror']);
@@ -49,18 +54,18 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 			$captchaError = $errors->get_error_message('recaptcha-error');
 		}
 
-		// @todo support for multiple recaptcha widget
 		if (!empty($captchaError)) {
 			$output[] = '<p class="bwp-recaptcha-error error">' . $captchaError . '</p>';
 		}
 
 		$output[] = implode('', array(
-			'<div class="g-recaptcha" ',
-				'data-sitekey="' . esc_attr($this->options['site_key']) . '" ',
-				'data-theme="' . esc_attr($this->options['theme']) . '" ',
-				'data-size="' . esc_attr($this->options['size']) . '" ',
-				'data-tabindex="' . esc_attr($this->options['tabindex']) . '"',
-				'>',
+			'<input type="hidden" name="bwp-recaptcha-widget-id" value="' . esc_attr($this->_getWidgetId($formId)) . '" />',
+			'<div id="' . $this->_getWidgetHtmlId($formId) . '" class="g-recaptcha" ',
+				/* 'data-sitekey="' . esc_attr($this->options['site_key']) . '" ', */
+				/* 'data-theme="' . esc_attr($this->options['theme']) . '" ', */
+				/* 'data-size="' . esc_attr($this->options['size']) . '" ', */
+				/* 'data-tabindex="' . esc_attr($this->options['tabindex']) . '"', */
+			'>',
 			'</div>'
 		));
 
@@ -70,7 +75,7 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
 	public function verify($userResponse = null)
 	{
@@ -86,5 +91,75 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 		} else {
 			return $this->processErrors($response->getErrorCodes());
 		}
+	}
+
+	public function printRecaptchaJS()
+	{
+		$args = array(
+			'onload' => 'bwpRecaptchaCallback',
+			'render' => 'explicit'
+		);
+
+		if (!empty($this->options['language'])) {
+			$args['hl'] = urlencode($this->options['language']);
+		}
+
+		$src = add_query_arg($args, $this->jsSrc);
+?>
+		<script type="text/javascript">
+<?php foreach ($this->instances as $key => $formId) : ?>
+			var bwpRecaptchaWidget<?php echo $key + 1; ?>;
+<?php endforeach; ?>
+			var bwpRecaptchaCallback = function() {
+				// render all collected recaptcha instances
+<?php foreach ($this->instances as $key => $formId) : ?>
+				bwpRecaptchaWidget<?php echo $key + 1; ?> = grecaptcha.render('<?php echo $this->_getWidgetHtmlId($formId); ?>', {
+					sitekey: '<?php echo esc_js($this->options['site_key']); ?>',
+					theme: '<?php echo esc_js($this->options['theme']); ?>',
+					size: '<?php echo esc_js($this->options['size']); ?>',
+					tabindex: '<?php echo esc_js($this->options['tabindex']); ?>'
+				});
+<?php endforeach; ?>
+			};
+		</script>
+
+		<script src="<?php echo esc_url($src) ?>" async defer></script>
+<?php
+	}
+
+	private function _getWidgetId($formId)
+	{
+		return 'bwpRecaptchaWidget' . (array_search($formId, $this->instances, true) + 1);
+	}
+
+	private function _registerHooks()
+	{
+		$priority = 99999;
+
+		// regular pages
+		add_action('wp_footer', array($this, 'printRecaptchaJS'), $priority);
+
+		// login/register page
+		add_action('login_footer', array($this, 'printRecaptchaJS'), $priority);
+
+		// admin theme preview page
+		add_action('admin_footer-bwp-recapt_page_bwp_capt_theme', array($this, 'printRecaptchaJS'), $priority);
+	}
+
+	private function _getUniqueFormId($formId)
+	{
+		$formId = $formId ?: 'form';
+
+		if (!in_array($formId, $this->instances)) {
+			return $formId;
+		}
+
+		// non-unique form id, append the total number of instances plus one
+		return $formId . '-' . (count($this->instances) + 1);
+	}
+
+	private function _getWidgetHtmlId($formId)
+	{
+		return 'bwp-recaptcha-' . md5($formId);
 	}
 }

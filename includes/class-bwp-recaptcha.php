@@ -296,7 +296,10 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			// installed and activated
 			// @since 2.0.0 this should use appropriate class for current
 			// version of recaptcha
-			BWP_Recaptcha_CF7_V1::init($this);
+			if ('yes' == $this->options['use_recaptcha_v1'])
+				BWP_Recaptcha_CF7_V1::init($this);
+			else
+				BWP_Recaptcha_CF7_V2::init($this);
 		}
 	}
 
@@ -1029,11 +1032,12 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	 *      account @see wp-signup.php::show_user_form
 	 *
 	 * @param $errors @since 1.1.0
+	 * @param $formId @since 2.0.0
 	 */
-	public function add_recaptcha($errors = '')
+	public function add_recaptcha($errors = '', $formId = null)
 	{
 		$errors = !is_wp_error($errors) ? new WP_Error() : $errors;
-		$this->provider->renderCaptcha($errors);
+		$this->provider->renderCaptcha($errors, $formId);
 	}
 
 	/**

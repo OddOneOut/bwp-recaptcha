@@ -54,8 +54,10 @@ abstract class BWP_Recaptcha_Provider
 	 * Render the recaptcha
 	 *
 	 * @param WP_ERROR $errors
+	 * @param string $formId id of the form this recaptcha belongs to, this
+	 *                       should basically be a unique identifier
 	 */
-	abstract public function renderCaptcha(WP_Error $errors = null);
+	abstract public function renderCaptcha(WP_Error $errors = null, $formId = null);
 
 	/**
 	 * Verify a captcha response

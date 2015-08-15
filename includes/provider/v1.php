@@ -15,9 +15,9 @@
 class BWP_Recaptcha_Provider_V1 extends BWP_Recaptcha_Provider
 {
 	/**
-	 * {@inheritdoc}
+	 * {@inheritDoc}
 	 */
-	public function renderCaptcha(WP_Error $errors = null)
+	public function renderCaptcha(WP_Error $errors = null, $formId = null)
 	{
 		$this->loadCaptchaLibrary();
 
@@ -92,7 +92,7 @@ class BWP_Recaptcha_Provider_V1 extends BWP_Recaptcha_Provider
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * {@inheritDoc}
 	 */
 	public function verify($userResponse = null)
 	{

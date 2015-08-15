@@ -26,8 +26,31 @@ class BWP_Recaptcha_CF7_V2 extends BWP_Recaptcha_CF7_Shortcode
 	 */
 	public static function refreshCaptcha($items)
 	{
-		$codes = array(
-		);
+		if (!function_exists('wpcf7_scan_shortcode')) {
+			return $items;
+		}
+
+		if (!$fields = wpcf7_scan_shortcode(array('type' => array(
+			'recaptcha',
+			'bwprecaptcha',
+			'bwp-recaptcha',
+			'bwp_recaptcha'
+		)))) {
+			return $items;
+		};
+
+		$codes = array();
+		foreach ($fields as $field) {
+			$name    = $field['name'];
+			$options = $field['options'];
+
+			if (empty($name) || empty($_POST['bwp-recaptcha-widget-id'])) {
+				continue;
+			}
+
+			// right now we can only support one captcha instance per form
+			$codes[] = 'if (grecaptcha) { grecaptcha.reset(' . trim($_POST['bwp-recaptcha-widget-id']) . '); }';
+		}
 
 		$items['onSubmit'][] = implode('', $codes);
 

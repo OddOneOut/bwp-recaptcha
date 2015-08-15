@@ -26,7 +26,7 @@ class BWP_Recaptcha_CF7_V1 extends BWP_Recaptcha_CF7_Shortcode
 	 */
 	public static function refreshCaptcha($items)
 	{
-		$items['onSubmit'][] = 'if (typeof Recaptcha != "undefined") { Recaptcha.reload(); }';
+		$items['onSubmit'][] = 'if (typeof Recaptcha !== "undefined") { Recaptcha.reload(); }';
 
 		return $items;
 	}
