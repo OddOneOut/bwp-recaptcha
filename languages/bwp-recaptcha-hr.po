@@ -1,0 +1,585 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BWP reCAPTCHA\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-01-08 17:11+0700\n"
+"PO-Revision-Date: 2015-08-16 15:32+0700\n"
+"Last-Translator: Gospodin Bajrudin <gbajro@gmail.com>\n"
+"Language-Team: Gospodin Bajrudin <gbajro@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: hr\n"
+"X-Generator: Poedit 1.8.2\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/class-bwp-framework.php:178
+#, php-format
+msgid ""
+"%s requires WordPress <strong>%s</strong> or higher and PHP <strong>%s</"
+"strong> or higher. The plugin will not function until you update your "
+"software. Please deactivate this plugin."
+msgstr ""
+"%s zahtjeva WordPress <strong>%s</strong> ili noviji i PHP <strong>%s</"
+"strong> ili noviji. Ovaj dodatak nece raditi dok ne azurirate svoj softver. "
+"Molimo deaktivirajte ovaj dodatak."
+
+#: includes/class-bwp-framework.php:190
+msgid "Development Log"
+msgstr "Razvojni zapis"
+
+#: includes/class-bwp-framework.php:190
+msgid "Frequently Asked Questions"
+msgstr "Često postavljana pitanja"
+
+#: includes/class-bwp-framework.php:190
+msgid "FAQ"
+msgstr "FAQ"
+
+#: includes/class-bwp-framework.php:190
+msgid "Got a problem? Send me a feedback!"
+msgstr "Imate problem? Pošaljite mi poruku!"
+
+#: includes/class-bwp-framework.php:190
+msgid "Contact"
+msgstr "Kontakt"
+
+#: includes/class-bwp-framework.php:197
+msgid ""
+"You can buy me some special coffees if you appreciate my work, thank you!"
+msgstr "Možete mi kupiti specijalnu kavu ako cijenite moj posao, hvala Vam!"
+
+#: includes/class-bwp-framework.php:211
+msgid "Donate to "
+msgstr "Donirati "
+
+#: includes/class-bwp-framework.php:213
+msgid "One cup $5.00"
+msgstr "Jedna šalica $5.00"
+
+#: includes/class-bwp-framework.php:214
+msgid "Two cups $10.00"
+msgstr "Dvije šalice $10.00"
+
+#: includes/class-bwp-framework.php:215
+msgid "Five cups! $25.00"
+msgstr "Pet šalica! $25.00"
+
+#: includes/class-bwp-framework.php:216
+msgid "One LL-cup!!! $50.00"
+msgstr "Jedna LL-šalica!!! $50.00"
+
+#: includes/class-bwp-framework.php:217
+msgid "... or any amount!"
+msgstr "... ili bilo koja svota!"
+
+#: includes/class-bwp-framework.php:232
+msgid "Latest updates from BetterWP.net!"
+msgstr "Zadnje nadogradnje od BetterWP.net!"
+
+#: includes/class-bwp-framework.php:233
+msgid "Follow me on Twitter!"
+msgstr "Slijedi me na Twitteru"
+
+#: includes/class-bwp-framework.php:243
+msgid "This Plugin is Proudly Sponsored By"
+msgstr "Ovaj dodatak je ponosno sponzoriran od"
+
+#: includes/class-bwp-framework.php:260
+#, php-format
+msgid "You are using version %s!"
+msgstr "Koristite inačicu %s!"
+
+#: includes/class-bwp-framework.php:396
+msgid "Settings"
+msgstr "Postavke"
+
+#: includes/class-bwp-recaptcha.php:44
+msgid "Get another challenge"
+msgstr "Ponovno generiraj kombinaciju"
+
+#: includes/class-bwp-recaptcha.php:45
+msgid "Get audio reCAPTCHA"
+msgstr "Generiraj zvučni reCAPTCHA"
+
+#: includes/class-bwp-recaptcha.php:46
+msgid "Get video reCAPTCHA"
+msgstr "Generiraj slikovni reCAPTCHA"
+
+#: includes/class-bwp-recaptcha.php:47
+msgid "About reCAPTCHA"
+msgstr "O reCAPTCHA"
+
+#: includes/class-bwp-recaptcha.php:51
+msgid "Enter the two words in the box:"
+msgstr "Unesite dvije riječi u polje:"
+
+#: includes/class-bwp-recaptcha.php:52
+msgid "Enter the numbers you hear:"
+msgstr "Unesite brojeve koje ste čuli:"
+
+#: includes/class-bwp-recaptcha.php:132
+msgid ""
+"<strong>ERROR:</strong> Incorrect or empty reCAPTCHA response, please try "
+"again."
+msgstr ""
+"<strong>POGREŠKA:</strong> Netočan ili prazan reCAPTCHA odgovor, pokušajte "
+"ponovno."
+
+#: includes/class-bwp-recaptcha.php:133
+#, php-format
+msgid ""
+"Error: Incorrect or empty reCAPTCHA response, please click the back button "
+"on your browser's toolbar or click on %s to go back."
+msgstr ""
+"Pogreška: Netočan ili prazan reCAPTCHA odgovor, molimo kliknite tipku natrag "
+"na Vašem pregledniku ili kliknite na %s za vratiti se."
+
+#: includes/class-bwp-recaptcha.php:155 includes/class-bwp-recaptcha.php:313
+msgid "General Options"
+msgstr "Globalne Opcije"
+
+#: includes/class-bwp-recaptcha.php:156 includes/class-bwp-recaptcha.php:314
+msgid "Theme Options"
+msgstr "Opcije teme"
+
+#: includes/class-bwp-recaptcha.php:159
+msgid "English"
+msgstr "Engleski"
+
+#: includes/class-bwp-recaptcha.php:160
+msgid "Dutch"
+msgstr "Nizozemski"
+
+#: includes/class-bwp-recaptcha.php:161
+msgid "French"
+msgstr "Francuski"
+
+#: includes/class-bwp-recaptcha.php:162
+msgid "German"
+msgstr "Njemački"
+
+#: includes/class-bwp-recaptcha.php:163
+msgid "Portuguese"
+msgstr "Portugalski"
+
+#: includes/class-bwp-recaptcha.php:164
+msgid "Russian"
+msgstr "Ruski"
+
+#: includes/class-bwp-recaptcha.php:165
+msgid "Spanish"
+msgstr "Španjolski"
+
+#: includes/class-bwp-recaptcha.php:166
+msgid "Turkish"
+msgstr "Turski"
+
+#: includes/class-bwp-recaptcha.php:170
+msgid "Read Profile"
+msgstr "Provjeri profil"
+
+#: includes/class-bwp-recaptcha.php:171
+msgid "Manage Options"
+msgstr "Upravljanje opcijama"
+
+#: includes/class-bwp-recaptcha.php:311
+msgid "Better WordPress reCAPTCHA"
+msgstr "Better WordPress reCAPTCHA"
+
+#: includes/class-bwp-recaptcha.php:313
+msgid "BWP reCAPTCHA General Options"
+msgstr "BWP reCAPTCHA Globalne Opcije"
+
+#: includes/class-bwp-recaptcha.php:314
+msgid "BWP reCAPTCHA Theme Options"
+msgstr "BWP reCAPTCHA Opcije Teme"
+
+#: includes/class-bwp-recaptcha.php:347
+msgid "You do not have sufficient permissions to access this page."
+msgstr "Nemate dovoljna prava za posjetiti ovu stranicu"
+
+#: includes/class-bwp-recaptcha.php:366
+msgid "What is reCAPTCHA?"
+msgstr "Što je reCAPTCHA"
+
+#: includes/class-bwp-recaptcha.php:367
+msgid "This plugin will be"
+msgstr "Ovaj dodatak će biti"
+
+#: includes/class-bwp-recaptcha.php:368
+msgid "Use main site's keys"
+msgstr "Koristite ključeve glavne stranice"
+
+#: includes/class-bwp-recaptcha.php:369
+msgid "Public Key"
+msgstr "Javni ključ"
+
+#: includes/class-bwp-recaptcha.php:370
+msgid "Private Key"
+msgstr "Privatni ključ"
+
+#: includes/class-bwp-recaptcha.php:371
+msgid "Visibility Options (applied to comment forms)"
+msgstr "Opcije prikaza (za komentare)"
+
+#: includes/class-bwp-recaptcha.php:372
+msgid "Hide the CAPTCHA for"
+msgstr "Sakrij CAPTCHU za"
+
+#: includes/class-bwp-recaptcha.php:373
+msgid "If wrong or empty response"
+msgstr "Ako je pokrešan ili prazan odgovor"
+
+#: includes/class-bwp-recaptcha.php:374 includes/class-bwp-recaptcha.php:375
+msgid "Show the error message"
+msgstr "Prikaži poruku o pogrešci"
+
+#: includes/class-bwp-recaptcha.php:376
+msgid "Akismet Integration (applied to comment forms)"
+msgstr "Akismet Integracija (za komentare)"
+
+#: includes/class-bwp-recaptcha.php:377
+msgid "Integrate with Akismet?"
+msgstr "Integrati s Akismetom?"
+
+#: includes/class-bwp-recaptcha.php:378
+msgid "If correct CAPTCHA response"
+msgstr "Za točan CAPTCHA odgovor"
+
+#: includes/class-bwp-recaptcha.php:382
+msgid ""
+"reCAPTCHA is a free CAPTCHA service that helps to digitize books, newspapers "
+"and old time radio shows. You can read more about reCAPTCHA <a href=\"http://"
+"www.google.com/recaptcha/learnmore\" target=\"_blank\">here</a>."
+msgstr ""
+"reCAPTCHA je besplatan CAPTCHA servis koji pomaže digitalizaciji knjiga, "
+"članaka i starih radio emisija. Više o reCAPTCHA možete saznati <a href="
+"\"http://www.google.com/recaptcha/learnmore\" target=\"_blank\">ovdje</a>."
+
+#: includes/class-bwp-recaptcha.php:383
+msgid ""
+"<em>This section allows you to determine when to show reCAPTCHA and how this "
+"plugin reacts to errors.</em>"
+msgstr ""
+"<em>Ovaj dio omogućava pregled opcija o prikazu reCAPTCHE i kako će se ovaj "
+"dodatak ponašati u slučaju pogrešaka.</em>"
+
+#: includes/class-bwp-recaptcha.php:384
+msgid ""
+"<em>Integrate with Akismet for better end-user experience. reCAPTCHA is "
+"optional and <strong>NO</strong> spam comment will be added to the spam/"
+"moderation queue, except likely legitimate comments. This makes the task of "
+"identifying sincere comments much easier. This integration is currently in "
+"beta stage.</em>"
+msgstr ""
+"<em>Integrati s Akismet dodatkom za bolje korisničko iskustvo. reCAPTCHA je "
+"neobavezna i <strong>NIJEDAN</strong> spam komentar neće se dodati u "
+"direktorij za spam/moderaciju, osim komentara koji su najvjerojatnije "
+"ispravni. To olakšava posao prepoznavanja ispravnih komentara. Ova "
+"integracija je trenutno u beta fazi.</em>"
+
+#: includes/class-bwp-recaptcha.php:400
+msgid "Redirect commenter back to the comment form"
+msgstr "Preusmjeri korisnika natrag formu za komentare"
+
+#: includes/class-bwp-recaptcha.php:401
+msgid "Show an error page just like WordPress does"
+msgstr "Prikaži stranicu o pogrešci kao što to radi WordPress"
+
+#: includes/class-bwp-recaptcha.php:404
+msgid "Approve comment immediately"
+msgstr "Odmah odobri komentar"
+
+#: includes/class-bwp-recaptcha.php:405
+msgid "Hold comment in moderation queue"
+msgstr "Zadrži komentar u moderaciji"
+
+#: includes/class-bwp-recaptcha.php:406
+msgid "Put comment in spam queue"
+msgstr "Stavi komentar u spam direktorij"
+
+#: includes/class-bwp-recaptcha.php:410
+msgid "enabled for comment forms."
+msgstr "omogućeno kod komentara"
+
+#: includes/class-bwp-recaptcha.php:411
+msgid "enabled for registration form (user/site registration)."
+msgstr "omogućeno kod registracijske forme (za korisnike i stranice) "
+
+#: includes/class-bwp-recaptcha.php:412
+msgid "enabled for login form."
+msgstr "omogućeno kod forme za prijavu."
+
+#: includes/class-bwp-recaptcha.php:413
+msgid "registered users <em>(even without any capabilities)</em>."
+msgstr "registrirani korisnici <em>(čak i bez ikakvih mogućnosti)</em>."
+
+#: includes/class-bwp-recaptcha.php:414
+msgid "users who can"
+msgstr "korisnici koji mogu"
+
+#: includes/class-bwp-recaptcha.php:415
+msgid "visitors who have at least"
+msgstr "posjetitelji koji imaju najmanje"
+
+#: includes/class-bwp-recaptcha.php:416
+msgid ""
+"reCAPTCHA will only show when Akismet identifies a comment as spam. Highly "
+"recommended if you do not want to force your visitors to type the captcha "
+"every time."
+msgstr ""
+"reCAPTCHA će se prikazati samo ako Akismet identificira komentar kao spam. "
+"Preporučeno ukoliko se želi smanjiti broj prikazivanja reCAPTCHE "
+"posjetiteljima."
+
+#: includes/class-bwp-recaptcha.php:417
+msgid "uncheck to use different key pairs for this site."
+msgstr "odznači ako želiš za koristiti druge ključeve za svoju stranicu "
+
+#: includes/class-bwp-recaptcha.php:420
+msgid "A public key used to request captchas from reCAPTCHA server."
+msgstr "Javni ključ koristi se za dohvat CAPTCHE sa reCAPTCHA poslužitelja."
+
+#: includes/class-bwp-recaptcha.php:421
+msgid "A private (secret) key used to authenticate user's response."
+msgstr ""
+"Privatni ključ (tajni) koji se koristi za provjeru (autentikaciju) "
+"korisnikova odgovora."
+
+#: includes/class-bwp-recaptcha.php:422
+msgid ""
+"when redirect commenter back to the comment form (or when used in other "
+"forms such as contact forms)."
+msgstr ""
+"kod vraćanja korisnika na formular za komentar (ili kod korištenja u drugim "
+"formama, npr. kontakt formulara)."
+
+#: includes/class-bwp-recaptcha.php:423
+msgid "when show the normal error page with no redirection."
+msgstr "kod prikaza stranice s greškom kod koje nema preusmjeravanja"
+
+#: includes/class-bwp-recaptcha.php:424
+msgid "approved comment(s)."
+msgstr "Odobren(i) komentar(i)."
+
+#: includes/class-bwp-recaptcha.php:427
+msgid ""
+"<em><strong>Note:</strong> For this plugin to work, you will need a pair of "
+"API keys (public and private), which is available for free <a href=\"https://"
+"www.google.com/recaptcha/admin/create\" target=\"_blank\">here</a>. Once you "
+"have created those two keys for this domain, simply paste them below.</em>"
+msgstr ""
+"<em><strong>Pažnja:</strong> Kako bi ovaj dodatak mogao raditi, potrebno je "
+"koristiti API ključeve (javni i privatni), koji su besplatno dostupni  <a "
+"href=\"https://www.google.com/recaptcha/admin/create\" target=\"_blank"
+"\">ovdje</a>. Nakon dobivanja ključeva za Vašu domenu, unesite ih ispod.</em>"
+
+#: includes/class-bwp-recaptcha.php:428
+msgid ""
+"<em><strong>Note:</strong> Now you may wonder, why put the comment in the "
+"spam queue? The benefit is Akismet will be able to mark the comment as False "
+"Positive, and thus will not possibly block that comment in the future. "
+"However, it is best to just put the comment in moderation queue as next time "
+"Akismet will put such comment in moderation queue immediately without the "
+"need of a CAPTCHA.</em>"
+msgstr ""
+"<em><strong>Pažnja:</strong> Zašto staviti komentar u spam direktorij? "
+"Akismet će provjeriti i biti u mogućnosti označiti komentar kao legitiman, "
+"te u budućnosti ne blokirati takav komentar. U principu, najbolje je staviti "
+"komentar u moderaciju, te će svaki slijedeći puta Akismet postaviti komentar "
+"direktno u moderaciju, bez potrebe za unošenjem CAPTCHA koda.</em>"
+
+#: includes/class-bwp-recaptcha.php:457
+msgid "Choose a theme"
+msgstr "Izaberi temu"
+
+#: includes/class-bwp-recaptcha.php:458
+msgid "Use CSS provided by this plugin?"
+msgstr "Koristi CSS koji je došao s ovim pluginom?"
+
+#: includes/class-bwp-recaptcha.php:459
+msgid "Load CSS, JS selectively?"
+msgstr "Učitaj CSS, JS opcionalno?"
+
+#: includes/class-bwp-recaptcha.php:460
+msgid "Choose a language for built-in themes"
+msgstr "Odaberi jezik za ugrađene teme"
+
+#: includes/class-bwp-recaptcha.php:461
+msgid "Tabindex for captcha input field"
+msgstr "Tab kod polja za unos"
+
+#: includes/class-bwp-recaptcha.php:462
+msgid "Preview your reCAPTCHA"
+msgstr "Pregledaj reCAPTCHU"
+
+#: includes/class-bwp-recaptcha.php:466
+msgid ""
+"<em>Below you will see how your reCAPTCHA will look. Note that this might "
+"differ on your actual pages.<br /></em>"
+msgstr ""
+"<em>Ispod je prikaz izgleda reCAPTCHE. Može se razlikovati na pravoj web "
+"stranici.<br /></em>"
+
+#: includes/class-bwp-recaptcha.php:470
+msgid "Default Theme (Red)"
+msgstr "Zadana Tema (Crvena)"
+
+#: includes/class-bwp-recaptcha.php:471
+msgid "White Theme"
+msgstr "Bijela Tema"
+
+#: includes/class-bwp-recaptcha.php:472
+msgid "Black Theme"
+msgstr "Crna Tema"
+
+#: includes/class-bwp-recaptcha.php:473
+msgid "Clean Theme"
+msgstr "Clean (čista) Tema"
+
+#: includes/class-bwp-recaptcha.php:474
+msgid "Custom Theme (use CSS)"
+msgstr "Vlastita tema (koristi CSS)"
+
+#: includes/class-bwp-recaptcha.php:479
+msgid ""
+"This stylesheet is used to style the custom theme as well as the "
+"registration page. You can disable this or add appropriate filters to use "
+"your own."
+msgstr ""
+"Ovaj stil se koristi za prikaz ručno napravljene teme kao i registracijske "
+"stranice. Može se onemogućiti ili urediti na željeni način."
+
+#: includes/class-bwp-recaptcha.php:480
+msgid "This is only useful when you do not use any minify or cache plugin."
+msgstr ""
+"Korisno kad se ne koristi dodaci koji uključuju spremnik (minify ili cache "
+"dodatak)."
+
+#: includes/class-bwp-recaptcha.php:483
+msgid ""
+"Basically, this should be 4 if you place the captcha before the textarea, "
+"and 5 if you put it after. Set to 0 to disable."
+msgstr ""
+"Ovo bi trebalo biti 4 ako će se captcha prikazivati prije unosa teksta, a 5 "
+"ako će se prikazivati poslije. Postaviti 0 da se onemogući."
+
+#: includes/class-bwp-recaptcha.php:486
+#, php-format
+msgid ""
+"<em><strong>Note:</strong> The four built-in captcha themes will look OK in "
+"most WordPress themes; However, some times it is better to control how "
+"reCAPTCHA looks using CSS. Please read <a href=\"%s#customization\" target="
+"\"_blank\">this guide</a> if you would like to do so.</em>"
+msgstr ""
+"<em><strong>Pažnja:</strong> Četiri ugrađene teme će izgledati dobro u "
+"većini WordPress tema. Ponekad je bolje koristiti CSS za kontroliranje "
+"reCAPTCHA izgleda. Pročitajte <a href=\"%s#customization\" target=\"_blank"
+"\">ove upute</a> ako želite promijeniti izgled.</em>"
+
+#: includes/class-bwp-recaptcha.php:487
+#, php-format
+msgid ""
+"<em><strong>Note:</strong> Above you can select some built-in languages. If "
+"you would like to add your own language, please read <a href="
+"\"%s#customization\" target=\"_blank\">this guide</a>.</em>"
+msgstr ""
+"<em><strong>Pažnja:</strong> Ovdje se mogu odabrati jezici za korištenje . "
+"Ukoliko želite dodati svoj, pročitajte <a href=\"%s#customization\" target="
+"\"_blank\">ove upute</a>.</em>"
+
+#: includes/class-bwp-recaptcha.php:540
+msgid "All options have been saved."
+msgstr "Sve opcije su spremljene."
+
+#: includes/class-bwp-recaptcha.php:546
+msgid "Warning"
+msgstr "Upozorenje"
+
+#: includes/class-bwp-recaptcha.php:546
+msgid ""
+"API key(s) missing. Please get an API key from <a href='https://www.google."
+"com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</"
+"a> (free!)"
+msgstr ""
+"Nedostaje/u API ključ(evi). Mogu se zatražiti na  <a href='https://www."
+"google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/"
+"create</a> (besplatno!)"
+
+#: includes/class-bwp-recaptcha.php:548
+msgid "Notice"
+msgstr "Obavijest"
+
+#: includes/class-bwp-recaptcha.php:548
+msgid ""
+"You are enabling Akismet integration but Akismet is not currently active. "
+"Please activate Akismet for the integration to work."
+msgstr ""
+"Omogućili ste Akismet integraciju ali Akismet trenutno nije aktivan. "
+"Aktivirajte Akismet kako bi integracija proradila."
+
+#: includes/class-bwp-recaptcha.php:671
+msgid "Your comment was identified as spam, please complete the CAPTCHA below:"
+msgstr "Vaš komentar je prepoznat kao spam, molimo popunite CAPTCHU:"
+
+#: includes/class-bwp-recaptcha.php:714
+msgid ""
+"To use reCAPTCHA you must get an API key from <a href='https://www.google."
+"com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a>"
+msgstr ""
+"Za korištenje reCAPTCHA potrebno je preuzeti API ključ sa <a href='https://"
+"www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/"
+"admin/create</a>"
+
+#: includes/class-bwp-recaptcha.php:763 includes/class-bwp-recaptcha.php:808
+msgid "<strong>ERROR</strong>: Unknown captcha error."
+msgstr "<strong>POGREŠKA</strong>: Nepoznata captcha pogreška"
+
+#: includes/class-bwp-recaptcha.php:878
+msgid "this link"
+msgstr "ovu poveznicu"
+
+#: includes/class-bwp-recaptcha.php:880
+msgid ""
+"There is some problem with your reCAPTCHA API keys, please double check them."
+msgstr "Postoji problem s reCAPTCHA API ključevima, provjerite ih još jednom."
+
+#: includes/class-bwp-recaptcha.php:882
+msgid "Unknown error. Please contact the administrator for more info."
+msgstr "Nepoznata greška. Kontaktirajte administratora za više informacija."
+
+#: includes/class-bwp-recaptcha-cf7.php:107
+msgid "This reCAPTCHA tag is provided by the BWP reCAPTCHA WordPress plugin."
+msgstr ""
+"Ovaj reCAPTCHA tag je dodjeljen od strane BWP reCAPTCHA WordPress dodatka."
+
+#: includes/class-bwp-recaptcha-cf7.php:110
+msgid ""
+"Please refer to <a target=\"_blank\" href=\"http://betterwp.net/wordpress-"
+"plugins/bwp-recaptcha/#customization\">BWP reCAPTCHA's documentation </a> "
+"for a quick guide on how to customize the look and feel of this tag."
+msgstr ""
+"Pogledaj na <a target=\"_blank\" href=\"http://betterwp.net/wordpress-"
+"plugins/bwp-recaptcha/#customization\">BWP reCAPTCHA dokumentaciju </a> za "
+"kratke upute kako promijeniti izgled ovog taga."
+
+#: includes/class-bwp-recaptcha-cf7.php:116
+msgid "Name"
+msgstr "Ime"
+
+#: includes/class-bwp-recaptcha-cf7.php:123
+msgid "Copy this code and paste it into the form left."
+msgstr "Kopiraj ovaj dio koda i zalijepi lijevo u polje forme"
+
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:80
+msgid "Plugin Configurations"
+msgstr "Postavke dodatka"
+
+#: includes/bwp-option-page/includes/class-bwp-option-page.php:398
+msgid "Save Changes"
+msgstr "Spremi promjene"
