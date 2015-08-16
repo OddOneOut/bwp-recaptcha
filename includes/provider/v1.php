@@ -75,11 +75,14 @@ class BWP_Recaptcha_Provider_V1 extends BWP_Recaptcha_Provider
 				bwp_capt_custom_theme_widget();
 			}
 
+			$isSecured = is_ssl() ? true : false;
+			$isSecured = $this->options['use_ssl'] ? true : $isSecured;
+
 			if (!empty($this->options['secret_key'])) {
 				echo recaptcha_get_html(
 					$this->options['site_key'],
 					$captchaErrorCode,
-					is_ssl() ? true : false,
+					$isSecured,
 					$this->options['language']
 				);
 			} else if (current_user_can('manage_options')) {

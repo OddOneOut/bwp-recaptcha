@@ -37,6 +37,10 @@ abstract class BWP_Recaptcha_Provider
 		);
 
 		if ('yes' == $options['use_recaptcha_v1']) {
+			$providerOptions = array_merge($providerOptions, array(
+				'use_ssl' => $options['enable_v1_https']
+			));
+
 			return new BWP_Recaptcha_Provider_V1($providerOptions, $domain);
 		} else {
 			$providerOptions = array_merge($providerOptions, array(

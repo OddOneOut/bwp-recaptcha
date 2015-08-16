@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 Khang Minh <betterwp.net>
+ * Copyright (c) 2015 Khang Minh <betterwp.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,12 +128,12 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			'enable_cf7'               => 'yes', // @since 2.0.0
 			'enable_auto_fill_comment' => '',
 			'enable_css'               => 'yes',
+			'enable_v1_https'          => '', // @since 2.0.0, force recaptcha v1 to use https
 			'use_recaptcha_v1'         => '', // @since 2.0.0 whether to use recaptcha v1
 			'use_global_keys'          => 'yes',
 			'select_lang'              => 'en',
 			'select_theme'             => 'red',
 			'select_cap'               => 'manage_options',
-			'select_cf7_tag'           => 'bwp-recaptcha',
 			'select_response'          => 'redirect',
 			'select_position'          => 'after_comment_field',
 			'select_v2_lang'           => '', // @since 2.0.0, default to empty (auto detected)
@@ -539,7 +539,6 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			{
 				$option_page->set_current_tab(1);
 
-				// Option Structures - Form
 				$form = array(
 					'items' => array(
 						'heading',
@@ -547,6 +546,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						'input',
 						'input',
 						'heading',
+						'checkbox',
 						'checkbox',
 						'section',
 						'section',
@@ -569,6 +569,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						__('Secret Key', $this->domain),
 						__('Plugin Functionality', $this->domain),
 						__('Use reCAPTCHA version 1', $this->domain),
+						__('Force https', $this->domain),
 						__('Enable this plugin for', $this->domain),
 						__('Hide captcha for', $this->domain),
 						__('reCAPTCHA for comment form', $this->domain),
@@ -590,6 +591,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						'input_prikey',
 						'heading_func',
 						'use_recaptcha_v1',
+						'enable_v1_https',
 						'sec1',
 						'sec2',
 						'h2',
@@ -643,10 +645,6 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						'select_akismet_react' => array(
 							__('Approve comment immediately', $this->domain) => '1',
 							__('Hold comment in moderation queue', $this->domain) => 'hold'
-						),
-						'select_cf7_tag' => array(
-							__('Use "bwp-recaptcha" shortcode tag', $this->domain) => 'bwp-recaptcha',
-							__('Use "recaptcha" shortcode tag', $this->domain) => 'recaptcha'
 						)
 					),
 					'checkbox'	=> array(
@@ -678,6 +676,9 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						),
 						'use_recaptcha_v1' => array(
 							__('check this if you prefer the oldschool recaptcha.', $this->domain) => 'use_recaptcha_v1'
+						),
+						'enable_v1_https' => array(
+							__('check this to make requests to reCAPTCHA server always secured.', $this->domain) => 'enable_v1_https'
 						),
 						'enable_auto_fill_comment' => array(
 							__('After redirected, auto fill the comment field with previous comment.', $this->domain)
@@ -742,6 +743,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 				$form_options = array(
 					'use_global_keys',
 					'use_recaptcha_v1',
+					'enable_v1_https',
 					'input_pubkey',
 					'input_prikey',
 					'input_error',
@@ -1070,7 +1072,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 
 		// with this we can redirect to the previous comment url, with support
 		// for previous comment page
-		if (!is_admin() && 'redirect' == $this->options['select_response'])
+		if ('redirect' == $this->options['select_response'])
 		{
 ?>
 		<input type="hidden" name="error_redirect_to"
