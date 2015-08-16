@@ -25,8 +25,8 @@ function bwp_capt_comment_form($args = array(), $post_id = null)
 {
 	global $bwp_capt;
 
-	remove_action('comment_form_after_fields', array($bwp_capt, 'add_recaptcha'));
-	remove_action('comment_form_logged_in_after', array($bwp_capt, 'add_recaptcha'));
+	remove_action('comment_form_after_fields', array($bwp_capt, 'add_comment_recaptcha'));
+	remove_action('comment_form_logged_in_after', array($bwp_capt, 'add_comment_recaptcha'));
 	remove_filter('comment_form_defaults', array($bwp_capt, 'add_recaptcha_after_comment_field'), 11);
 	remove_filter('comment_form_submit_field', array($bwp_capt, 'add_recaptcha_before_comment_submit_field'));
 
@@ -241,8 +241,8 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 
 	protected function pre_init_properties()
 	{
-		$this->lang    = include_once __DIR__ . '/provider/v1_languages.php';
-		$this->v2_lang = include_once __DIR__ . '/provider/v2_languages.php';
+		$this->lang    = include_once __DIR__ . '/provider/v1-languages.php';
+		$this->v2_lang = include_once __DIR__ . '/provider/v2-languages.php';
 
 		$this->caps = apply_filters('bwp_capt_bypass_caps', array(
 			__('Read Profile', $this->domain)   => 'read',
@@ -296,14 +296,14 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			if ('yes' == $this->options['enable_comment'])
 				$this->init_comment_form_captcha();
 
+			if ('yes' == $this->options['enable_login'] && $this->is_login)
+				$this->init_login_form_captcha();
+
 			if ('yes' == $this->options['enable_registration'] && $this->is_reg)
 				$this->init_registration_form_captcha();
 
 			if ('yes' == $this->options['enable_registration'] && $this->is_signup)
 				$this->init_multisite_registration_form_captcha();
-
-			if ('yes' == $this->options['enable_login'] && $this->is_login)
-				$this->init_login_form_captcha();
 		}
 	}
 
