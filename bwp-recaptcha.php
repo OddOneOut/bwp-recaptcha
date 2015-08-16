@@ -15,6 +15,34 @@ License: GPLv3
 if (class_exists('BWP_RECAPTCHA') || !defined('ABSPATH'))
 	return;
 
+$bwp_capt_meta = array(
+	'title'       => 'Better WordPress reCAPTCHA',
+	'version'     => '2.0.0-beta',
+	'domain'      => 'bwp-recaptcha'
+);
+
+// show a friendly message when PHP version is lower than required version
+// @todo remove this when WordPress drops support for PHP version < 5.3.2
+if (version_compare(PHP_VERSION, '5.3.2', '<'))
+{
+	function bwp_capt_warn_php_version()
+	{
+		global $bwp_capt_meta;
+
+		require_once __DIR__ . '/vendor/kminh/bwp-framework/src/class-bwp-version.php';
+
+		BWP_VERSION::warn_required_versions(
+			$bwp_capt_meta['title'],
+			$bwp_capt_meta['domain']
+		);
+	}
+
+	add_action('admin_notices', 'bwp_capt_warn_php_version');
+	add_action('network_admin_notices', 'bwp_capt_warn_php_version');
+
+	return;
+}
+
 // dependencies
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -25,4 +53,4 @@ add_filter('bwp_capt_init_priority', function() {
 });
 
 // init the plugin
-$bwp_capt = new BWP_RECAPTCHA();
+$bwp_capt = new BWP_RECAPTCHA($bwp_capt_meta);

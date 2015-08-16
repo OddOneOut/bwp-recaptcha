@@ -95,17 +95,12 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	protected $provider;
 
 	/**
-	 * Constructor
+	 * {@inheritDoc}
 	 */
-	public function __construct($version = '2.0.0-beta')
+	public function __construct(array $meta)
 	{
-		// Plugin's title
-		$this->plugin_title = 'Better WordPress reCAPTCHA';
-		// Plugin's version
-		$this->set_version('5.3.2', 'php');
-		$this->set_version($version);
-		// Plugin's language domain
-		$this->domain = 'bwp-recaptcha';
+		parent::__construct($meta);
+
 		// Basic version checking
 		if (!$this->check_required_versions())
 			return;
