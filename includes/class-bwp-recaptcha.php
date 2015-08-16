@@ -418,13 +418,20 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 
 	protected function init_captcha_keys()
 	{
+		global $blog_id;
+
 		if (self::is_multisite())
 		{
-			if ('yes' == $this->options['use_global_keys'])
+			// use api keys from main blog unless we're already on the main blog
+			if ($blog_id > 1 && 'yes' == $this->options['use_global_keys'])
 			{
-				$site_options = get_site_option(BWP_CAPT_OPTION_GENERAL);
-				$this->options['input_pubkey'] = $site_options['input_pubkey'];
-				$this->options['input_prikey'] = $site_options['input_prikey'];
+				switch_to_blog(1);
+
+				$options = get_option(BWP_CAPT_OPTION_GENERAL);
+				$this->options['input_pubkey'] = $options['input_pubkey'];
+				$this->options['input_prikey'] = $options['input_prikey'];
+
+				restore_current_blog();
 			}
 		}
 	}
@@ -741,6 +748,9 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 					),
 					'env' => array(
 						'use_global_keys' => 'multisite'
+					),
+					'blog' => array(
+						'use_global_keys' => 'sub'
 					),
 					'formats' => array(
 						'input_approved' => 'int',
