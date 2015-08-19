@@ -3,7 +3,7 @@
 Plugin Name: Better WordPress reCAPTCHA
 Plugin URI: http://betterwp.net/wordpress-plugins/bwp-recaptcha/
 Description: This plugin utilizes reCAPTCHA (with support for Akismet) to help your blog stay clear of spams. This plugin, however, has a different approach from the current WP-reCAPTCHA plugin and allows you to customize how the captcha looks using CSS.
-Version: 2.0.0
+Version: 2.0.1
 Text Domain: bwp-recaptcha
 Domain Path: /languages/
 Author: Khang Minh
@@ -17,7 +17,7 @@ if (class_exists('BWP_RECAPTCHA') || !defined('ABSPATH'))
 
 $bwp_capt_meta = array(
 	'title'   => 'Better WordPress reCAPTCHA',
-	'version' => '2.0.0',
+	'version' => '2.0.1',
 	'domain'  => 'bwp-recaptcha'
 );
 

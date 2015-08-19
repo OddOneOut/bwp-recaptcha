@@ -128,7 +128,7 @@ abstract class BWP_Recaptcha_Provider
 
 	protected function processErrors(array $errorCodes)
 	{
-		$processedErrorCodes = [];
+		$processedErrorCodes = array();
 
 		foreach ($errorCodes as $code) {
 			$processedErrorCodes[$code] = $this->processError($code);
