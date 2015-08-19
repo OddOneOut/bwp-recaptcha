@@ -832,7 +832,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 						'cb1' => array(
 							sprintf(__('This is for Custom Theme only. '
 								. 'Disable this and add your own CSS to style the Custom Theme. '
-								. 'More info <a href="%s#customization" target="_blank">here</a>.', $this->domain),
+								. 'More info <a href="%s#recaptcha-version-1" target="_blank">here</a>.', $this->domain),
 								BWP_CAPT_PLUGIN_URL) => 'enable_css'
 						)
 					),

@@ -1,12 +1,22 @@
 {
     "name": "kdm/bwp-recaptcha",
+    "description": "A WordPress plugin that utilizes the popular anti-spam library, reCAPTCHA, to help your blog stay clear of spams.",
+    "homepage": "http://betterwp.net",
+    "license": "GPLv3",
     "repositories": [
         {
             "type": "git",
             "url": "https://github.com/kminh/bwp-framework"
         }
     ],
+    "authors": [
+        {
+            "name": "Khang Minh",
+            "email": "contact@betterwp.net"
+        }
+    ],
     "require": {
+        "php": "^5.3.2",
         "kminh/bwp-framework": "dev-master",
         "google/recaptcha": "^1.1"
     },
@@ -14,5 +24,10 @@
         "classmap": [
             "includes/"
         ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
     }
 }
