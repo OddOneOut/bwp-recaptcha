@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7d7cc68d17224c2b892ccaa1a8aad12a",
+    "hash": "70a297e8197d0dc8a366fb6ba41a1194",
     "packages": [
         {
             "name": "google/recaptcha",
@@ -57,15 +57,22 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kminh/bwp-framework",
-                "reference": "e5a66731a92ed897188b55b94756694f0e9710b7"
+                "reference": "9f8117c390aa84959016ae570997a5b4bbce8d2c"
             },
             "require": {
                 "php": "~5.1"
             },
+            "require-dev": {
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "^4.8"
+            },
+            "bin": [
+                "bin/install-wp-tests.sh"
+            ],
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "3.0.x-dev"
                 }
             },
             "autoload": {
@@ -79,12 +86,12 @@
             "authors": [
                 {
                     "name": "Khang Minh",
-                    "email": "kminhfoss@gmail.com"
+                    "email": "contact@betterwp.net"
                 }
             ],
             "description": "Base codes for BWP WordPress Plugins",
             "homepage": "http://betterwp.net",
-            "time": "2015-08-16 08:27:08"
+            "time": "2015-09-02 09:08:50"
         }
     ],
     "packages-dev": [],
@@ -95,6 +102,8 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^5.3.2"
+    },
     "platform-dev": []
 }

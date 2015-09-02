@@ -45,7 +45,7 @@ function bwp_capt_comment_form($args = array(), $post_id = null)
 	comment_form($args, $post_id);
 }
 
-class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
+class BWP_RECAPTCHA extends BWP_Framework_V3
 {
 	/**
 	 * reCAPTCHA built-in languages
@@ -547,7 +547,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 	protected function build_option_page()
 	{
 		$page         = $this->get_current_admin_page();
-		$option_page  = $this->curren_option_page;
+		$option_page  = $this->current_option_page;
 		$form_options = array();
 
 		if (!empty($page))
@@ -956,7 +956,7 @@ class BWP_RECAPTCHA extends BWP_FRAMEWORK_V2
 			);
 		}
 
-		$this->curren_option_page->generate_html_form();
+		$this->current_option_page->generate_html_form();
 	}
 
 	/**

@@ -1,7 +1,3 @@
-/.settings
-/.buildpath
-/.project
-/vendor
-\.*
-\*.un
+vendor/
+.*
 *.otl
