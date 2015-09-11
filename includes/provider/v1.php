@@ -105,7 +105,7 @@ class BWP_Recaptcha_Provider_V1 extends BWP_Recaptcha_Provider
 			? $_POST['recaptcha_challenge_field']
 			: null;
 
-		$userResponse = $userResponse ?: (!empty($_POST['recaptcha_response_field'])
+		$userResponse = $userResponse ? $userResponse : (!empty($_POST['recaptcha_response_field'])
 			? $_POST['recaptcha_response_field']
 			: null);
 
@@ -176,7 +176,7 @@ class BWP_Recaptcha_Provider_V1 extends BWP_Recaptcha_Provider
 		if (!function_exists('recaptcha_get_html')
 			|| !function_exists('recaptcha_check_answer')
 		) {
-			require_once __DIR__ . '/recaptcha/recaptchalib.php';
+			require_once dirname(__FILE__) . '/recaptcha/recaptchalib.php';
 		}
 	}
 }

@@ -36,7 +36,9 @@ abstract class BWP_Recaptcha_Provider
 			'invalid_response_message' => $options['input_error'],
 		);
 
-		if ('yes' == $options['use_recaptcha_v1']) {
+		// if instructed to use recaptcha v1, or the current PHP version is
+		// less than 5.3.2, we need to use v1 provider
+		if ('yes' == $options['use_recaptcha_v1'] || version_compare(PHP_VERSION, '5.3.2', '<')) {
 			$providerOptions = array_merge($providerOptions, array(
 				'use_ssl' => $options['enable_v1_https']
 			));

@@ -241,8 +241,8 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 
 	protected function pre_init_properties()
 	{
-		$this->lang    = include_once __DIR__ . '/provider/v1-languages.php';
-		$this->v2_lang = include_once __DIR__ . '/provider/v2-languages.php';
+		$this->lang    = include_once dirname(__FILE__) . '/provider/v1-languages.php';
+		$this->v2_lang = include_once dirname(__FILE__) . '/provider/v2-languages.php';
 
 		$this->caps = apply_filters('bwp_capt_bypass_caps', array(
 			__('Read Profile', $this->domain)   => 'read',
@@ -333,7 +333,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 			// installed and activated
 			// @since 2.0.0 this should use appropriate class for current
 			// version of recaptcha
-			if ('yes' == $this->options['use_recaptcha_v1'])
+			if ('yes' == $this->options['use_recaptcha_v1'] || version_compare(PHP_VERSION, '5.3.2', '<'))
 				BWP_Recaptcha_CF7_V1::init($this);
 			else
 				BWP_Recaptcha_CF7_V2::init($this);

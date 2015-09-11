@@ -31,6 +31,11 @@ class BWP_Recaptcha_PHP_Support_Functional_Test extends PHPUnit_Framework_TestCa
 				continue;
 			}
 
+			// v2 is for PHP 5.3.2+
+			if (stripos($class_name, 'v2') !== false && version_compare(PHP_VERSION, '5.3.2', '<')) {
+				continue;
+			}
+
 			$classes[] = $this->getMockBuilder($class_name)
 				->disableOriginalConstructor()
 				->getMock();

@@ -18,6 +18,8 @@
         "test:php:all": "npm run test:php:unit && npm run test:php:functional:all",
         "test": "npm run test:php:stable",
         "build": "export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:all",
+        "build:legacy": "export PHPUNIT_CMD='test:php:legacy' && export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:functional:all",
+        "build:php55": "npm run build",
         "update": "php composer update"
     }
 }

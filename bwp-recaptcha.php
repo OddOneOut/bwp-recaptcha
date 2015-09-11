@@ -11,8 +11,10 @@ Author URI: http://betterwp.net
 License: GPLv3
 */
 
-// In case someone integrates this plugin in a theme or calling this directly
-if (class_exists('BWP_RECAPTCHA') || !defined('ABSPATH'))
+// in case someone integrates this plugin or calling this directly
+global $bwp_capt;
+
+if ((isset($bwp_capt) && $bwp_capt instanceof BWP_RECAPTCHA) || !defined('ABSPATH'))
 	return;
 
 $bwp_capt_meta = array(
@@ -21,36 +23,22 @@ $bwp_capt_meta = array(
 	'domain'  => 'bwp-recaptcha'
 );
 
-// show a friendly message when PHP version is lower than required version
+// require libs manually if PHP version is lower than 5.3.2
 // @todo remove this when WordPress drops support for PHP version < 5.3.2
 if (version_compare(PHP_VERSION, '5.3.2', '<'))
 {
-	function bwp_capt_warn_php_version()
-	{
-		global $bwp_capt_meta;
-
-		require_once __DIR__ . '/vendor/kminh/bwp-framework/src/class-bwp-version.php';
-
-		BWP_VERSION::warn_required_versions(
-			$bwp_capt_meta['title'],
-			$bwp_capt_meta['domain']
-		);
-	}
-
-	add_action('admin_notices', 'bwp_capt_warn_php_version');
-	add_action('network_admin_notices', 'bwp_capt_warn_php_version');
-
-	return;
+	require_once dirname(__FILE__) . '/vendor/kminh/bwp-framework/autoload.php';
+	require_once dirname(__FILE__) . '/autoload.php';
 }
-
-// dependencies
-require_once __DIR__ . '/vendor/autoload.php';
+else
+{
+	// load dependencies using composer autoload
+	require_once dirname(__FILE__) . '/vendor/autoload.php';
+}
 
 // @since 2.0.0 we hook to 'init' action with a priority of 9 to make sure the
 // plugin loads before Contact Form 7 loads
-add_filter('bwp_capt_init_priority', function() {
-	return 9;
-});
+add_filter('bwp_capt_init_priority', create_function('', 'return 9;'));
 
 // init the plugin
 $bwp_capt = new BWP_RECAPTCHA($bwp_capt_meta);
