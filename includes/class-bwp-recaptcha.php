@@ -109,9 +109,9 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 		$options = array(
 			'input_pubkey'             => '',
 			'input_prikey'             => '',
-			'input_error'              => __('<strong>ERROR:</strong> Incorrect or '
+			'input_error'              => $this->bridge->t('<strong>ERROR:</strong> Incorrect or '
 				. 'empty reCAPTCHA response, please try again.', $this->domain),
-			'input_back'               => __('Error: Incorrect or empty reCAPTCHA response, '
+			'input_back'               => $this->bridge->t('Error: Incorrect or empty reCAPTCHA response, '
 				. 'please click the back button on your browser\'s toolbar or '
 				. 'click on %s to go back.', $this->domain),
 			'input_approved'           => 1,
@@ -142,10 +142,10 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 		);
 
 		$this->add_option_key('BWP_CAPT_OPTION_GENERAL', 'bwp_capt_general',
-			__('General Options', $this->domain)
+			$this->bridge->t('General Options', $this->domain)
 		);
 		$this->add_option_key('BWP_CAPT_OPTION_THEME', 'bwp_capt_theme',
-			__('Theme Options', $this->domain)
+			$this->bridge->t('Theme Options', $this->domain)
 		);
 
 		$this->build_properties('BWP_CAPT', $options,
@@ -244,9 +244,9 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 		$this->lang    = include_once dirname(__FILE__) . '/provider/v1-languages.php';
 		$this->v2_lang = include_once dirname(__FILE__) . '/provider/v2-languages.php';
 
-		$this->caps = apply_filters('bwp_capt_bypass_caps', array(
-			__('Read Profile', $this->domain)   => 'read',
-			__('Manage Options', $this->domain) => 'manage_options'
+		$this->caps = $this->bridge->apply_filters('bwp_capt_bypass_caps', array(
+			$this->bridge->t('Read Profile', $this->domain)   => 'read',
+			$this->bridge->t('Manage Options', $this->domain) => 'manage_options'
 		));
 
 		// @since 1.1.0 init public and private keys based on multi-site setting
@@ -994,13 +994,13 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 	{
 		global $wpdb;
 
-		if ('yes' == $this->options['hide_registered'] && is_user_logged_in())
+		if ('yes' == $this->options['hide_registered'] && $this->bridge->is_user_logged_in())
 			// do not show captcha to logged in users
 			return true;
 
 		if ('yes' == $this->options['hide_cap']
 			&& !empty($this->options['select_cap'])
-			&& current_user_can($this->options['select_cap']))
+			&& $this->bridge->current_user_can($this->options['select_cap']))
 		{
 			// user must have certain capabilities in order to bypass captcha
 			return true;
@@ -1014,7 +1014,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 
 		if ('yes' == $this->options['hide_approved'])
 		{
-			$commenter = wp_get_current_commenter();
+			$commenter = $this->bridge->wp_get_current_commenter();
 			foreach ($commenter as $key => &$commenter_field)
 			{
 				$commenter_field = trim(strip_tags($commenter_field));
