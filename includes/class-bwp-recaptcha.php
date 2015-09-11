@@ -97,9 +97,9 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 	/**
 	 * {@inheritDoc}
 	 */
-	public function __construct(array $meta)
+	public function __construct(array $meta, BWP_WP_Bridge $bridge = null)
 	{
-		parent::__construct($meta);
+		parent::__construct($meta, $bridge);
 
 		// Basic version checking
 		if (!$this->check_required_versions())
@@ -148,8 +148,8 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 			__('Theme Options', $this->domain)
 		);
 
-		$this->build_properties('BWP_CAPT', $this->domain, $options,
-			'BetterWP reCAPTCHA', dirname(dirname(__FILE__)) . '/bwp-recaptcha.php',
+		$this->build_properties('BWP_CAPT', $options,
+			dirname(dirname(__FILE__)) . '/bwp-recaptcha.php',
 			'http://betterwp.net/wordpress-plugins/bwp-recaptcha/', false);
 	}
 
@@ -365,13 +365,13 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 			elseif ($this->options['select_position'] == 'after_comment_field')
 			{
 				/**
-					* show captcha after comment field (default @since 1.1.1)
-					*
-					* @since 2.0.0 and @since WordPress 4.2.0
-					* there's a new filter to add recaptcha that doesn't
-					* rely on the fragile `comment_notes_after`, we will
-					* use that if possible
-					*/
+				 * show captcha after comment field (default @since 1.1.1)
+				 *
+				 * @since 2.0.0 and @since WordPress 4.2.0
+				 * there's a new filter to add recaptcha that doesn't
+				 * rely on the fragile `comment_notes_after`, we will
+				 * use that if possible
+				 */
 				if (version_compare($this->get_current_wp_version(), '4.2', '>='))
 					add_filter('comment_form_submit_field', array($this, 'add_recaptcha_before_comment_submit_field'));
 				else
@@ -618,7 +618,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						'input_error',
 						'input_back',
 						'h3',
-						'cb6',
+						'enable_akismet',
 						'select_akismet_react',
 						'heading_cf7',
 						'enable_cf7'
@@ -640,14 +640,14 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							. 'This only works if you have Contact Form 7 activated.', $this->domain) . '</em>'
 					),
 					'sec1' => array(
-						array('checkbox', 'name' => 'cb1'),
-						array('checkbox', 'name' => 'cb2'),
-						array('checkbox', 'name' => 'cb8')
+						array('checkbox', 'name' => 'enable_comment'),
+						array('checkbox', 'name' => 'enable_registration'),
+						array('checkbox', 'name' => 'enable_login')
 					),
 					'sec2' => array(
-						array('checkbox', 'name' => 'cb3'),
-						array('checkbox', 'name' => 'cb4'),
-						array('checkbox', 'name' => 'cb5')
+						array('checkbox', 'name' => 'hide_registered'),
+						array('checkbox', 'name' => 'hide_cap'),
+						array('checkbox', 'name' => 'hide_approved')
 					),
 					'select' => array(
 						'select_cap' => $this->caps,
@@ -665,34 +665,34 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						)
 					),
 					'checkbox'	=> array(
-						'cb1' => array(
-							__('Comment form.', $this->domain) => 'enable_comment'
+						'enable_comment' => array(
+							__('Comment form.', $this->domain) => ''
 						),
-						'cb2' => array(
-							__('Registration form (user/site registration).', $this->domain) => 'enable_registration'
+						'enable_registration' => array(
+							__('Registration form (user/site registration).', $this->domain) => ''
 						),
-						'cb8' => array(
-							__('Login form.', $this->domain) => 'enable_login'
+						'enable_login' => array(
+							__('Login form.', $this->domain) => ''
 						),
-						'cb3' => array(
-							__('registered users <em>(even without any capabilities)</em>.', $this->domain) => 'hide_registered'
+						'hide_registered' => array(
+							__('registered users <em>(even without any capabilities)</em>.', $this->domain) => ''
 						),
-						'cb4' => array(
-							__('users who can', $this->domain) => 'hide_cap'
+						'hide_cap' => array(
+							__('users who can', $this->domain) => ''
 						),
-						'cb5' => array(
-							__('visitors who have at least', $this->domain) => 'hide_approved'
+						'hide_approved' => array(
+							__('visitors who have at least', $this->domain) => ''
 						),
-						'cb6' => array(
+						'enable_akismet' => array(
 							__('A captcha is only shown when Akismet identifies a comment as spam. '
 							. 'Highly recommended if you do not want to '
-							. 'force your visitors to enter a captcha every time.', $this->domain) => 'enable_akismet'
+							. 'force your visitors to enter a captcha every time.', $this->domain) => ''
 						),
 						'use_global_keys' => array(
-							__('uncheck to use different key pairs for this site.', $this->domain) => 'use_global_keys'
+							__('uncheck to use different key pairs for this site.', $this->domain) => ''
 						),
 						'use_recaptcha_v1' => array(
-							__('check this if you prefer the oldschool recaptcha.', $this->domain) => 'use_recaptcha_v1'
+							__('check this if you prefer the oldschool recaptcha.', $this->domain) => ''
 						),
 						'enable_v1_https' => array(
 							__('check this to make requests to reCAPTCHA server always secured.', $this->domain) => 'enable_v1_https'
@@ -703,10 +703,10 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							. sprintf(
 								__('This feature requires an active <a target="_blank" href="%s">PHP session</a>.', $this->domain),
 								'http://php.net/manual/en/intro.session.php'
-							) => 'enable_auto_fill_comment'
+							) => ''
 						),
 						'enable_cf7' => array(
-							__('With this you can use the <code>recaptcha</code> shortcode tag in your Contact Form 7 forms.', $this->domain) => 'enable_cf7'
+							__('With this you can use the <code>recaptcha</code> shortcode tag in your Contact Form 7 forms.', $this->domain) => ''
 						)
 					),
 					'input'	=> array(
@@ -809,7 +809,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					),
 					'item_names' => array(
 						'select_theme',
-						'cb1',
+						'enable_css',
 						'select_lang',
 						'input_tab',
 						'h1'
@@ -829,11 +829,11 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						'select_lang' => $this->lang
 					),
 					'checkbox' => array(
-						'cb1' => array(
+						'enable_css' => array(
 							sprintf(__('This is for Custom Theme only. '
 								. 'Disable this and add your own CSS to style the Custom Theme. '
 								. 'More info <a href="%s#recaptcha-version-1" target="_blank">here</a>.', $this->domain),
-								BWP_CAPT_PLUGIN_URL) => 'enable_css'
+								BWP_CAPT_PLUGIN_URL) => ''
 						)
 					),
 					'input'	=> array(
