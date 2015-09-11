@@ -9,11 +9,11 @@ class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Framework_PHPUni
 {
 	public function setUp()
 	{
+		parent::setUp();
+
 		if (!self::get_wp_version('4.1')) {
 			$this->markTestSkipped('CF7 4.2 requires WP 4.1 or higher');
 		}
-
-		parent::setUp();
 	}
 
 	public static function get_plugins()
@@ -72,6 +72,10 @@ class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Framework_PHPUni
 	{
 		self::ensure_correct_captcha();
 
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'input_error' => 'invalid captcha'
+		));
+
 		$cf7_form = $crawler->filter('.wpcf7-form input[type="submit"]')->form(array(
 			'your-name'  => 'test',
 			'your-email' => 'test@example.com'
@@ -80,7 +84,7 @@ class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Framework_PHPUni
 		$client = self::get_client_clone();
 		$crawler = $client->submit($cf7_form);
 
-		$this->assertCount(1, $crawler->filter('.wpcf7-mail-sent-ok'));
+		$this->assertCount(0, $crawler->filter('.wpcf7-not-valid-tip:contains(invalid captcha)'), 'no captcha error should be shown');
 	}
 
 	public function test_can_add_multiple_captcha_to_cf7_form()

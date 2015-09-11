@@ -12,7 +12,7 @@
         "test:php:functional:3.8": "export WP_VERSION=3.8 && npm run test:php:functional",
         "test:php:functional:stable": "export WP_VERSION=latest && npm run test:php:functional",
         "test:php:functional:beta": "echo 'No beta version'",
-        "test:php:functional:all": "npm run test:php:functional:stable && npm run test:php:functional:3.7 && npm run test:php:functional:beta",
+        "test:php:functional:all": "npm run test:php:functional:stable && npm run test:php:functional:3.8 && npm run test:php:functional:beta",
         "test:php:unit": "npm run test:php --BWP_Recaptcha:phpunit_suite='unit'",
         "test:php:stable": "npm run test:php:unit && npm run test:php:functional:stable",
         "test:php:all": "npm run test:php:unit && npm run test:php:functional:all",
