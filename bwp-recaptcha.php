@@ -27,7 +27,6 @@ $bwp_capt_meta = array(
 // @todo remove this when WordPress drops support for PHP version < 5.3.2
 if (version_compare(PHP_VERSION, '5.3.2', '<'))
 {
-	require_once dirname(__FILE__) . '/vendor/kminh/bwp-framework/autoload.php';
 	require_once dirname(__FILE__) . '/autoload.php';
 }
 else
