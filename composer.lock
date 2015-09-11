@@ -4,20 +4,115 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "70a297e8197d0dc8a366fb6ba41a1194",
+    "hash": "9188c3d987f448715a88fb0a3777dca5",
     "packages": [
         {
-            "name": "google/recaptcha",
-            "version": "1.1.1",
+            "name": "composer/installers",
+            "version": "v1.0.21",
             "source": {
                 "type": "git",
-                "url": "https://github.com/google/recaptcha.git",
-                "reference": "090585935d95ebdf2d16dd071b10c9179a94da47"
+                "url": "https://github.com/composer/installers.git",
+                "reference": "d64e23fce42a4063d63262b19b8e7c0f3b5e4c45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/recaptcha/zipball/090585935d95ebdf2d16dd071b10c9179a94da47",
-                "reference": "090585935d95ebdf2d16dd071b10c9179a94da47",
+                "url": "https://api.github.com/repos/composer/installers/zipball/d64e23fce42a4063d63262b19b8e7c0f3b5e4c45",
+                "reference": "d64e23fce42a4063d63262b19b8e7c0f3b5e4c45",
+                "shasum": ""
+            },
+            "replace": {
+                "roundcube/plugin-installer": "*",
+                "shama/baton": "*"
+            },
+            "require-dev": {
+                "composer/composer": "1.0.*@dev",
+                "phpunit/phpunit": "4.1.*"
+            },
+            "type": "composer-installer",
+            "extra": {
+                "class": "Composer\\Installers\\Installer",
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Composer\\Installers\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kyle Robinson Young",
+                    "email": "kyle@dontkry.com",
+                    "homepage": "https://github.com/shama"
+                }
+            ],
+            "description": "A multi-framework Composer library installer",
+            "homepage": "http://composer.github.com/installers/",
+            "keywords": [
+                "Craft",
+                "Dolibarr",
+                "Hurad",
+                "MODX Evo",
+                "OXID",
+                "SMF",
+                "Thelia",
+                "WolfCMS",
+                "agl",
+                "aimeos",
+                "annotatecms",
+                "bitrix",
+                "cakephp",
+                "chef",
+                "codeigniter",
+                "concrete5",
+                "croogo",
+                "dokuwiki",
+                "drupal",
+                "elgg",
+                "fuelphp",
+                "grav",
+                "installer",
+                "joomla",
+                "kohana",
+                "laravel",
+                "lithium",
+                "magento",
+                "mako",
+                "mediawiki",
+                "modulework",
+                "moodle",
+                "phpbb",
+                "piwik",
+                "ppi",
+                "puppet",
+                "roundcube",
+                "shopware",
+                "silverstripe",
+                "symfony",
+                "typo3",
+                "wordpress",
+                "zend",
+                "zikula"
+            ],
+            "time": "2015-02-18 17:17:01"
+        },
+        {
+            "name": "google/recaptcha",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/google/recaptcha.git",
+                "reference": "2b7e00566afca82a38a1d3adb8e42c118006296e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/google/recaptcha/zipball/2b7e00566afca82a38a1d3adb8e42c118006296e",
+                "reference": "2b7e00566afca82a38a1d3adb8e42c118006296e",
                 "shasum": ""
             },
             "require": {
@@ -49,7 +144,7 @@
                 "recaptcha",
                 "spam"
             ],
-            "time": "2015-03-16 13:45:08"
+            "time": "2015-09-02 17:23:59"
         },
         {
             "name": "kminh/bwp-framework",
@@ -57,12 +152,14 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kminh/bwp-framework",
-                "reference": "9f8117c390aa84959016ae570997a5b4bbce8d2c"
+                "reference": "4d6a8bc11935a0720454fd574b83cca8a354a14b"
             },
             "require": {
-                "php": "~5.1"
+                "php": "^5.1.2"
             },
             "require-dev": {
+                "fabpot/goutte": "~1.0",
+                "guzzle/plugin-cookie": "^3.9",
                 "mockery/mockery": "^0.9.4",
                 "phpunit/phpunit": "^4.8"
             },
@@ -91,10 +188,51 @@
             ],
             "description": "Base codes for BWP WordPress Plugins",
             "homepage": "http://betterwp.net",
-            "time": "2015-09-02 09:08:50"
+            "time": "2015-09-11 06:51:26"
         }
     ],
-    "packages-dev": [],
+    "packages-dev": [
+        {
+            "name": "wpackagist-plugin/akismet",
+            "version": "3.1.3",
+            "source": {
+                "type": "svn",
+                "url": "http://plugins.svn.wordpress.org/akismet/",
+                "reference": "tags/3.1.3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/akismet.3.1.3.zip",
+                "reference": null,
+                "shasum": null
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/akismet/"
+        },
+        {
+            "name": "wpackagist-plugin/contact-form-7",
+            "version": "4.2.2",
+            "source": {
+                "type": "svn",
+                "url": "http://plugins.svn.wordpress.org/contact-form-7/",
+                "reference": "tags/4.2.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/contact-form-7.4.2.2.zip",
+                "reference": null,
+                "shasum": null
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/contact-form-7/"
+        }
+    ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
@@ -103,7 +241,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^5.3.2"
+        "php": "~5.1"
     },
     "platform-dev": []
 }

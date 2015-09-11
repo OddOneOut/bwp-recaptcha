@@ -1,3 +1,4 @@
 vendor/
 .*
 *.otl
+phpunit.xml

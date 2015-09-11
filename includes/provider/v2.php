@@ -79,6 +79,11 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 	 */
 	public function verify($userResponse = null)
 	{
+		// don't verify anything for the test captcha
+		if ('6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe' == $this->options['secret_key']) {
+			return array();
+		}
+
 		$userResponse = $userResponse ?: (!empty($_POST['g-recaptcha-response'])
 			? $_POST['g-recaptcha-response']
 			: null);

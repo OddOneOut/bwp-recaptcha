@@ -1,0 +1,394 @@
+<?php
+
+use \Symfony\Component\DomCrawler\Crawler;
+
+/**
+ * @author Khang Minh <contact@betterwp.net>
+ */
+class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Framework_PHPUnit_WP_Functional_TestCase
+{
+	public function tearDown()
+	{
+		self::reset_users();
+		self::reset_comments();
+	}
+
+	public static function get_plugins()
+	{
+		$root_dir = dirname(dirname(dirname(__FILE__)));
+
+		return array(
+			$root_dir . '/vendor/wp-plugin/akismet/akismet.php' => 'akismet/akismet.php',
+			$root_dir . '/bwp-recaptcha.php' => 'bwp-recaptcha/bwp-recaptcha.php'
+		);
+	}
+
+	protected static function set_wp_default_options()
+	{
+		self::update_option('users_can_register', 1);
+	}
+
+	protected static function set_plugin_default_options()
+	{
+		$default_options = array(
+			'input_pubkey'        => '6LdYGQsTAAAAAFwLgIpzaIBQibeTQRG8qqk6zK-X',
+			'input_prikey'        => '6LdYGQsTAAAAAD3sarjAo5x8b8IvTqp1eU-2MFwv',
+			'use_recaptcha_v1'    => '', // only test recaptcha v2
+			'enable_comment'      => 'yes',
+			'enable_login'        => 'yes',
+			'enable_registration' => 'yes',
+			'hide_registered'     => '',
+			'hide_approved'       => '',
+			'hide_cap'            => ''
+		);
+
+		self::update_option(BWP_CAPT_OPTION_GENERAL, $default_options);
+	}
+
+	public function test_add_captcha_to_comment_form_after_author_fields()
+	{
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'select_position' => 'after_fields'
+		));
+
+		$crawler = self::get_crawler_from_post($this->create_post());
+
+		$captcha = $crawler->filter('div.g-recaptcha');
+
+		$this->assertCount(1, $captcha);
+		$this->assertCount(0, $captcha->previousAll()->filter('p > textarea[name="comment"]'), 'captcha added after author fields, before comment field');
+	}
+
+	public function test_add_captcha_to_comment_form_after_comment_field()
+	{
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'select_position' => 'after_comment_field'
+		));
+
+		$crawler = self::get_crawler_from_post($this->create_post());
+
+		$captcha = $crawler->filter('div.g-recaptcha');
+
+		$this->assertCount(1, $captcha);
+		$this->assertCount(1, $captcha->previousAll()->filter('p > textarea[name="comment"]'), 'captcha added after comment field');
+
+		return $crawler;
+	}
+
+	/**
+	 * @depends test_add_captcha_to_comment_form_after_comment_field
+	 */
+	public function test_redirect_back_to_comment_form_if_wrong_captcha(Crawler $crawler)
+	{
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'select_response' => 'redirect'
+		));
+
+		$comment_form = $crawler->filter('#commentform input[type="submit"]')->form();
+
+		$client = self::get_client_clone();
+		$post_uri = $client->getRequest()->getUri();
+
+		// don't follow redirect so we can check the actual redirect response
+		$client->followRedirects(false);
+		$client->submit($comment_form);
+
+		$this->assertEquals(302, $client->getResponse()->getStatus());
+		$this->assertEquals(add_query_arg(array('cerror' => 'missing-input-response'), $post_uri . '#respond'), $client->getResponse()->getHeader('Location'));
+	}
+
+	/**
+	 * @depends test_add_captcha_to_comment_form_after_comment_field
+	 */
+	public function test_redirect_back_to_comment_form_with_correct_error_if_wrong_captcha(Crawler $crawler)
+	{
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'select_response' => 'redirect',
+			'input_error'     => 'invalid captcha'
+		));
+
+		$comment_form = $crawler->filter('#commentform input[type="submit"]')->form();
+
+		$client = self::get_client_clone();
+		$crawler = $client->submit($comment_form);
+
+		$this->assertCount(1, $crawler->filter('.bwp-recaptcha-error:contains(invalid captcha)'));
+	}
+
+	/**
+	 * @depends test_add_captcha_to_comment_form_after_comment_field
+	 */
+	public function test_fill_comment_field_when_redirected_if_wrong_captcha(Crawler $crawler)
+	{
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'select_response' => 'redirect',
+			'enable_auto_fill_comment' => true
+		));
+
+		$comment = '<p>my comment</p>';
+		$comment_form = $crawler->filter('#commentform input[type="submit"]')->form(array(
+			'comment' => $comment
+		));
+
+		$client = self::get_client_clone();
+		$crawler = $client->submit($comment_form);
+
+		$this->assertEquals(htmlspecialchars($comment, ENT_QUOTES, get_option('blog_charset')), $crawler->filter('#comment')->html());
+	}
+
+	/**
+	 * @depends test_add_captcha_to_comment_form_after_comment_field
+	 */
+	public function test_wp_die_with_correct_error_if_wrong_captcha(Crawler $crawler)
+	{
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'select_response' => 'back',
+			'input_back' => 'invalid captcha go back'
+		));
+
+		$comment_form = $crawler->filter('#commentform input[type="submit"]')->form();
+
+		$client = self::get_client_clone();
+		$crawler = $client->submit($comment_form);
+
+		$this->assertEquals(500, $client->getResponse()->getStatus(), 'should be a wp_die() page');
+		$this->assertCount(1, $crawler->filter('body > p:contains(invalid captcha go back)'));
+	}
+
+	/**
+	 * @depends test_add_captcha_to_comment_form_after_comment_field
+	 */
+	public function test_successfully_post_comment_if_captcha_is_correct(Crawler $crawler)
+	{
+		self::ensure_correct_captcha();
+
+		$email = 'test' . self::uniqid() . '@example.com';
+
+		$comment_form = $crawler->filter('#commentform input[type="submit"]')->form(array(
+			'author'  => $email,
+			'email'   => $email,
+			'comment' => 'a valid comment',
+		));
+
+		$client = self::get_client_clone();
+		$client->submit($comment_form);
+
+		$this->assertCount(1, get_comments(array(
+			'author_email' => $email,
+			'number' => 1
+		)));
+	}
+
+	/**
+	 * @depends test_add_captcha_to_comment_form_after_comment_field
+	 */
+	public function test_should_not_add_captcha_to_comment_form_if_user_can_bypass_approved_comments(Crawler $crawler)
+	{
+		self::ensure_correct_captcha();
+
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'hide_approved'  => 'yes',
+			'input_approved' => 2
+		));
+
+		$email   = 'test' . self::uniqid() . '@example.com';
+		$comment = 'a valid comment %s';
+
+		$comment_form = $crawler->filter('#commentform input[type="submit"]')->form(array(
+			'author'  => $email,
+			'email'   => $email
+		));
+
+		$client = self::get_client_clone();
+
+		$client->submit($comment_form, array(
+			'comment' => sprintf($comment, self::uniqid())
+		));
+
+		$crawler = $client->submit($comment_form, array(
+			'comment' => sprintf($comment, self::uniqid())
+		));
+
+		$captcha = $crawler->filter('div.g-recaptcha');
+		$this->assertCount(0, $captcha, 'users who have "input_approved" approved comments should not have to fill captcha');
+	}
+
+	/**
+	 * Order matters here
+	 */
+	public function test_should_not_add_captcha_to_comment_form_if_user_can_bypass_is_logged_in()
+	{
+		self::ensure_correct_captcha();
+
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'hide_registered' => 'yes'
+		));
+
+		$user_login = 'test';
+		$user = $this->factory->user->create_and_get(array(
+			'user_login' => $user_login
+		));
+
+		self::commit_transaction();
+
+		$client = self::get_client(false);
+		$client->request('POST', wp_login_url(), array(
+			'log' => $user_login,
+			'pwd' => 'password'
+		));
+
+		$crawler = $client->request('GET', get_permalink($this->create_post()));
+
+		$captcha = $crawler->filter('div.g-recaptcha');
+		$this->assertCount(0, $captcha);
+	}
+
+	/**
+	 * Order matters here
+	 */
+	public function test_should_not_add_captcha_to_comment_form_if_user_can_bypass_has_capabilities()
+	{
+		self::ensure_correct_captcha();
+
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'hide_cap'   => 'yes',
+			'select_cap' => 'manage_options'
+		));
+
+		$client = self::get_client(false);
+		$client->request('POST', wp_login_url(), array(
+			'log' => 'admin',
+			'pwd' => 'password'
+		));
+
+		$crawler = $client->request('GET', get_permalink($this->create_post()));
+
+		$captcha = $crawler->filter('div.g-recaptcha');
+		$this->assertCount(0, $captcha);
+	}
+
+	public function test_add_captcha_to_login_form()
+	{
+		$crawler = self::get_crawler_from_url(wp_login_url());
+
+		$captcha = $crawler->filter('div.g-recaptcha');
+		$this->assertCount(1, $captcha);
+
+		return $crawler;
+	}
+
+	/**
+	 * @depends test_add_captcha_to_login_form
+	 */
+	public function test_show_only_captcha_error_in_login_error_if_wrong_captcha(Crawler $crawler)
+	{
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'input_error' => 'invalid captcha'
+		));
+
+		$login_form = $crawler->filter('#loginform input[type="submit"]')->form(array(
+			'log' => 'test'
+		));
+
+		$client = self::get_client_clone();
+		$crawler = $client->submit($login_form);
+
+		$this->assertEquals('invalid captcha', trim($crawler->filter('#login_error')->text()));
+	}
+
+	/**
+	 * @depends test_add_captcha_to_login_form
+	 */
+	public function test_login_successfully_if_captcha_is_correct(Crawler $crawler)
+	{
+		self::ensure_correct_captcha();
+
+		$user_login = 'test';
+		$user = $this->factory->user->create_and_get(array(
+			'user_login' => $user_login
+		));
+
+		self::commit_transaction();
+
+		$login_form = $crawler->filter('#loginform input[type="submit"]')->form(array(
+			'log' => $user_login,
+			'pwd' => 'password'
+		));
+
+		$client = self::get_client_clone();
+		$client->followRedirects(false);
+		$crawler = $client->submit($login_form);
+
+		$this->assertEquals(302, $client->getResponse()->getStatus(), 'a successful login means a redirection');
+	}
+
+	public function test_add_captcha_to_registration_form()
+	{
+		$crawler = self::get_crawler_from_url(wp_registration_url());
+
+		$captcha = $crawler->filter('div.g-recaptcha');
+		$this->assertCount(1, $captcha);
+
+		return $crawler;
+	}
+
+	/**
+	 * @depends test_add_captcha_to_registration_form
+	 */
+	public function test_show_registration_error_if_wrong_captcha(Crawler $crawler)
+	{
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'input_error' => 'invalid captcha'
+		));
+
+		$register_form = $crawler->filter('#registerform input[type="submit"]')->form(array(
+			'user_login' => 'test',
+			'user_email' => 'test@example.com'
+		));
+
+		$client = self::get_client_clone();
+		$crawler = $client->submit($register_form);
+
+		$this->assertCount(1, $crawler->filter('#login_error:contains(invalid captcha)'));
+	}
+
+	/**
+	 * @depends test_add_captcha_to_registration_form
+	 */
+	public function test_register_successfully_if_captcha_is_correct(Crawler $crawler)
+	{
+		self::ensure_correct_captcha();
+
+		$user_login = 'test' . self::uniqid();
+
+		$register_form = $crawler->filter('#registerform input[type="submit"]')->form(array(
+			'user_login' => $user_login,
+			'user_email' => $user_login . '@example.com'
+		));
+
+		$client = self::get_client_clone();
+		$crawler = $client->submit($register_form);
+
+		$this->assertInstanceOf('WP_User', get_user_by('login', $user_login));
+	}
+
+	protected function create_post()
+	{
+		$post = $this->factory->post->create_and_get(array(
+			'post_title'     => 'Post with recaptcha added to comment form',
+			'comment_status' => 'open'
+		));
+
+		self::commit_transaction();
+
+		return $post;
+	}
+
+	protected static function ensure_correct_captcha()
+	{
+		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
+			'input_pubkey' => '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+			'input_prikey' => '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+		));
+	}
+}

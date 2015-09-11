@@ -3,7 +3,7 @@
 <!-- http://phpunit.de/manual/4.8/en/appendixes.configuration.html -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.8/phpunit.xsd"
-		 bootstrap="vendor/autoload.php"
+		 bootstrap="tests/bootstrap.php"
 		 backupGlobals="false"
 		 colors="true"
 >
@@ -24,6 +24,10 @@
 
 	<listeners>
 		<listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
-		<listener class="\BWP_Framework_PHPUnit_Test_Listener"></listener>
 	</listeners>
+
+	<php>
+		<ini name="memory_limit" value="-1"/>
+		<ini name="max_execution_time" value="0"/>
+	</php>
 </phpunit>

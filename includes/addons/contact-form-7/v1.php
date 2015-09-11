@@ -12,8 +12,10 @@
  */
 class BWP_Recaptcha_CF7_V1 extends BWP_Recaptcha_CF7_Shortcode
 {
-	protected static function registerMoreHooks()
+	public static function init(BWP_RECAPTCHA $plugin)
 	{
+		parent::init($plugin);
+
 		add_filter('wpcf7_ajax_json_echo', array(__CLASS__, 'refreshCaptcha'));
 	}
 

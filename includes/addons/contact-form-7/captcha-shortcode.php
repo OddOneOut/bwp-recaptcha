@@ -59,7 +59,7 @@ class BWP_Recaptcha_CF7_Shortcode
 		self::$_domain          = $plugin->plugin_dkey;
 
 		// register our main hooks to CF7
-		self::_registerHooks();
+		self::registerHooks();
 	}
 
 	/**
@@ -71,7 +71,7 @@ class BWP_Recaptcha_CF7_Shortcode
 	 * @return void
 	 * @access private
 	 */
-	private static function _registerHooks()
+	protected static function registerHooks()
 	{
 		// admin hooks
 		if (is_admin()) {
@@ -90,13 +90,6 @@ class BWP_Recaptcha_CF7_Shortcode
 
 		// need to refresh captcha when the form is submitted via ajax
 		add_filter('wpcf7_ajax_json_echo', array(__CLASS__, 'refreshCaptcha'));
-
-		static::registerMoreHooks();
-	}
-
-	protected static function registerMoreHooks()
-	{
-		// to be overriden
 	}
 
 	/**
