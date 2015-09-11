@@ -154,6 +154,19 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 	}
 
 	/**
+	 * Whether we should use the old recaptcha
+	 *
+	 * @return bool
+	 */
+	public function should_use_old_recaptcha()
+	{
+		if ('yes' == $this->options['use_recaptcha_v1'] || !BWP_Version::get_current_php_version('5.3.2'))
+			return true;
+
+		return false;
+	}
+
+	/**
 	 * Init a PHP session
 	 *
 	 * @since 2.0.0
@@ -333,7 +346,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 			// installed and activated
 			// @since 2.0.0 this should use appropriate class for current
 			// version of recaptcha
-			if ('yes' == $this->options['use_recaptcha_v1'] || version_compare(PHP_VERSION, '5.3.2', '<'))
+			if ($this->should_use_old_recaptcha())
 				BWP_Recaptcha_CF7_V1::init($this);
 			else
 				BWP_Recaptcha_CF7_V2::init($this);
@@ -752,6 +765,9 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					'blog' => array(
 						'use_global_keys' => 'sub'
 					),
+					'php' => array(
+						'use_recaptcha_v1' => '50302'
+					),
 					'formats' => array(
 						'input_approved' => 'int',
 						'input_error'    => 'html',
@@ -792,7 +808,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 				$option_page->set_current_tab(2);
 
 				// @since 2.0.0 differnet settings for different recaptcha
-				$form = $this->options['use_recaptcha_v1'] == 'yes' ? array(
+				$form = $this->should_use_old_recaptcha() ? array(
 					'items' => array(
 						'select',
 						'checkbox',
@@ -905,7 +921,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					)
 				);
 
-				$form_options = $this->options['use_recaptcha_v1'] == 'yes'
+				$form_options = $this->should_use_old_recaptcha()
 					? array(
 						'select_lang',
 						'select_theme',

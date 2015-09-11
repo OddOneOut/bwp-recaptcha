@@ -55,7 +55,7 @@ class BWP_Recaptcha_Provider_Test extends PHPUnit_Framework_TestCase
 			$this->markTestSkipped();
 		}
 
-		$this->plugin->options['use_recaptcha_v1'] = $use_v1;
+		$this->plugin->method('should_use_old_recaptcha')->willReturn($use_v1);
 
 		$provider = BWP_Recaptcha_Provider::create($this->plugin);
 
@@ -68,21 +68,5 @@ class BWP_Recaptcha_Provider_Test extends PHPUnit_Framework_TestCase
 			array('yes', 'BWP_Recaptcha_Provider_V1'),
 			array('', 'BWP_Recaptcha_Provider_V2')
 		);
-	}
-
-	/**
-	 * @covers BWP_Recaptcha_Provider::create
-	 */
-	public function test_should_create_correct_version_of_provider_based_on_php_version()
-	{
-		$this->plugin->options['use_recaptcha_v1'] = '';
-
-		$provider = BWP_Recaptcha_Provider::create($this->plugin);
-
-		if (version_compare(PHP_VERSION, '5.3.2', '<')) {
-			$this->assertInstanceOf('BWP_Recaptcha_Provider_V1', $provider, 'should always use v1 provider');
-		} else {
-			$this->assertInstanceOf('BWP_Recaptcha_Provider_V2', $provider);
-		}
 	}
 }
