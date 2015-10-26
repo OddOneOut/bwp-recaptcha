@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2015 Khang Minh <betterwp.net>
  *
@@ -451,23 +452,21 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 
 	protected function enqueue_media()
 	{
-		if ($this->is_admin_page(BWP_CAPT_OPTION_GENERAL))
+		if ($this->is_admin_page())
 		{
-			// some JS to toggle fields' visibility in General Options page
-			wp_enqueue_script('bwp-recaptcha', BWP_CAPT_JS . '/bwp-recaptcha.js', array('jquery'));
+			$this->enqueue_media_file('bwp-capt-admin',
+				BWP_CAPT_JS . '/admin.js',
+				array('bwp-op')
+			);
 		}
 
 		if ('yes' == $this->options['enable_css'])
 		{
-			// load default CSS if needed
-			$theme        = $this->options['select_theme'];
-			$bwp_capt_css = apply_filters('bwp_capt_css', BWP_CAPT_CSS . '/bwp-recaptcha.css');
-
 			if ('custom' == $this->options['select_theme']
 				&& ($this->is_admin_page(BWP_CAPT_OPTION_THEME) || !is_admin())
 			) {
-				// load default CSS for custom theme
-				wp_enqueue_style('bwp-capt', $bwp_capt_css);
+				$custom_theme_css = apply_filters('bwp_capt_css', BWP_CAPT_CSS . '/custom-theme.css');
+				wp_enqueue_style('bwp-capt', $custom_theme_css);
 			}
 		}
 
