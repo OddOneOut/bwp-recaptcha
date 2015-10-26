@@ -197,15 +197,15 @@
     "packages-dev": [
         {
             "name": "wpackagist-plugin/akismet",
-            "version": "3.1.3",
+            "version": "3.1.5",
             "source": {
                 "type": "svn",
                 "url": "http://plugins.svn.wordpress.org/akismet/",
-                "reference": "tags/3.1.3"
+                "reference": "tags/3.1.5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/akismet.3.1.3.zip",
+                "url": "https://downloads.wordpress.org/plugin/akismet.3.1.5.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -217,15 +217,15 @@
         },
         {
             "name": "wpackagist-plugin/contact-form-7",
-            "version": "4.2.2",
+            "version": "4.3",
             "source": {
                 "type": "svn",
                 "url": "http://plugins.svn.wordpress.org/contact-form-7/",
-                "reference": "tags/4.2.2"
+                "reference": "tags/4.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/contact-form-7.4.2.2.zip",
+                "url": "https://downloads.wordpress.org/plugin/contact-form-7.4.3.zip",
                 "reference": null,
                 "shasum": null
             },
