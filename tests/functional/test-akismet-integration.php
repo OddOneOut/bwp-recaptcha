@@ -4,16 +4,17 @@ use \Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @author Khang Minh <contact@betterwp.net>
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
-class BWP_Recaptcha_Akismet_Integration_Functional_Test extends BWP_Framework_PHPUnit_WP_Functional_TestCase
+class BWP_Recaptcha_Akismet_Integration_Functional_Test extends BWP_Recaptcha_PHPUnit_WP_Functional_TestCase
 {
-	public static function get_plugins()
+	public function get_extra_plugins()
 	{
 		$root_dir = dirname(dirname(dirname(__FILE__)));
 
 		return array(
-			$root_dir . '/vendor/wp-plugin/akismet/akismet.php' => 'akismet/akismet.php',
-			$root_dir . '/bwp-recaptcha.php' => 'bwp-recaptcha/bwp-recaptcha.php'
+			$root_dir . '/vendor/wp-plugin/akismet/akismet.php' => 'akismet/akismet.php'
 		);
 	}
 
@@ -56,25 +57,5 @@ class BWP_Recaptcha_Akismet_Integration_Functional_Test extends BWP_Framework_PH
 		/* $crawler = $client->submit($comment_form); */
 
 		/* $this->assertCount(1, $crawler->filter('div.g-recaptcha')); */
-	}
-
-	protected function create_post()
-	{
-		$post = $this->factory->post->create_and_get(array(
-			'post_title'     => 'Post with comment opened',
-			'comment_status' => 'open'
-		));
-
-		self::commit_transaction();
-
-		return $post;
-	}
-
-	protected static function ensure_correct_captcha()
-	{
-		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
-			'input_pubkey' => '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-			'input_prikey' => '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-		));
 	}
 }

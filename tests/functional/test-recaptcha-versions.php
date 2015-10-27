@@ -5,17 +5,8 @@ use \Symfony\Component\DomCrawler\Crawler;
 /**
  * @author Khang Minh <contact@betterwp.net>
  */
-class BWP_Recaptcha_Recaptcha_Version_Functional_Test extends BWP_Framework_PHPUnit_WP_Functional_TestCase
+class BWP_Recaptcha_Recaptcha_Version_Functional_Test extends BWP_Recaptcha_PHPUnit_WP_Functional_TestCase
 {
-	public static function get_plugins()
-	{
-		$root_dir = dirname(dirname(dirname(__FILE__)));
-
-		return array(
-			$root_dir . '/bwp-recaptcha.php' => 'bwp-recaptcha/bwp-recaptcha.php'
-		);
-	}
-
 	protected static function set_plugin_default_options()
 	{
 		$default_options = array(
@@ -37,17 +28,5 @@ class BWP_Recaptcha_Recaptcha_Version_Functional_Test extends BWP_Framework_PHPU
 
 		$this->assertCount(0, $crawler->filter('div.g-recaptcha'));
 		$this->assertCount(1, $crawler->filter('script[src="http://www.google.com/recaptcha/api/challenge?k=6LdYGQsTAAAAAFwLgIpzaIBQibeTQRG8qqk6zK-X&hl=en"]'));
-	}
-
-	protected function create_post()
-	{
-		$post = $this->factory->post->create_and_get(array(
-			'post_title'     => 'Post with comment opened',
-			'comment_status' => 'open'
-		));
-
-		self::commit_transaction();
-
-		return $post;
 	}
 }

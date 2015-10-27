@@ -17,7 +17,7 @@
 
 	<filter>
 		<whitelist>
-			<directory>./src</directory>
+			<directory>./includes</directory>
 		</whitelist>
 	</filter>
 

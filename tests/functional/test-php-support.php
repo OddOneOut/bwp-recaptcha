@@ -3,31 +3,24 @@
 /**
  * @author Khang Minh <contact@betterwp.net>
  */
-class BWP_Recaptcha_PHP_Support_Functional_Test extends PHPUnit_Framework_TestCase
+class BWP_Recaptcha_PHP_Support_Functional_Test extends BWP_Framework_PHPUnit_WP_Legacy_Functional_TestCase
 {
-	protected function setUp()
-	{
-		global $_tests_dir;
-
-		if (!function_exists('tests_add_filter')) {
-			_bwp_framework_test_autoloader('WP_UnitTestCase');
-
-			require_once $_tests_dir . '/includes/functions.php';
-			require $_tests_dir . '/includes/bootstrap.php';
-		}
-	}
-
-	protected function tearDown()
-	{
-	}
-
 	public function test_can_initiate_all_classes()
 	{
-		$classes = array();
-		$class_maps = include dirname(dirname(dirname(__FILE__))) . '/vendor/composer/autoload_classmap.php';
+		$root_dir = dirname(dirname(dirname(__FILE__)));
+		$class_maps = include $root_dir . '/vendor/composer/autoload_classmap.php';
 
 		foreach ($class_maps as $class_name => $class_file) {
 			if (stripos($class_name, 'recaptcha') === false) {
+				continue;
+			}
+
+			$not_php_52 = array(
+				'BWP_Recaptcha_PHPUnit_WP_Functional_TestCase',
+			);
+
+			// do not load certain testcase classes if PHP version is less than 5.3
+			if (in_array($class_name, $not_php_52) && version_compare(PHP_VERSION, '5.3', '<')) {
 				continue;
 			}
 
@@ -36,19 +29,31 @@ class BWP_Recaptcha_PHP_Support_Functional_Test extends PHPUnit_Framework_TestCa
 				continue;
 			}
 
-			$classes[] = $this->getMockBuilder($class_name)
-				->disableOriginalConstructor()
-				->getMock();
+			require_once $class_file;
+		}
+
+		// this is not actually a class so it needs checking separately
+		if (!function_exists('recaptcha_get_html')
+			|| !function_exists('recaptcha_check_answer')
+		) {
+			require_once $root_dir . '/includes/provider/recaptcha/recaptchalib.php';
 		}
 
 		$this->assertTrue(true);
 	}
 
-	public function test_can_boot_plugin()
+	public function get_plugin_under_test()
 	{
 		$root_dir = dirname(dirname(dirname(__FILE__)));
 
-		include_once $root_dir . '/bwp-recaptcha.php';
+		return array(
+			$root_dir . '/bwp-recaptcha.php' => 'bwp-recaptcha/bwp-recaptcha.php'
+		);
+	}
+
+	public function test_can_boot_plugin()
+	{
+		$this->bootstrap_plugin();
 
 		$this->assertTrue(true);
 	}

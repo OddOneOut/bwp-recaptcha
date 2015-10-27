@@ -4,8 +4,10 @@ use \Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @author Khang Minh <contact@betterwp.net>
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
-class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Framework_PHPUnit_WP_Functional_TestCase
+class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Recaptcha_PHPUnit_WP_Functional_TestCase
 {
 	public function setUp()
 	{
@@ -16,12 +18,11 @@ class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Framework_PHPUni
 		}
 	}
 
-	public static function get_plugins()
+	public function get_extra_plugins()
 	{
 		$root_dir = dirname(dirname(dirname(__FILE__)));
 
 		return array(
-			$root_dir . '/bwp-recaptcha.php' => 'bwp-recaptcha/bwp-recaptcha.php',
 			$root_dir . '/vendor/wp-plugin/contact-form-7/wp-contact-form-7.php' => 'contact-form-7/wp-contact-form-7.php'
 		);
 	}
@@ -40,26 +41,29 @@ class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Framework_PHPUni
 
 	public function test_add_captcha_to_cf7_form()
 	{
-		$crawler = self::get_crawler_from_post($this->create_post_with_cf7());
+		$post = $this->create_post_with_cf7();
+
+		$crawler = self::get_crawler_from_post($post);
 		$captcha = $crawler->filter('div.g-recaptcha');
 
 		$this->assertCount(1, $captcha);
 
-		return $crawler;
+		return $post->ID;
 	}
 
 	/**
 	 * @depends test_add_captcha_to_cf7_form
 	 */
-	public function test_show_cf7_error_if_wrong_captcha(Crawler $crawler)
+	public function test_show_cf7_error_if_wrong_captcha($post_id)
 	{
 		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
 			'input_error' => 'invalid captcha'
 		));
 
+		$crawler  = self::get_crawler_from_post(get_post($post_id));
 		$cf7_form = $crawler->filter('.wpcf7-form input[type="submit"]')->form();
 
-		$client = self::get_client_clone();
+		$client  = self::get_client_clone();
 		$crawler = $client->submit($cf7_form);
 
 		$this->assertCount(1, $crawler->filter('.wpcf7-not-valid-tip:contains(invalid captcha)'));
@@ -68,13 +72,15 @@ class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Framework_PHPUni
 	/**
 	 * @depends test_add_captcha_to_cf7_form
 	 */
-	public function test_submit_cf7_form_successfully_if_captcha_is_correct(Crawler $crawler)
+	public function test_submit_cf7_form_successfully_if_captcha_is_correct($post_id)
 	{
 		self::ensure_correct_captcha();
 
 		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
 			'input_error' => 'invalid captcha'
 		));
+
+		$crawler = self::get_crawler_from_post(get_post($post_id));
 
 		$cf7_form = $crawler->filter('.wpcf7-form input[type="submit"]')->form(array(
 			'your-name'  => 'test',
@@ -126,13 +132,5 @@ class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Framework_PHPUni
 		self::commit_transaction();
 
 		return $post;
-	}
-
-	protected static function ensure_correct_captcha()
-	{
-		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
-			'input_pubkey'   => '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-			'input_prikey'   => '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-		));
 	}
 }

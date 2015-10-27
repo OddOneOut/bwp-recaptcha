@@ -7,18 +7,17 @@ use \Symfony\Component\DomCrawler\Crawler;
  */
 class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Multisite_Functional_Test extends BWP_Framework_PHPUnit_WP_Multisite_Functional_TestCase
 {
-	public static function get_plugins()
+	protected static $wp_site_options = array(
+		'registration' => 'all'
+	);
+
+	public function get_plugin_under_test()
 	{
 		$root_dir = dirname(dirname(dirname(__FILE__)));
 
 		return array(
-			$root_dir . '/bwp-recaptcha.php' => 'bwp-recaptcha/bwp-recaptcha.php',
+			$root_dir . '/bwp-recaptcha.php' => 'bwp-recaptcha/bwp-recaptcha.php'
 		);
-	}
-
-	protected static function set_wp_default_options()
-	{
-		self::update_site_option('registration', 'all');
 	}
 
 	protected static function set_plugin_default_options()

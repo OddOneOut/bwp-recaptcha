@@ -2,7 +2,8 @@
 
 /**
  * @covers BWP_Recaptcha_Provider
- * @author Khang Minh <kminh@kdmlabs.com>
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
 class BWP_Recaptcha_Provider_Test extends PHPUnit_Framework_TestCase
 {
@@ -39,10 +40,6 @@ class BWP_Recaptcha_Provider_Test extends PHPUnit_Framework_TestCase
 
 		$this->plugin->options = $options;
 		$this->plugin->domain  = 'bwp-capt';
-	}
-
-	protected function tearDown()
-	{
 	}
 
 	/**

@@ -9,6 +9,10 @@ use \Mockery as Mockery;
  */
 class BWP_RECAPTCHA_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 {
+	protected $plugin_slug = 'bwp-recaptcha';
+
+	protected $bwp_version;
+
 	protected $provider;
 
 	protected function setUp()
@@ -18,17 +22,26 @@ class BWP_RECAPTCHA_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 		$this->provider = Mockery::mock('alias:BWP_Recaptcha_Provider');
 		$this->provider->shouldReceive('create')->andReturn(null)->byDefault();
 
-		$this->plugin = Mockery::mock('BWP_RECAPTCHA', array(
+		$this->bwp_version = Mockery::mock('alias:BWP_Version');
+
+		$this->plugin = Mockery::mock('BWP_RECAPTCHA')
+			->makePartial()
+			->shouldAllowMockingProtectedMethods();
+
+		$this->plugin
+			->shouldReceive('check_required_versions')
+			->andReturn(true)
+			->byDefault();
+
+		$this->plugin->__construct(
 			array(
 				'title'       => 'BWP recaptcha',
 				'version'     => '1.0.0',
-				'php_version' => '5.1.2',
-				'wp_version'  => '3.0',
+				'php_version' => '5.2.0',
+				'wp_version'  => '3.6',
 				'domain'      => 'bwp-capt'
-			), $this->bridge
-		))
-		->makePartial()
-		->shouldAllowMockingProtectedMethods();
+			), $this->bridge, $this->cache
+		);
 	}
 
 	protected function tearDown()
@@ -38,14 +51,14 @@ class BWP_RECAPTCHA_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 
 	/**
 	 * @covers BWP_RECAPTCHA::should_use_old_recaptcha
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 * @dataProvider get_should_use_old_recaptcha_cases
 	 */
 	public function test_should_use_old_recaptcha($use_v1, $php_satisfied, $will_use_v1)
 	{
-		$version = Mockery::mock('alias:BWP_Version');
-		$version->shouldReceive('get_current_php_version')->andReturn($php_satisfied)->byDefault();
+		$this->bwp_version
+			->shouldReceive('get_current_php_version')
+			->andReturn($php_satisfied)
+			->byDefault();
 
 		$this->plugin->options['use_recaptcha_v1'] = $use_v1;
 

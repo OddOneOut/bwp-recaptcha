@@ -5,27 +5,18 @@ use \Symfony\Component\DomCrawler\Crawler;
 /**
  * @author Khang Minh <contact@betterwp.net>
  */
-class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Framework_PHPUnit_WP_Functional_TestCase
+class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recaptcha_PHPUnit_WP_Functional_TestCase
 {
+	protected static $wp_options = array(
+		'users_can_register' => 1
+	);
+
 	public function tearDown()
 	{
 		self::reset_users();
 		self::reset_comments();
-	}
 
-	public static function get_plugins()
-	{
-		$root_dir = dirname(dirname(dirname(__FILE__)));
-
-		return array(
-			$root_dir . '/vendor/wp-plugin/akismet/akismet.php' => 'akismet/akismet.php',
-			$root_dir . '/bwp-recaptcha.php' => 'bwp-recaptcha/bwp-recaptcha.php'
-		);
-	}
-
-	protected static function set_wp_default_options()
-	{
-		self::update_option('users_can_register', 1);
+		parent::tearDown();
 	}
 
 	protected static function set_plugin_default_options()
@@ -370,25 +361,5 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Framew
 		$crawler = $client->submit($register_form);
 
 		$this->assertInstanceOf('WP_User', get_user_by('login', $user_login));
-	}
-
-	protected function create_post()
-	{
-		$post = $this->factory->post->create_and_get(array(
-			'post_title'     => 'Post with recaptcha added to comment form',
-			'comment_status' => 'open'
-		));
-
-		self::commit_transaction();
-
-		return $post;
-	}
-
-	protected static function ensure_correct_captcha()
-	{
-		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
-			'input_pubkey' => '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-			'input_prikey' => '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-		));
 	}
 }
