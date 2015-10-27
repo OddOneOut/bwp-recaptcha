@@ -13,6 +13,10 @@
 		</testsuite>
 		<testsuite name="functional">
 			<directory prefix="test-" suffix=".php">./tests/functional</directory>
+			<exclude>./tests/functional/multisite</exclude>
+		</testsuite>
+		<testsuite name="functional-multisite">
+			<directory prefix="test-" suffix=".php">./tests/functional/multisite</directory>
 		</testsuite>
 	</testsuites>
 
