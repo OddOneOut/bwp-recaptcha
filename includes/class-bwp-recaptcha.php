@@ -723,14 +723,10 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					),
 					'input'	=> array(
 						'input_pubkey'   => array(
-							'size' => 50,
-							'label' => '<br />' . __('A public key used to '
-								. 'request captchas from reCAPTCHA server.', $this->domain)
+							'size' => 50
 						),
 						'input_prikey'   => array(
-							'size' => 50,
-							'label' => '<br />' . __('A private (secret) key used to '
-								. 'authenticate user\'s response.', $this->domain)
+							'size' => 50
 						),
 						'input_error'    => array(
 							'size' => 90,
@@ -748,15 +744,40 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					'container' => array(
 						'cb8' => ''
 					),
-					'post' => array(
-						'select_akismet_react' => '<br />'
-							. __('It is best to put comments identified as spam in moderation queue '
-							. 'so you are able to review and instruct '
-							. 'Akismet to correctly handle similar comments in the future.</em>', $this->domain)
-					),
 					'inline_fields' => array(
 						'cb4' => array('select_cap' => 'select'),
 						'cb5' => array('input_approved' => 'input')
+					),
+					'helps' => array(
+						'input_pubkey' => array(
+							'type'    => 'focus',
+							'content' => __('A public key used to '
+								. 'request captchas from reCAPTCHA server.', $this->domain),
+							'placement' => 'right'
+						),
+						'input_prikey' => array(
+							'type'    => 'focus',
+							'content' => __('A private (secret) key used to '
+								. 'authenticate user\'s response.', $this->domain),
+							'placement' => 'right'
+						),
+						'select_akismet_react' => array(
+							'target'  => 'icon',
+							'content' => __('It is best to put comments identified as spam in moderation queue '
+								. 'so you are able to review and instruct '
+								. 'Akismet to correctly handle similar comments in the future.', $this->domain)
+						)
+					),
+					'attributes' => array(
+						'use_recaptcha_v1' => array(
+							'class'             => 'bwp-switch-select bwp-switch-on-load',
+							'data-target'       => 'enable_v1_https',
+						),
+						'select_response' => array(
+							'class'             => 'bwp-switch-select bwp-switch-on-load',
+							'data-target'       => 'enable_auto_fill_comment',
+							'data-toggle-value' => 'redirect'
+						)
 					),
 					'env' => array(
 						'use_global_keys' => 'multisite'
@@ -844,27 +865,41 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						'select_lang' => $this->lang
 					),
 					'checkbox' => array(
-						'enable_css' => array(
-							sprintf(__('This is for Custom Theme only. '
-								. 'Disable this and add your own CSS to style the Custom Theme. '
-								. 'More info <a href="%s#recaptcha-version-1" target="_blank">here</a>.', $this->domain),
-								BWP_CAPT_PLUGIN_URL) => ''
-						)
+						'enable_css' => array('' => '')
 					),
 					'input'	=> array(
 						'input_tab' => array(
-							'size' => 3,
-							'label' => '<br />' . __('This should be 4 if you '
-							. 'place the captcha before the textarea, '
-							. 'and 5 if you put it after. Set to 0 to disable.', $this->domain)
+							'size' => 3
 						)
 					),
 					'container' => array(
 					),
-					'post' => array(
-						'select_lang' => sprintf(__('If you would like to add custom translations, '
-							. 'please read <a href="%s" target="_blank">this dedicated tip</a>.', $this->domain),
-							'http://betterwp.net/wordpress-tips/how-to-add-custom-translations-to-bwp-recaptcha/')
+					'helps' => array(
+						'enable_css' => array(
+							'type'    => 'switch',
+							'target'  => 'icon',
+							'content' => sprintf(
+								__('Read <a href="%s#recaptcha-version-1" target="_blank">here</a> '
+								. 'to know how to use your own CSS for the Custom Theme.', $this->domain),
+								BWP_CAPT_PLUGIN_URL
+							)
+						),
+						'select_lang' => array(
+							'type'    => 'switch',
+							'target'  => 'icon',
+							'content' => sprintf(
+								__('If you want to add custom translations, '
+								. 'please read <a href="%s" target="_blank">this tip</a>.', $this->domain),
+								'http://betterwp.net/wordpress-tips/how-to-add-custom-translations-to-bwp-recaptcha/'
+							)
+						)
+					),
+					'attributes' => array(
+						'select_theme' => array(
+							'class'             => 'bwp-switch-select bwp-switch-on-load',
+							'data-target'       => 'enable_css',
+							'data-toggle-value' => 'custom'
+						)
 					)
 				) : array(
 					'items' => array(
@@ -912,13 +947,27 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					),
 					'input'	=> array(
 						'input_tab' => array(
-							'size' => 3,
-							'label' => '<br />' . __('This should be 4 if you '
-							. 'place the captcha before the textarea, '
-							. 'and 5 if you put it after. Set to 0 to disable.', $this->domain)
+							'size' => 3
 						)
 					)
 				);
+
+				$form = array_merge_recursive($form, array(
+					'helps' => array(
+						'input_tab' => array(
+							'type' => 'focus',
+							'content' => __('This should be 4 if you '
+								. 'place the captcha before the textarea, '
+								. 'and 5 if you put it after. Set to 0 to disable.', $this->domain)
+						)
+					),
+					'formats' => array(
+						'input_tab' => 'int'
+					),
+					'container' => array(
+						'h1' => $this->get_recaptcha()
+					)
+				));
 
 				$form_options = $this->should_use_old_recaptcha()
 					? array(
@@ -932,13 +981,6 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						'select_v2_lang',
 						'input_tab'
 					);
-
-				$form['formats'] = array(
-					'input_tab' => 'int'
-				);
-
-				// preview reCAPTCHA
-				add_action('bwp_option_action_before_submit_button', array($this, 'add_recaptcha'));
 			}
 		}
 
@@ -1084,6 +1126,23 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 	{
 		$errors = !is_wp_error($errors) ? new WP_Error() : $errors;
 		$this->provider->renderCaptcha($errors, $formId);
+	}
+
+	/**
+	 * Get rendered captcha HTML
+	 *
+	 * @return string
+	 * @since 2.0.2
+	 */
+	public function get_recaptcha()
+	{
+		ob_start();
+
+		$this->add_recaptcha();
+
+		$output = ob_get_clean();
+
+		return $output;
 	}
 
 	/**
