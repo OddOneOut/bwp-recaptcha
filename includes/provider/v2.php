@@ -5,6 +5,12 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GENERAL PUBLIC LICENSE VERSION 3.0 OR LATER
  */
 
+use \ReCaptcha\ReCaptcha;
+use \ReCaptcha\RequestMethod;
+use \ReCaptcha\RequestMethod\Post;
+use \ReCaptcha\RequestMethod\CurlPost;
+use \ReCaptcha\RequestMethod\SocketPost;
+
 /**
  * This is the provider used for recaptcha v2
  *
@@ -84,11 +90,9 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 			return array();
 		}
 
-		$userResponse = $userResponse ?: (!empty($_POST['g-recaptcha-response'])
-			? $_POST['g-recaptcha-response']
-			: null);
+		$userResponse = $userResponse ?: BWP_Framework_Util::get_request_var('g-recaptcha-response');
 
-		$recaptcha = new ReCaptcha\ReCaptcha($this->options['secret_key']);
+		$recaptcha = new ReCaptcha($this->options['secret_key'], $this->_createRequestMethod());
 		$response = $recaptcha->verify($userResponse, $this->getIpAddress());
 
 		if ($response->isSuccess()) {
@@ -135,6 +139,32 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 	private function _getWidgetId($formId)
 	{
 		return 'bwpRecaptchaWidget' . (array_search($formId, $this->instances, true) + 1);
+	}
+
+	/**
+	 * Create a RequestMethod to use with Recaptcha based on server setup
+	 *
+	 * @see Recaptcha::__construct()
+	 * @return RequestMethod
+	 *
+	 * @since 2.0.2
+	 * @link https://github.com/OddOneOut/bwp-recaptcha/issues/23
+	 */
+	private function _createRequestMethod()
+	{
+		// check for cURL first
+		if (extension_loaded('curl')) {
+			return new CurlPost();
+		}
+
+		// check for ``allow_url_fopen``, so that `file_get_contents` can be
+		// used to fetch URLs
+		if (ini_get('allow_url_fopen')) {
+			return new Post();
+		}
+
+		// last resort, use fsockopen
+		return new SocketPost();
 	}
 
 	private function _registerHooks()
