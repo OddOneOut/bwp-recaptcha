@@ -93,8 +93,11 @@ abstract class BWP_Recaptcha_Provider
 			return __('There is some problem with your reCAPTCHA API keys, '
 				. 'please double check them.', $this->domain);
 		} else {
-			return __('Unknown error. Please contact an administrator '
-				. 'for more info.', $this->domain);
+			return sprintf(
+				__('Unknown error (%s). Please contact an administrator '
+				. 'for more info.', $this->domain),
+				$error
+			);
 		}
 	}
 
@@ -125,7 +128,7 @@ abstract class BWP_Recaptcha_Provider
 			return $errorMaps[$errorCode];
 		}
 
-		return 'unknown';
+		return $errorCode;
 	}
 
 	protected function processErrors(array $errorCodes)

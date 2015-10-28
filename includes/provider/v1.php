@@ -33,7 +33,7 @@ class BWP_Recaptcha_Provider_V1 extends BWP_Recaptcha_Provider
 			if (!empty($_GET['cerror'])) {
 				$captchaError     = $this->getErrorMessageFromCode($_GET['cerror']);
 				$captchaErrorCode = $_GET['cerror'];
-			} elseif (isset($errors) && is_wp_error($errors)) {
+			} elseif (isset($errors)) {
 				$captchaError = $errors->get_error_message('recaptcha-error');
 			}
 
