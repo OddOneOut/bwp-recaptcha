@@ -4,7 +4,7 @@ function _bwp_recaptcha_autoloader($class_name)
 {
 	$class_maps = include dirname(__FILE__) . '/vendor/composer/autoload_classmap.php';
 
-	if (stripos($class_name, 'BWP') === false) {
+	if (stripos($class_name, 'BWP') === false && $class_name !== 'ReCaptchaResponse') {
 		return;
 	}
 
