@@ -2,6 +2,8 @@
 
 /**
  * @author Khang Minh <contact@betterwp.net>
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
 class BWP_Recaptcha_PHP_Support_Functional_Test extends BWP_Framework_PHPUnit_WP_Legacy_Functional_TestCase
 {
@@ -32,13 +34,6 @@ class BWP_Recaptcha_PHP_Support_Functional_Test extends BWP_Framework_PHPUnit_WP
 			require_once $class_file;
 		}
 
-		// this is not actually a class so it needs checking separately
-		if (!function_exists('recaptcha_get_html')
-			|| !function_exists('recaptcha_check_answer')
-		) {
-			require_once $root_dir . '/includes/provider/recaptcha/recaptchalib.php';
-		}
-
 		$this->assertTrue(true);
 	}
 
@@ -56,5 +51,18 @@ class BWP_Recaptcha_PHP_Support_Functional_Test extends BWP_Framework_PHPUnit_WP
 		$this->bootstrap_plugin();
 
 		$this->assertTrue(true);
+	}
+
+	public function test_can_load_recaptcha_v1_library()
+	{
+		$root_dir = dirname(dirname(dirname(__FILE__)));
+
+		if (!function_exists('recaptcha_get_html')
+			|| !function_exists('recaptcha_check_answer')
+		) {
+			require_once $root_dir . '/includes/provider/recaptcha/recaptchalib.php';
+		}
+
+		$this->assertTrue(true, 'should be included correctly with ReCaptchaResponse class autoloaded');
 	}
 }
