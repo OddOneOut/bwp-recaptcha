@@ -117,11 +117,14 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 				. 'click on %s to go back.', $this->domain),
 			'input_approved'           => 1,
 			'input_tab'                => 0,
+			'input_error_cf7'          => $this->bridge->t('Incorrect or empty reCAPTCHA response, '
+				. 'please try again.', $this->domain),
 			'enable_comment'           => 'yes',
 			'enable_registration'      => '',
 			'enable_login'             => '',
 			'enable_akismet'           => '',
 			'enable_cf7'               => 'yes', // @since 2.0.0
+			'enable_cf7_spam'          => 'yes', // @since 2.0.2
 			'enable_auto_fill_comment' => '',
 			'enable_css'               => 'yes',
 			'enable_v1_https'          => '', // @since 2.0.0, force recaptcha v1 to use https
@@ -593,7 +596,9 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						'checkbox',
 						'select',
 						'heading',
-						'checkbox'
+						'checkbox',
+						'checkbox',
+						'input'
 					),
 					'item_labels' => array(
 						__('reCAPTCHA API Keys', $this->domain),
@@ -612,10 +617,12 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						__('Invalid captcha error message', $this->domain),
 						__('Invalid captcha error message', $this->domain),
 						__('Akismet Integration for comment form', $this->domain),
-						__('Integrate with Akismet?', $this->domain),
+						__('Integrate with Akismet', $this->domain),
 						__('If correct captcha response', $this->domain),
 						__('Contact Form 7 Integration', $this->domain),
-						__('Integrate with Contact Form 7?', $this->domain)
+						__('Integrate with Contact Form 7', $this->domain),
+						__('Treat invalid captcha as spam', $this->domain),
+						__('Invalid captcha error message', $this->domain)
 					),
 					'item_names' => array(
 						'h1',
@@ -637,7 +644,9 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						'enable_akismet',
 						'select_akismet_react',
 						'heading_cf7',
-						'enable_cf7'
+						'enable_cf7',
+						'enable_cf7_spam',
+						'input_error_cf7'
 					),
 					'heading' => array(
 						'h1' => '<em>' . sprintf(
@@ -722,7 +731,10 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							) => ''
 						),
 						'enable_cf7' => array(
-							__('With this you can use the <code>recaptcha</code> shortcode tag in your Contact Form 7 forms.', $this->domain) => ''
+							__('Add the <code>recaptcha</code> shortcode tag in your Contact Form 7 forms', $this->domain) => ''
+						),
+						'enable_cf7_spam' => array(
+							__('Treat invalid captcha response as spam instead of validation error', $this->domain) => ''
 						)
 					),
 					'input'	=> array(
@@ -742,7 +754,10 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						),
 						'input_approved' => array(
 							'size' => 3,
-							'label' => __('approved comment(s).', $this->domain)
+							'label' => __('approved comment(s)', $this->domain)
+						),
+						'input_error_cf7' => array(
+							'size' => 90
 						)
 					),
 					'container' => array(
@@ -770,6 +785,17 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							'content' => __('It is best to put comments identified as spam in moderation queue '
 								. 'so you are able to review and instruct '
 								. 'Akismet to correctly handle similar comments in the future.', $this->domain)
+							),
+						'enable_cf7_spam' => array(
+							'type'    => 'link',
+							'content' => 'http://contactform7.com/spam-filtering-with-akismet/'
+						),
+						'input_error_cf7' => array(
+							'target'  => 'icon',
+							'content' => __('This message is shown when '
+								. 'invalid captcha response is treated as '
+								. 'a standard validation error. '
+								. 'Leave blank to not use.', $this->domain)
 						)
 					),
 					'attributes' => array(
@@ -781,6 +807,11 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							'class'             => 'bwp-switch-select bwp-switch-on-load',
 							'data-target'       => 'enable_auto_fill_comment',
 							'data-toggle-value' => 'redirect'
+						),
+						'enable_cf7_spam' => array(
+							'class'                => 'bwp-switch-select bwp-switch-on-load',
+							'data-target'          => 'input_error_cf7',
+							'data-checkbox-invert' => '1'
 						)
 					),
 					'env' => array(
@@ -793,9 +824,10 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						'use_recaptcha_v1' => '50302'
 					),
 					'formats' => array(
-						'input_approved' => 'int',
-						'input_error'    => 'html',
-						'input_back'     => 'html'
+						'input_approved'  => 'int',
+						'input_error'     => 'html',
+						'input_back'      => 'html',
+						'input_error_cf7' => 'html'
 					)
 				);
 
@@ -821,7 +853,9 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					'select_response',
 					'enable_akismet',
 					'select_akismet_react',
-					'enable_cf7'
+					'enable_cf7',
+					'enable_cf7_spam',
+					'input_error_cf7'
 				);
 
 				// show appropriate fields based on multi-site setting

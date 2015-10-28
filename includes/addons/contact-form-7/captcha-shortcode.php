@@ -78,15 +78,25 @@ class BWP_Recaptcha_CF7_Shortcode
 			add_action('admin_init', array(__CLASS__, 'registerCf7Tag'), 45);
 		}
 
-		// front-end hooks
+		// register the ``recaptcha`` shortcode tag, this is done on ``init``
+		// action. Contact form 7 registers the same shortcode tag before
+		// ``init`` but this will override that default shortcode tag.
+		// @see wpcf7_recaptcha_add_shortcode_recaptcha()
 		add_action('wpcf7_init', array(__CLASS__, 'registerCf7Shortcode'));
 
-		// validation for all types of shortcodes, `bwp*` shortcodes are kept
-		// for BC only, and should not be used anymore
-		add_filter('wpcf7_validate_bwp-recaptcha', array(__CLASS__, 'validateCaptcha'), 10, 2);
-		add_filter('wpcf7_validate_bwp_recaptcha', array(__CLASS__, 'validateCaptcha'), 10, 2);
-		add_filter('wpcf7_validate_bwprecaptcha', array(__CLASS__, 'validateCaptcha'), 10, 2);
-		add_filter('wpcf7_validate_recaptcha', array(__CLASS__, 'validateCaptcha'), 10, 2);
+		if (self::$_options['enable_cf7_spam'] == 'yes') {
+			// register this at priority 9 so it is done before contact form 7
+			// checks the message with Akismet
+			// @see wpcf7_akismet()
+			add_filter('wpcf7_spam', array(__CLASS__, 'validateCaptchaAsSpam'), 9);
+		} else {
+			// validate shortcodes as fields, `bwp*` shortcodes are kept for BC
+			// only, and should not be used anymore
+			add_filter('wpcf7_validate_bwp-recaptcha', array(__CLASS__, 'validateCaptcha'), 10, 2);
+			add_filter('wpcf7_validate_bwp_recaptcha', array(__CLASS__, 'validateCaptcha'), 10, 2);
+			add_filter('wpcf7_validate_bwprecaptcha', array(__CLASS__, 'validateCaptcha'), 10, 2);
+			add_filter('wpcf7_validate_recaptcha', array(__CLASS__, 'validateCaptcha'), 10, 2);
+		}
 
 		// need to refresh captcha when the form is submitted via ajax
 		add_filter('wpcf7_ajax_json_echo', array(__CLASS__, 'refreshCaptcha'));
@@ -251,14 +261,13 @@ class BWP_Recaptcha_CF7_Shortcode
 
 		// some CF7-specific codes
 		$tag = new WPCF7_Shortcode($tag);
-		$name = $tag->name;
+
+		// @since 2.0.2 name is only required when users want to display an
+		// error regarding an invalid captcha response
+		$name = $tag->name ? $tag->name : '';
 
 		// if current user can bypass the captcha, no need to render anything
 		if ($rc->user_can_bypass()) {
-			return '';
-		}
-
-		if (empty($name)) {
 			return '';
 		}
 
@@ -274,12 +283,15 @@ class BWP_Recaptcha_CF7_Shortcode
 		ob_end_clean();
 
 		// add a dummy input so that CF7's JS script can later display the
-		// error message (for ajax submit only)
-		$cf7Input = sprintf(
-			'<span class="wpcf7-form-control-wrap %1$s"><input type="hidden" '
-			. 'name="%1$s-dummy" /></span>',
-			esc_attr($tag->name)
-		);
+		// error message (for ajax submit and when the field has a name only)
+		$cf7Input = '';
+		if (!empty($name)) {
+			$cf7Input = sprintf(
+				'<span class="wpcf7-form-control-wrap %1$s"><input type="hidden" '
+				. 'name="%1$s-dummy" /></span>',
+				esc_attr($name)
+			);
+		}
 
 		return $rcOutput . $cf7Input . $error;
 	}
@@ -297,8 +309,8 @@ class BWP_Recaptcha_CF7_Shortcode
 	 */
 	public static function validateCaptcha($result, $tag)
 	{
-		$rc          = self::$_plugin;
-		$provider    = self::$_captchaProvider;
+		$rc       = self::$_plugin;
+		$provider = self::$_captchaProvider;
 
 		// some CF7-specific codes
 		$tag = new WPCF7_Shortcode($tag);
@@ -312,7 +324,11 @@ class BWP_Recaptcha_CF7_Shortcode
 
 		// invalid captcha
 		if ($errors = $provider->verify()) {
-			$errorMessage = $provider->getErrorMessage(current($errors));
+			$errorCode = current($errors);
+			$errorCode = $errorCode == 'invalid-response'
+				? 'invalid-response-cf7' : $errorCode;
+
+			$errorMessage = $provider->getErrorMessage($errorCode);
 
 			// invalid captcha response, show an error message
 			if (version_compare(WPCF7_VERSION, '4.1', '>=')) {
@@ -325,6 +341,53 @@ class BWP_Recaptcha_CF7_Shortcode
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Validate captcha returned by the Contact Form, and return spam status
+	 *
+	 * @access public
+	 * @uses WPCF7_Shortcode class
+	 *
+	 * @param bool $spam
+	 * @return bool
+	 *
+	 * @since 2.0.2
+	 */
+	public static function validateCaptchaAsSpam($spam)
+	{
+		if ($spam) {
+			return $spam;
+		}
+
+		$rc       = self::$_plugin;
+		$provider = self::$_captchaProvider;
+
+		// if current user can bypass the captcha, no need to validate
+		if ($rc->user_can_bypass()) {
+			return $spam;
+		}
+
+		if (!function_exists('wpcf7_scan_shortcode')) {
+			return $spam;
+		}
+
+		// no captcha field, no validation is needed
+		if (! $fields = wpcf7_scan_shortcode(array('type' => array(
+			'recaptcha',
+			'bwprecaptcha',
+			'bwp-recaptcha',
+			'bwp_recaptcha'
+		)))) {
+			return $spam;
+		};
+
+		// invalid captcha
+		if ($errors = $provider->verify()) {
+			return true;
+		}
+
+		return $spam;
 	}
 
 	/**

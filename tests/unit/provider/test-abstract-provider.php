@@ -27,6 +27,7 @@ class BWP_Recaptcha_Provider_Test extends PHPUnit_Framework_TestCase
 			'select_lang'              => '',
 			'input_tab'                => '',
 			'input_error'              => '',
+			'input_error_cf7'          => '',
 			'enable_v1_https'          => '',
 			'select_v2_lang'           => '',
 			'select_v2_theme'          => '',

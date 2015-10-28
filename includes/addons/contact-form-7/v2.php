@@ -46,12 +46,12 @@ class BWP_Recaptcha_CF7_V2 extends BWP_Recaptcha_CF7_Shortcode
 			$name    = $field['name'];
 			$options = $field['options'];
 
-			if (empty($name) || empty($_POST['bwp-recaptcha-widget-id'])) {
+			if (! $widgetId = BWP_Framework_Util::get_request_var('bwp-recaptcha-widget-id')) {
 				continue;
 			}
 
 			// right now we can only support one captcha instance per form
-			$codes[] = 'if (grecaptcha) { grecaptcha.reset(' . trim($_POST['bwp-recaptcha-widget-id']) . '); }';
+			$codes[] = 'if (grecaptcha) { grecaptcha.reset(' . $widgetId . '); }';
 		}
 
 		$items['onSubmit'][] = implode('', $codes);

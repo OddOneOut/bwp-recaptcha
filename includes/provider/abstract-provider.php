@@ -28,12 +28,13 @@ abstract class BWP_Recaptcha_Provider
 		$domain  = $plugin->domain;
 
 		$providerOptions = array(
-			'site_key'                 => $options['input_pubkey'],
-			'secret_key'               => $options['input_prikey'],
-			'theme'                    => $options['select_theme'],
-			'language'                 => $options['select_lang'],
-			'tabindex'                 => $options['input_tab'],
-			'invalid_response_message' => $options['input_error'],
+			'site_key'                     => $options['input_pubkey'],
+			'secret_key'                   => $options['input_prikey'],
+			'theme'                        => $options['select_theme'],
+			'language'                     => $options['select_lang'],
+			'tabindex'                     => $options['input_tab'],
+			'invalid_response_message'     => $options['input_error'],
+			'invalid_response_message_cf7' => $options['input_error_cf7'],
 		);
 
 		// if instructed to use recaptcha v1, or the current PHP version is
@@ -89,6 +90,8 @@ abstract class BWP_Recaptcha_Provider
 	{
 		if ('invalid-response' == $error) {
 			return $this->options['invalid_response_message'];
+		} elseif ('invalid-response-cf7' == $error) {
+			return $this->options['invalid_response_message_cf7'];
 		} elseif ('invalid-keys' == $error && current_user_can('manage_options')) {
 			return __('There is some problem with your reCAPTCHA API keys, '
 				. 'please double check them.', $this->domain);
