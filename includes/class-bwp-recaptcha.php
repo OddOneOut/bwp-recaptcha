@@ -474,7 +474,8 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 		if (('yes' == $this->options['enable_registration'] && $this->is_reg)
 			|| ('yes' == $this->options['enable_login'] && $this->is_login)
 		) {
-			add_action('login_head', array($this, 'print_inline_styles_for_login'), 11); // make sure this is late enough
+			// priority 11 so our inline styles are printed after other styles
+			add_action('login_head', array($this, 'print_inline_styles_for_login'), 11);
 		}
 	}
 
@@ -489,6 +490,9 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 	public function print_inline_styles_for_login()
 	{
 		$login_width = 'clean' == $this->options['select_theme'] ? 482 : 362;
+
+		// recaptcha v2 requires a different width
+		$login_width = ! $this->should_use_old_recaptcha() ? 350 : $login_width;
 ?>
 		<style type="text/css">
 			#login {
