@@ -714,7 +714,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							. 'force your visitors to enter a captcha every time.', $this->domain) => ''
 						),
 						'use_global_keys' => array(
-							__('uncheck to use different key pairs for this site.', $this->domain) => ''
+							__('Uncheck to use different key pairs for this site.', $this->domain) => ''
 						),
 						'use_recaptcha_v1' => array(
 							__('Use the oldschool recaptcha instead of the new <em>nocaptcha</em> recaptcha', $this->domain) => ''
@@ -745,12 +745,10 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							'size' => 50
 						),
 						'input_error'    => array(
-							'size' => 90,
-							/* 'label' => '<br />' . __('when redirect commenter back to the comment form.', $this->domain) */
+							'size' => 90
 						),
 						'input_back'     => array(
-							'size' => 90,
-							/* 'label' => '<br />' . __('when show the normal error page with no redirection.', $this->domain) */
+							'size' => 90
 						),
 						'input_approved' => array(
 							'size' => 3,
@@ -783,6 +781,15 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 								. 'so you are able to review and instruct '
 								. 'Akismet to correctly handle similar comments in the future.', $this->domain)
 							),
+						'input_error' => array(
+							'target'  => 'icon',
+							'content' => __('This is shown when the commenter is redirected '
+								. 'back to the comment form.', $this->domain)
+						),
+						'input_back' => array(
+							'target'  => 'icon',
+							'content' => __('This is shown on the standard WordPress error page.', $this->domain)
+						),
 						'enable_cf7_spam' => array(
 							'type'    => 'link',
 							'content' => 'http://contactform7.com/spam-filtering-with-akismet/'
