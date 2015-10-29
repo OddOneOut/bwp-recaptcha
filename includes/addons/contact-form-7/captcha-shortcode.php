@@ -68,6 +68,11 @@ class BWP_Recaptcha_CF7_Shortcode
 	 * Register necessary hooks so that admin can add recaptcha to forms and
 	 * validate captcha properly
 	 *
+	 * Since version 4.3 contact form 7 has its own implementation of recaptcha
+	 * and also uses ``recaptcha`` as the shortcode tag. We need to register
+	 * our hooks after contact form 7's hooks so they override the default
+	 * implementation.
+	 *
 	 * @return void
 	 * @access private
 	 */
@@ -75,6 +80,7 @@ class BWP_Recaptcha_CF7_Shortcode
 	{
 		// admin hooks
 		if (is_admin()) {
+			// contact form 7 registers its tag pane at priority 10
 			add_action('admin_init', array(__CLASS__, 'registerCf7Tag'), 45);
 		}
 

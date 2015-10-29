@@ -66,7 +66,7 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 
 		$output[] = implode('', array(
 			'<input type="hidden" name="bwp-recaptcha-widget-id" value="' . esc_attr($this->_getWidgetId($formId)) . '" />',
-			'<div id="' . $this->_getWidgetHtmlId($formId) . '" class="g-recaptcha" ',
+			'<div id="' . $this->_getWidgetHtmlId($formId) . '" class="bwp-recaptcha g-recaptcha" ',
 				/* 'data-sitekey="' . esc_attr($this->options['site_key']) . '" ', */
 				/* 'data-theme="' . esc_attr($this->options['theme']) . '" ', */
 				/* 'data-size="' . esc_attr($this->options['size']) . '" ', */

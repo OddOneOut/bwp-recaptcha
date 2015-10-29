@@ -37,7 +37,8 @@ class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Recaptcha_PHPUni
 			'enable_cf7_spam' => 'yes'
 		));
 
-		self::update_option(BWP_CAPT_OPTION_GENERAL, $default_options);
+		// by default cf7's built in recaptcha should be inactive
+		WPCF7::update_option('recaptcha', null);
 	}
 
 	public function test_add_captcha_to_cf7_form()
@@ -45,7 +46,7 @@ class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Recaptcha_PHPUni
 		$post = $this->create_post_with_cf7();
 
 		$crawler = self::get_crawler_from_post($post);
-		$captcha = $crawler->filter('div.g-recaptcha');
+		$captcha = $crawler->filter('div.bwp-recaptcha');
 
 		$this->assertCount(1, $captcha);
 
@@ -125,7 +126,7 @@ class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Recaptcha_PHPUni
 	public function test_can_add_multiple_captcha_to_cf7_form()
 	{
 		$crawler = self::get_crawler_from_post($this->create_post_with_cf7(3));
-		$captcha = $crawler->filter('div.g-recaptcha');
+		$captcha = $crawler->filter('div.bwp-recaptcha');
 
 		$html = self::get_client()->getResponse()->getContent();
 
@@ -133,6 +134,18 @@ class BWP_Recaptcha_CF7_Integration_Functional_Test extends BWP_Recaptcha_PHPUni
 		$this->assertContains('bwpRecaptchaWidget1 = grecaptcha.render', $html, 'should have correct js render code');
 		$this->assertContains('bwpRecaptchaWidget2 = grecaptcha.render', $html, 'should have correct js render code');
 		$this->assertContains('bwpRecaptchaWidget3 = grecaptcha.render', $html, 'should have correct js render code');
+	}
+
+	public function test_should_override_cf7_built_in_recaptcha_correctly()
+	{
+		// enable cf7's built in recaptcha
+		WPCF7::update_option('recaptcha', array(
+			'6LdYGQsTAAAAAFwLgIpzaIBQibeTQRG8qqk6zK-X' => '6LdYGQsTAAAAAD3sarjAo5x8b8IvTqp1eU-2MFwv'
+		));
+
+		$post_id = $this->test_add_captcha_to_cf7_form();
+
+		$this->test_submit_cf7_form_successfully_if_captcha_is_correct($post_id);
 	}
 
 	protected function create_post_with_cf7($captcha_count = 1)
