@@ -691,16 +691,16 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					),
 					'checkbox'	=> array(
 						'enable_comment' => array(
-							__('Comment form.', $this->domain) => ''
+							__('Comment form', $this->domain) => ''
 						),
 						'enable_registration' => array(
-							__('Registration form (user/site registration).', $this->domain) => ''
+							__('Registration form (user/site registration)', $this->domain) => ''
 						),
 						'enable_login' => array(
-							__('Login form.', $this->domain) => ''
+							__('Login form', $this->domain) => ''
 						),
 						'hide_registered' => array(
-							__('registered users <em>(even without any capabilities)</em>.', $this->domain) => ''
+							__('registered users <em>(even without any capabilities)</em>', $this->domain) => ''
 						),
 						'hide_cap' => array(
 							__('users who can', $this->domain) => ''
@@ -717,10 +717,10 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							__('uncheck to use different key pairs for this site.', $this->domain) => ''
 						),
 						'use_recaptcha_v1' => array(
-							__('check this if you prefer the oldschool recaptcha.', $this->domain) => ''
+							__('Use the oldschool recaptcha instead of the new <em>nocaptcha</em> recaptcha', $this->domain) => ''
 						),
 						'enable_v1_https' => array(
-							__('check this to make requests to reCAPTCHA server always secured.', $this->domain) => 'enable_v1_https'
+							__('Make requests to recaptcha server always secured', $this->domain) => 'enable_v1_https'
 						),
 						'enable_auto_fill_comment' => array(
 							__('After redirected, auto fill the comment field with previous comment.', $this->domain)
@@ -760,12 +760,9 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							'size' => 90
 						)
 					),
-					'container' => array(
-						'cb8' => ''
-					),
 					'inline_fields' => array(
-						'cb4' => array('select_cap' => 'select'),
-						'cb5' => array('input_approved' => 'input')
+						'hide_cap'      => array('select_cap' => 'select'),
+						'hide_approved' => array('input_approved' => 'input')
 					),
 					'helps' => array(
 						'input_pubkey' => array(
