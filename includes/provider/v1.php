@@ -41,9 +41,9 @@ class BWP_Recaptcha_Provider_V1 extends BWP_Recaptcha_Provider
 ?>
 		<style type="text/css">
 			/* this is to prevent the iframe from showing up in Chrome */
-			iframe[src="about:blank"] {
-				display: none;
-			}
+			iframe[src="about:blank"] { display: none; }
+			/* make sure the captcha uses auto table layout */
+			.recaptchatable { table-layout: auto; }
 		</style>
 <?php
 			if ($this->options['theme'] != 'custom') {
