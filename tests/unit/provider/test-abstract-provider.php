@@ -1,5 +1,10 @@
 <?php
 
+// workaround for PHPUnit 3.6 when running tests in separate processes
+if (!class_exists('BWP_Framework_PHPUnit_WP_Legacy_Functional_TestCase')) {
+	require_once dirname(dirname(dirname(__FILE__))) . '/bootstrap.php';
+}
+
 /**
  * @covers BWP_Recaptcha_Provider
  * @runTestsInSeparateProcesses
