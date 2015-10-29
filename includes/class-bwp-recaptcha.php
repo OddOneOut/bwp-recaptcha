@@ -457,10 +457,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 	{
 		if ($this->is_admin_page())
 		{
-			$this->enqueue_media_file('bwp-capt-admin',
-				BWP_CAPT_JS . '/admin.js',
-				array('bwp-op')
-			);
+			wp_enqueue_script('bwp-capt-admin', BWP_CAPT_JS . '/admin.js', array('bwp-op'), $this->plugin_ver, true);
 		}
 
 		if ('yes' == $this->options['enable_css'])
