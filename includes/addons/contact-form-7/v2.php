@@ -50,8 +50,10 @@ class BWP_Recaptcha_CF7_V2 extends BWP_Recaptcha_CF7_Shortcode
 				continue;
 			}
 
-			// right now we can only support one captcha instance per form
 			$codes[] = 'if (grecaptcha) { grecaptcha.reset(' . $widgetId . '); }';
+
+			// right now we can only support the first captcha instance in a form
+			break;
 		}
 
 		$items['onSubmit'][] = implode('', $codes);
