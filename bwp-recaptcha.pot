@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: BWP reCAPTCHA\n"
-"POT-Creation-Date: 2015-08-16 15:36+0700\n"
+"POT-Creation-Date: 2015-10-30 13:33+0700\n"
 "PO-Revision-Date: 2014-07-04 22:37+0700\n"
 "Last-Translator: Khang Minh <contact@betterwp.net>\n"
 "Language-Team: BWP <contact@betterwp.net>\n"
@@ -10,31 +10,32 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.2\n"
+"X-Generator: Poedit 1.8.5\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_;gettext;gettext_noop;_x\n"
-"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-KeywordsList: __;_e;_;gettext;gettext_noop;_x;_ex;t;te\n"
+"X-Poedit-SearchPath-0: includes\n"
+"X-Poedit-SearchPath-1: vendor/kminh/bwp-framework/src\n"
 
-#: includes/addons/contact-form-7/captcha-shortcode.php:150
-#: includes/addons/contact-form-7/captcha-shortcode.php:187
+#: includes/addons/contact-form-7/captcha-shortcode.php:159
+#: includes/addons/contact-form-7/captcha-shortcode.php:196
 msgid "Name"
 msgstr ""
 
-#: includes/addons/contact-form-7/captcha-shortcode.php:161
+#: includes/addons/contact-form-7/captcha-shortcode.php:170
 msgid "Insert Tag"
 msgstr ""
 
-#: includes/addons/contact-form-7/captcha-shortcode.php:196
+#: includes/addons/contact-form-7/captcha-shortcode.php:205
 msgid "Copy this code and paste it into the form left."
 msgstr ""
 
-#: includes/addons/contact-form-7/captcha-shortcode.php:211
+#: includes/addons/contact-form-7/captcha-shortcode.php:220
 msgid "This reCAPTCHA tag is provided by the BWP reCAPTCHA WordPress plugin."
 msgstr ""
 
-#: includes/addons/contact-form-7/captcha-shortcode.php:216
+#: includes/addons/contact-form-7/captcha-shortcode.php:225
 #, php-format
 msgid ""
 "Please refer to <a target=\"_blank\" href=\"%s\">BWP reCAPTCHA's "
@@ -42,124 +43,133 @@ msgid ""
 "this tag."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:112
+#: includes/class-bwp-recaptcha.php:113
 msgid ""
 "<strong>ERROR:</strong> Incorrect or empty reCAPTCHA response, please try "
 "again."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:114
+#: includes/class-bwp-recaptcha.php:115
 #, php-format
 msgid ""
 "Error: Incorrect or empty reCAPTCHA response, please click the back button "
 "on your browser's toolbar or click on %s to go back."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:145 includes/class-bwp-recaptcha.php:510
+#: includes/class-bwp-recaptcha.php:120
+msgid "Incorrect or empty reCAPTCHA response, please try again."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:149 includes/class-bwp-recaptcha.php:526
 msgid "General Options"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:148 includes/class-bwp-recaptcha.php:519
+#: includes/class-bwp-recaptcha.php:152 includes/class-bwp-recaptcha.php:535
 msgid "Theme Options"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:248
+#: includes/class-bwp-recaptcha.php:265
 msgid "Read Profile"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:249
+#: includes/class-bwp-recaptcha.php:266
 msgid "Manage Options"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:499
+#: includes/class-bwp-recaptcha.php:515
 msgid "Better WordPress reCAPTCHA"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:509
+#: includes/class-bwp-recaptcha.php:525
 msgid "BWP reCAPTCHA General Options"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:518
+#: includes/class-bwp-recaptcha.php:534
 msgid "BWP reCAPTCHA Theme Options"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:583
+#: includes/class-bwp-recaptcha.php:601
 msgid "reCAPTCHA API Keys"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:584
+#: includes/class-bwp-recaptcha.php:602
 msgid "Use main site's keys"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:585
+#: includes/class-bwp-recaptcha.php:603
 msgid "Site Key"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:586
+#: includes/class-bwp-recaptcha.php:604
 msgid "Secret Key"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:587
+#: includes/class-bwp-recaptcha.php:605
 msgid "Plugin Functionality"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:588
+#: includes/class-bwp-recaptcha.php:606
 msgid "Use reCAPTCHA version 1"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:589
+#: includes/class-bwp-recaptcha.php:607
 msgid "Force https"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:590
+#: includes/class-bwp-recaptcha.php:608
 msgid "Enable this plugin for"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:591
+#: includes/class-bwp-recaptcha.php:609
 msgid "Hide captcha for"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:592
+#: includes/class-bwp-recaptcha.php:610
 msgid "reCAPTCHA for comment form"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:593
+#: includes/class-bwp-recaptcha.php:611
 msgid "Captcha position"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:594
+#: includes/class-bwp-recaptcha.php:612
 msgid "If invalid captcha response"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:595
+#: includes/class-bwp-recaptcha.php:613
 msgid "Auto fill comment field"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:596 includes/class-bwp-recaptcha.php:597
+#: includes/class-bwp-recaptcha.php:614 includes/class-bwp-recaptcha.php:615
+#: includes/class-bwp-recaptcha.php:622
 msgid "Invalid captcha error message"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:598
+#: includes/class-bwp-recaptcha.php:616
 msgid "Akismet Integration for comment form"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:599
-msgid "Integrate with Akismet?"
+#: includes/class-bwp-recaptcha.php:617
+msgid "Integrate with Akismet"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:600
+#: includes/class-bwp-recaptcha.php:618
 msgid "If correct captcha response"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:601
+#: includes/class-bwp-recaptcha.php:619
 msgid "Contact Form 7 Integration"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:602
-msgid "Integrate with Contact Form 7?"
+#: includes/class-bwp-recaptcha.php:620
+msgid "Integrate with Contact Form 7"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:628
+#: includes/class-bwp-recaptcha.php:621
+msgid "Treat invalid captcha as spam"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:650
 #, php-format
 msgid ""
 "For this plugin to work, you will need a pair of API keys, which is "
@@ -167,258 +177,275 @@ msgid ""
 "created those two keys for the current domain, simply paste them below.</em>"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:633
+#: includes/class-bwp-recaptcha.php:655
 msgid "Control how this plugin works."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:634
+#: includes/class-bwp-recaptcha.php:656
 msgid "Settings that are applied to comment forms only."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:636
+#: includes/class-bwp-recaptcha.php:658
 msgid "Integrate the comment form with Akismet for better end-user experience."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:637 includes/class-bwp-recaptcha.php:704
+#: includes/class-bwp-recaptcha.php:659 includes/class-bwp-recaptcha.php:726
 #, php-format
 msgid ""
 "This feature requires an active <a target=\"_blank\" href=\"%s\">PHP "
 "session</a>."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:639
+#: includes/class-bwp-recaptcha.php:661
 msgid ""
 "Add reCAPTCHA to Contact Form 7. This only works if you have Contact Form 7 "
 "activated."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:655
+#: includes/class-bwp-recaptcha.php:677
 msgid "After comment field"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:656
+#: includes/class-bwp-recaptcha.php:678
 msgid "After form fields (name, email, website)"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:659
+#: includes/class-bwp-recaptcha.php:681
 msgid "Redirect commenter back to the comment form with error message"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:660
+#: includes/class-bwp-recaptcha.php:682
 msgid "Show an error page just like WordPress does"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:663
+#: includes/class-bwp-recaptcha.php:685
 msgid "Approve comment immediately"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:664
+#: includes/class-bwp-recaptcha.php:686
 msgid "Hold comment in moderation queue"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:669
-msgid "Comment form."
+#: includes/class-bwp-recaptcha.php:691
+msgid "Comment form"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:672
-msgid "Registration form (user/site registration)."
+#: includes/class-bwp-recaptcha.php:694
+msgid "Registration form (user/site registration)"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:675
-msgid "Login form."
+#: includes/class-bwp-recaptcha.php:697
+msgid "Login form"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:678
+#: includes/class-bwp-recaptcha.php:700
 msgid "registered users <em>(even without any capabilities)</em>."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:681
+#: includes/class-bwp-recaptcha.php:703
 msgid "users who can"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:684
+#: includes/class-bwp-recaptcha.php:706
 msgid "visitors who have at least"
-msgstr ""
-
-#: includes/class-bwp-recaptcha.php:687
-msgid ""
-"A captcha is only shown when Akismet identifies a comment as spam. Highly "
-"recommended if you do not want to force your visitors to enter a captcha "
-"every time."
-msgstr ""
-
-#: includes/class-bwp-recaptcha.php:692
-msgid "uncheck to use different key pairs for this site."
-msgstr ""
-
-#: includes/class-bwp-recaptcha.php:695
-msgid "check this if you prefer the oldschool recaptcha."
-msgstr ""
-
-#: includes/class-bwp-recaptcha.php:698
-msgid "check this to make requests to reCAPTCHA server always secured."
-msgstr ""
-
-#: includes/class-bwp-recaptcha.php:701
-msgid "After redirected, auto fill the comment field with previous comment."
 msgstr ""
 
 #: includes/class-bwp-recaptcha.php:709
 msgid ""
-"With this you can use the <code>recaptcha</code> shortcode tag in your "
-"Contact Form 7 forms."
+"Show captcha only when Akismet identifies a comment as spam. Highly "
+"recommended if you do not want to force your visitors to enter a captcha "
+"every time."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:715
-msgid "A public key used to request captchas from reCAPTCHA server."
+#: includes/class-bwp-recaptcha.php:714
+msgid "Uncheck to use different key pairs for this site."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:717
+msgid ""
+"Use the oldschool recaptcha instead of the new <em>nocaptcha</em> recaptcha."
 msgstr ""
 
 #: includes/class-bwp-recaptcha.php:720
-msgid "A private (secret) key used to authenticate user's response."
+msgid "Make requests to recaptcha server always secured"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:733
+#: includes/class-bwp-recaptcha.php:723
+msgid "After redirected, auto fill the comment field with previous comment."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:731
+msgid ""
+"Add the <code>recaptcha</code> shortcode tag to your Contact Form 7 forms."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:734
+msgid "Treat invalid captcha response as spam instead of validation error"
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:752
 msgid "approved comment(s)."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:741
+#: includes/class-bwp-recaptcha.php:765
+msgid "A public key used to request captchas from reCAPTCHA server."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:771
+msgid "A private (secret) key used to authenticate user's response."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:777
 msgid ""
 "It is best to put comments identified as spam in moderation queue so you are "
 "able to review and instruct Akismet to correctly handle similar comments in "
-"the future.</em>"
+"the future."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:804 includes/class-bwp-recaptcha.php:863
+#: includes/class-bwp-recaptcha.php:783
+msgid ""
+"This is shown when the commenter is redirected back to the comment form."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:788
+msgid "This is shown on the standard WordPress error page."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:796
+msgid ""
+"This message is shown when invalid captcha response is treated as a standard "
+"validation error. Leave blank to not use."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:879 includes/class-bwp-recaptcha.php:952
 msgid "reCAPTCHA theme"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:805
+#: includes/class-bwp-recaptcha.php:880
 msgid "Use default CSS"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:806
+#: includes/class-bwp-recaptcha.php:881
 msgid "Language for built-in themes"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:807 includes/class-bwp-recaptcha.php:866
+#: includes/class-bwp-recaptcha.php:882 includes/class-bwp-recaptcha.php:955
 msgid "Tabindex for captcha input field"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:808 includes/class-bwp-recaptcha.php:867
+#: includes/class-bwp-recaptcha.php:883 includes/class-bwp-recaptcha.php:956
 msgid "Preview your reCAPTCHA"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:818 includes/class-bwp-recaptcha.php:877
+#: includes/class-bwp-recaptcha.php:893 includes/class-bwp-recaptcha.php:966
 msgid ""
 "<em>Below you will see how your reCAPTCHA will look. Note that this might "
 "differ on your actual pages.<br /></em>"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:823
+#: includes/class-bwp-recaptcha.php:898
 msgid "Default Theme (Red)"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:824
+#: includes/class-bwp-recaptcha.php:899
 msgid "White Theme"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:825
+#: includes/class-bwp-recaptcha.php:900
 msgid "Black Theme"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:826
+#: includes/class-bwp-recaptcha.php:901
 msgid "Clean Theme"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:827
+#: includes/class-bwp-recaptcha.php:902
 msgid "Custom Theme (use CSS)"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:833
+#: includes/class-bwp-recaptcha.php:921
 #, php-format
 msgid ""
-"This is for Custom Theme only. Disable this and add your own CSS to style "
-"the Custom Theme. More info <a href=\"%s#customization\" target=\"_blank"
-"\">here</a>."
+"Read <a href=\"%s#recaptcha-version-1\" target=\"_blank\">here</a> to know "
+"how to use your own CSS for the Custom Theme."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:842 includes/class-bwp-recaptcha.php:901
-msgid ""
-"This should be 4 if you place the captcha before the textarea, and 5 if you "
-"put it after. Set to 0 to disable."
-msgstr ""
-
-#: includes/class-bwp-recaptcha.php:850
+#: includes/class-bwp-recaptcha.php:930
 #, php-format
 msgid ""
-"If you would like to add custom translations, please read <a href=\"%s\" "
-"target=\"_blank\">this dedicated tip</a>."
+"If you want to add custom translations, please read <a href=\"%s\" target="
+"\"_blank\">this tip</a>."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:864
+#: includes/class-bwp-recaptcha.php:953
 msgid "reCAPTCHA size"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:865
+#: includes/class-bwp-recaptcha.php:954
 msgid "Language"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:882
+#: includes/class-bwp-recaptcha.php:971
 msgid "Light"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:883
+#: includes/class-bwp-recaptcha.php:972
 msgid "Dark"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:886
+#: includes/class-bwp-recaptcha.php:975
 msgid "Normal"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:887
+#: includes/class-bwp-recaptcha.php:976
 msgid "Compact"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:890
+#: includes/class-bwp-recaptcha.php:979
 msgid "Auto-detected"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:941
+#: includes/class-bwp-recaptcha.php:990
+msgid "Set to 0 to disable."
+msgstr ""
+
+#: includes/class-bwp-recaptcha.php:1030
 msgid "Warning"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:942
+#: includes/class-bwp-recaptcha.php:1031
 #, php-format
 msgid ""
 "API key(s) missing. Please get an API key from <a href=\"%1$s\">%1$s</a> "
 "(free!)"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:953
+#: includes/class-bwp-recaptcha.php:1042
 msgid "Notice"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:954
+#: includes/class-bwp-recaptcha.php:1043
 msgid ""
 "You are enabling Akismet integration but Akismet is not currently active. "
 "Please activate Akismet for the integration to work."
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:1085
+#: includes/class-bwp-recaptcha.php:1191
 msgid "Your comment was identified as spam, please complete the CAPTCHA below:"
 msgstr ""
 
-#: includes/class-bwp-recaptcha.php:1263
+#: includes/class-bwp-recaptcha.php:1369
 msgid "this link"
 msgstr ""
 
-#: includes/provider/abstract-provider.php:91
+#: includes/provider/abstract-provider.php:96
 msgid ""
 "There is some problem with your reCAPTCHA API keys, please double check them."
 msgstr ""
 
-#: includes/provider/abstract-provider.php:94
-msgid "Unknown error. Please contact an administrator for more info."
+#: includes/provider/abstract-provider.php:100
+#, php-format
+msgid "Unknown error (%s). Please contact an administrator for more info."
 msgstr ""
 
 #: includes/provider/v1.php:90
@@ -450,90 +477,98 @@ msgstr ""
 msgid "Type what you hear"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/bwp-option-page/includes/class-bwp-option-page-v2.php:94
-msgid "Plugin Configurations"
-msgstr ""
-
-#: vendor/kminh/bwp-framework/src/bwp-option-page/includes/class-bwp-option-page-v2.php:625
-msgid "Save Changes"
-msgstr ""
-
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:285
-msgid "Development Log"
-msgstr ""
-
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:285
-msgid "Frequently Asked Questions"
-msgstr ""
-
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:285
-msgid "FAQ"
-msgstr ""
-
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:285
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:367
 msgid "Got a problem? Send me a feedback!"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:285
-msgid "Contact"
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:367
+msgid "Support"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:292
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:369
+msgid "Rate this plugin 5 stars!"
+msgstr ""
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:369
+msgid "Reviews"
+msgstr ""
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:371
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:371
+msgid "FAQ"
+msgstr ""
+
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:378
 msgid ""
 "You can buy me some special coffees if you appreciate my work, thank you!"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:306
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:392
 #, php-format
 msgid "Donate to %s"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:308
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:394
 msgid "One cup $5.00"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:309
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:395
 msgid "Two cups $10.00"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:310
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:396
 msgid "Five cups! $25.00"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:311
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:397
 msgid "One LL-cup!!! $50.00"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:312
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:398
 msgid "... or any amount!"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:327
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:413
 msgid "Latest updates from BetterWP.net!"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:328
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:414
 msgid "Follow me on Twitter!"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:338
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:424
 msgid "This Plugin is Proudly Sponsored By"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:358
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:444
 #, php-format
 msgid "You are using version %s!"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:646
+#: vendor/kminh/bwp-framework/src/class-bwp-framework-v3.php:1145
 msgid "Settings"
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-framework-v2.php:679
+#: vendor/kminh/bwp-framework/src/class-bwp-option-page-v3.php:93
+msgid "Plugin Configurations"
+msgstr ""
+
+#: vendor/kminh/bwp-framework/src/class-bwp-option-page-v3.php:312
+msgid "Save Changes"
+msgstr ""
+
+#: vendor/kminh/bwp-framework/src/class-bwp-option-page-v3.php:444
 msgid "All options have been saved."
 msgstr ""
 
-#: vendor/kminh/bwp-framework/src/class-bwp-version.php:25
+#: vendor/kminh/bwp-framework/src/class-bwp-option-page-v3.php:797
+msgid "View more info in a separate tab"
+msgstr ""
+
+#: vendor/kminh/bwp-framework/src/class-bwp-version.php:32
 #, php-format
 msgid ""
 "%s requires WordPress <strong>%s</strong> or higher and PHP <strong>%s</"
