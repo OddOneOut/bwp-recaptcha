@@ -697,7 +697,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							__('Login form', $this->domain) => ''
 						),
 						'hide_registered' => array(
-							__('registered users <em>(even without any capabilities)</em>', $this->domain) => ''
+							__('registered users <em>(even without any capabilities)</em>.', $this->domain) => ''
 						),
 						'hide_cap' => array(
 							__('users who can', $this->domain) => ''
@@ -706,7 +706,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							__('visitors who have at least', $this->domain) => ''
 						),
 						'enable_akismet' => array(
-							__('A captcha is only shown when Akismet identifies a comment as spam. '
+							__('Show captcha only when Akismet identifies a comment as spam. '
 							. 'Highly recommended if you do not want to '
 							. 'force your visitors to enter a captcha every time.', $this->domain) => ''
 						),
@@ -714,7 +714,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							__('Uncheck to use different key pairs for this site.', $this->domain) => ''
 						),
 						'use_recaptcha_v1' => array(
-							__('Use the oldschool recaptcha instead of the new <em>nocaptcha</em> recaptcha', $this->domain) => ''
+							__('Use the oldschool recaptcha instead of the new <em>nocaptcha</em> recaptcha.', $this->domain) => ''
 						),
 						'enable_v1_https' => array(
 							__('Make requests to recaptcha server always secured', $this->domain) => 'enable_v1_https'
@@ -728,7 +728,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							) => ''
 						),
 						'enable_cf7' => array(
-							__('Add the <code>recaptcha</code> shortcode tag in your Contact Form 7 forms', $this->domain) => ''
+							__('Add the <code>recaptcha</code> shortcode tag to your Contact Form 7 forms.', $this->domain) => ''
 						),
 						'enable_cf7_spam' => array(
 							__('Treat invalid captcha response as spam instead of validation error', $this->domain) => ''
@@ -749,7 +749,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						),
 						'input_approved' => array(
 							'size' => 3,
-							'label' => __('approved comment(s)', $this->domain)
+							'label' => __('approved comment(s).', $this->domain)
 						),
 						'input_error_cf7' => array(
 							'size' => 90
@@ -986,20 +986,13 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					),
 					'input'	=> array(
 						'input_tab' => array(
-							'size' => 3
+							'size'  => 3,
+							'label' => __('Set to 0 to disable.', $this->domain)
 						)
 					)
 				);
 
 				$form = array_merge_recursive($form, array(
-					'helps' => array(
-						'input_tab' => array(
-							'type' => 'focus',
-							'content' => __('This should be 4 if you '
-								. 'place the captcha before the textarea, '
-								. 'and 5 if you put it after. Set to 0 to disable.', $this->domain)
-						)
-					),
 					'formats' => array(
 						'input_tab' => 'int'
 					),
