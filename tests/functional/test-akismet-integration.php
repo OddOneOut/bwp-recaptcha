@@ -32,18 +32,20 @@ class BWP_Recaptcha_Akismet_Integration_Functional_Test extends BWP_Recaptcha_PH
 
 	public function test_should_not_add_captcha_when_comment_is_not_spam()
 	{
-		$crawler = self::get_crawler_from_post($this->create_post());
+		$post = $this->create_post();
+
+		$crawler = self::get_crawler_from_post($post);
 		$captcha = $crawler->filter('div.g-recaptcha');
 
 		$this->assertCount(0, $captcha);
 
-		return $crawler;
+		return $post->ID;
 	}
 
 	/**
 	 * @depends test_should_not_add_captcha_when_comment_is_not_spam
 	 */
-	public function test_add_captcha_when_comment_is_spam(Crawler $crawler)
+	public function test_add_captcha_when_comment_is_spam($post_id)
 	{
 		// @todo implement this test
 

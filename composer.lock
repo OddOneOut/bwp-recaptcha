@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "91694e297c8843597218443a3b1b62ae",
+    "hash": "cc3aeeb5cf4d92d7503c8176702fb61c",
     "packages": [
         {
             "name": "composer/installers",
@@ -152,7 +152,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kminh/bwp-framework",
-                "reference": "7e669bfa802435d494ce5bae5b741875251b9549"
+                "reference": "423d2c5386790200e259d70cf81b1829deb23ecb"
             },
             "require": {
                 "php": "^5.2.0"
@@ -191,7 +191,7 @@
             ],
             "description": "Base codes for BWP WordPress Plugins",
             "homepage": "http://betterwp.net",
-            "time": "2015-10-29 15:54:23"
+            "time": "2015-10-31 09:27:32"
         }
     ],
     "packages-dev": [
@@ -243,8 +243,6 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {
-        "php": "^5.1.2"
-    },
+    "platform": [],
     "platform-dev": []
 }
