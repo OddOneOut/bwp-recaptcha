@@ -21,7 +21,6 @@
         }
     ],
     "require": {
-        "php": "^5.1.2",
         "kminh/bwp-framework": "3.2.x-dev",
         "google/recaptcha": "^1.1",
         "composer/installers": "~1.0"
