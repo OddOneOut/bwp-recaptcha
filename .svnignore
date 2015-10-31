@@ -1,0 +1,11 @@
+tests/
+node_modules/
+bower_components/
+bin/
+.*
+phpunit*.*
+composer.*
+bower.json
+package.json
+Gruntfile.js
+README.md
