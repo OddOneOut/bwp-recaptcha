@@ -143,7 +143,8 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 			'select_request_method'    => 'auto', // @since 2.0.3
 			'hide_registered'          => '',
 			'hide_cap'                 => '',
-			'hide_approved'            => ''
+			'hide_approved'            => '',
+			'nag_only_recaptcha_v1'    => 'yes'
 		);
 
 		$this->add_option_key('BWP_CAPT_OPTION_GENERAL', 'bwp_capt_general',
@@ -1073,6 +1074,29 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 				. '<a href="%1$s">%1$s</a> (free!)', $this->domain),
 				'https://www.google.com/recaptcha/admin/create')
 			);
+		}
+
+		// @since 2.0.3 if the current PHP version is smaller than 5.3.2, and we
+		// need to nag user that only recaptcha v1 can be used
+		if (! BWP_Version::get_current_php_version('5.3.2')
+			&& $this->options['nag_only_recaptcha_v1'] == 'yes'
+		) {
+			$this->add_notice(
+				'<strong>' . __('Notice') . ':</strong> '
+				. sprintf(
+					__('In order to use the nocaptcha recaptcha (recaptcha v2), '
+					. 'you need at least <strong>PHP 5.3.2</strong> '
+					. '(your current PHP version is <strong>%s</strong>), '
+					. 'so only recaptcha v1 can be used. '
+					. 'It is recommended to contact your host to '
+					. 'know how to update your current version of PHP.', $this->domain),
+					BWP_Version::get_current_php_version()
+				)
+			);
+
+			$this->update_some_options(BWP_CAPT_OPTION_GENERAL, array(
+				'nag_only_recaptcha_v1' => ''
+			));
 		}
 
 		if ('yes' == $this->options['enable_akismet'] && !defined('AKISMET_VERSION'))
