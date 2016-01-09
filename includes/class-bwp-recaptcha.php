@@ -933,7 +933,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					),
 					'heading' => array(
 						'h1' => __('<em>Below you will see how your reCAPTCHA will look. '
-							. 'Note that this might differ on your actual pages.<br /></em>', $this->domain)
+							. 'Note that this might differ on your actual pages.</em>', $this->domain)
 					),
 					'select' => array(
 						'select_theme' => array(
@@ -1006,7 +1006,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					),
 					'heading' => array(
 						'h1' => __('<em>Below you will see how your reCAPTCHA will look. '
-							. 'Note that this might differ on your actual pages.<br /></em>', $this->domain)
+							. 'Note that this might differ on your actual pages.</em>', $this->domain)
 					),
 					'select' => array(
 						'select_v2_theme' => array(
