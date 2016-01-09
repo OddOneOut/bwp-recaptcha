@@ -1,5 +1,5 @@
 {
-    "name": "kdm/bwp-recaptcha",
+    "name": "bwp/recaptcha",
     "type": "wordpress-plugin",
     "description": "A WordPress plugin that utilizes the popular anti-spam library, reCAPTCHA, to help your blog stay clear of spams.",
     "homepage": "http://betterwp.net",
@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "kminh/bwp-framework": "3.2.x-dev",
+        "kminh/bwp-framework": "3.4.*@dev",
         "google/recaptcha": "^1.1",
         "composer/installers": "~1.0"
     },
