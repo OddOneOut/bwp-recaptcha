@@ -4,21 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cc3aeeb5cf4d92d7503c8176702fb61c",
+    "hash": "abe193c6035cce3595f0a47b4f201f01",
+    "content-hash": "875235a43032722cff3629cfb629f043",
     "packages": [
         {
             "name": "composer/installers",
-            "version": "v1.0.21",
+            "version": "v1.0.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "d64e23fce42a4063d63262b19b8e7c0f3b5e4c45"
+                "reference": "bd9b14f094c89c8b5804a4e41edeb7853bb85046"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/d64e23fce42a4063d63262b19b8e7c0f3b5e4c45",
-                "reference": "d64e23fce42a4063d63262b19b8e7c0f3b5e4c45",
+                "url": "https://api.github.com/repos/composer/installers/zipball/bd9b14f094c89c8b5804a4e41edeb7853bb85046",
+                "reference": "bd9b14f094c89c8b5804a4e41edeb7853bb85046",
                 "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "1.0.0"
             },
             "replace": {
                 "roundcube/plugin-installer": "*",
@@ -28,9 +32,9 @@
                 "composer/composer": "1.0.*@dev",
                 "phpunit/phpunit": "4.1.*"
             },
-            "type": "composer-installer",
+            "type": "composer-plugin",
             "extra": {
-                "class": "Composer\\Installers\\Installer",
+                "class": "Composer\\Installers\\Plugin",
                 "branch-alias": {
                     "dev-master": "1.0-dev"
                 }
@@ -99,7 +103,7 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2015-02-18 17:17:01"
+            "time": "2015-10-29 23:28:48"
         },
         {
             "name": "google/recaptcha",
@@ -152,7 +156,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kminh/bwp-framework",
-                "reference": "423d2c5386790200e259d70cf81b1829deb23ecb"
+                "reference": "0b0543cba111037cd8c6b15c9b167bbc34743199"
             },
             "require": {
                 "php": "^5.2.0"
@@ -167,12 +171,13 @@
                 "phpunit/phpunit": "^4.8"
             },
             "bin": [
-                "bin/install-wp-tests.sh"
+                "bin/install-wp-tests.sh",
+                "bin/build-translations"
             ],
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.2.x-dev"
+                    "dev-master": "3.4.x-dev"
                 }
             },
             "autoload": {
@@ -191,21 +196,21 @@
             ],
             "description": "Base codes for BWP WordPress Plugins",
             "homepage": "http://betterwp.net",
-            "time": "2015-10-31 09:27:32"
+            "time": "2016-01-13 23:58:08"
         }
     ],
     "packages-dev": [
         {
             "name": "wpackagist-plugin/akismet",
-            "version": "3.1.5",
+            "version": "3.1.7",
             "source": {
                 "type": "svn",
                 "url": "http://plugins.svn.wordpress.org/akismet/",
-                "reference": "tags/3.1.5"
+                "reference": "tags/3.1.7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/akismet.3.1.5.zip",
+                "url": "https://downloads.wordpress.org/plugin/akismet.3.1.7.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -217,15 +222,15 @@
         },
         {
             "name": "wpackagist-plugin/contact-form-7",
-            "version": "4.3",
+            "version": "4.3.1",
             "source": {
                 "type": "svn",
                 "url": "http://plugins.svn.wordpress.org/contact-form-7/",
-                "reference": "tags/4.3"
+                "reference": "tags/4.3.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/contact-form-7.4.3.zip",
+                "url": "https://downloads.wordpress.org/plugin/contact-form-7.4.3.1.zip",
                 "reference": null,
                 "shasum": null
             },
