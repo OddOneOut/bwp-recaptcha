@@ -140,6 +140,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 			'select_v2_size'           => 'normal', // @since 2.0.0
 			'select_v2_jsapi_position' => 'on_demand', // @since 2.0.0 load on all pages or only when needed
 			'select_akismet_react'     => 'hold',
+			'select_request_method'    => 'auto', // @since 2.0.3
 			'hide_registered'          => '',
 			'hide_cap'                 => '',
 			'hide_approved'            => ''
@@ -560,6 +561,24 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 		endif;
 	}
 
+	private function _get_available_request_methods()
+	{
+		$methods = array(
+			__('Auto detected', $this->domain) => 'auto'
+		);
+
+		if (function_exists('fsockopen'))
+			$methods['Socket (fsockopen)'] = 'socket';
+
+		if (extension_loaded('curl'))
+			$methods['cURL'] = 'curl';
+
+		if (ini_get('allow_url_fopen'))
+			$methods['file_get_contents'] = 'fileio';
+
+		return $methods;
+	}
+
 	protected function build_option_page()
 	{
 		$page         = $this->get_current_admin_page();
@@ -574,25 +593,27 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 
 				$form = array(
 					'items' => array(
-						'heading',
+						'heading', // recaptcha api keys
 						'checkbox',
 						'input',
 						'input',
-						'heading',
+						'heading', // recaptcha setting
 						'checkbox',
 						'checkbox',
+						'select',
+						'heading', // main functionality
 						'section',
 						'section',
-						'heading',
+						'heading', // comment form
 						'select',
 						'select',
 						'checkbox',
 						'input',
 						'input',
-						'heading',
+						'heading', // akistmet integration
 						'checkbox',
 						'select',
-						'heading',
+						'heading', // contact form 7 integration
 						'checkbox',
 						'checkbox',
 						'input'
@@ -602,9 +623,11 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						__('Use main site\'s keys', $this->domain),
 						__('Site Key', $this->domain),
 						__('Secret Key', $this->domain),
-						__('Plugin Functionality', $this->domain),
+						__('reCAPTCHA Settings', $this->domain),
 						__('Use reCAPTCHA version 1', $this->domain),
 						__('Force https', $this->domain),
+						__('Request method', $this->domain),
+						__('Main Functionality', $this->domain),
 						__('Enable this plugin for', $this->domain),
 						__('Hide captcha for', $this->domain),
 						__('reCAPTCHA for comment form', $this->domain),
@@ -626,9 +649,11 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						'use_global_keys',
 						'input_pubkey',
 						'input_prikey',
-						'heading_func',
+						'heading_recaptcha',
 						'use_recaptcha_v1',
 						'enable_v1_https',
+						'select_request_method',
+						'heading_func',
 						'sec1',
 						'sec2',
 						'heading_comment',
@@ -652,7 +677,8 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							. 'Once you have created those two keys for the current domain, '
 							. 'simply paste them below.</em>', $this->domain),
 							'https://www.google.com/recaptcha/admin/create'),
-						'heading_func' => '<em>' . __('Control how this plugin works.', $this->domain) . '</em>',
+						'heading_recaptcha' => '',
+						'heading_func' => '',
 						'heading_comment' => '<em>' . __('Settings that are applied to '
 							. 'comment forms only.', $this->domain) . '</em>',
 						'h3' => '<em>' . __('Integrate the comment form with Akismet for better end-user experience.', $this->domain) . ' '
@@ -672,6 +698,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						array('checkbox', 'name' => 'hide_approved')
 					),
 					'select' => array(
+						'select_request_method' => $this->_get_available_request_methods(),
 						'select_cap' => $this->caps,
 						'select_position' => array(
 							__('After comment field', $this->domain) => 'after_comment_field',
@@ -717,7 +744,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							__('Use the oldschool recaptcha instead of the new <em>nocaptcha</em> recaptcha.', $this->domain) => ''
 						),
 						'enable_v1_https' => array(
-							__('Make requests to recaptcha server always secured', $this->domain) => 'enable_v1_https'
+							__('Make requests to recaptcha server always secured.', $this->domain) => 'enable_v1_https'
 						),
 						'enable_auto_fill_comment' => array(
 							__('After redirected, auto fill the comment field with previous comment.', $this->domain)
@@ -771,6 +798,19 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							'content' => __('A private (secret) key used to '
 								. 'authenticate user\'s response.', $this->domain),
 							'placement' => 'right'
+						),
+						'select_request_method' => array(
+							'target' => 'icon',
+							'content' => __('To verify a captcha response, '
+								. 'this plugin needs to send requests to the reCAPTCHA server, '
+								. 'using a specific request method. '
+								. '<br /><br />'
+								. 'By default, BWP reCAPTCHA use the first available request method, '
+								. 'be it Socket (<code>fsockopen</code>), cURL, or <code>file_get_contents</code>.', $this->domain)
+								. '<br /><br />'
+								. __('If you encounter error such as <code>Unknown error (invalid-json)</code>'
+								. 'when submitting a form, try selecting a specific request method here.', $this->domain),
+							'size' => 'small'
 						),
 						'select_akismet_react' => array(
 							'target'  => 'icon',
@@ -837,6 +877,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					'use_global_keys',
 					'use_recaptcha_v1',
 					'enable_v1_https',
+					'select_request_method',
 					'input_pubkey',
 					'input_prikey',
 					'input_error',

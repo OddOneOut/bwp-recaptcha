@@ -16,10 +16,13 @@ abstract class BWP_Recaptcha_Provider
 
 	protected $domain;
 
-	public function __construct(array $options, $domain)
+	protected $bridge;
+
+	public function __construct(array $options, $domain, BWP_WP_Bridge $bridge)
 	{
 		$this->options = $options;
 		$this->domain  = $domain;
+		$this->bridge  = $bridge;
 	}
 
 	public static function create(BWP_RECAPTCHA $plugin)
@@ -30,6 +33,7 @@ abstract class BWP_Recaptcha_Provider
 		$providerOptions = array(
 			'site_key'                     => $options['input_pubkey'],
 			'secret_key'                   => $options['input_prikey'],
+			'request_method'               => $options['select_request_method'],
 			'theme'                        => $options['select_theme'],
 			'language'                     => $options['select_lang'],
 			'tabindex'                     => $options['input_tab'],
@@ -44,7 +48,7 @@ abstract class BWP_Recaptcha_Provider
 				'use_ssl' => $options['enable_v1_https']
 			));
 
-			return new BWP_Recaptcha_Provider_V1($providerOptions, $domain);
+			return new BWP_Recaptcha_Provider_V1($providerOptions, $domain, $plugin->get_bridge());
 		} else {
 			$providerOptions = array_merge($providerOptions, array(
 				'language' => $options['select_v2_lang'],
@@ -53,7 +57,7 @@ abstract class BWP_Recaptcha_Provider
 				'position' => $options['select_v2_jsapi_position']
 			));
 
-			return new BWP_Recaptcha_Provider_V2($providerOptions, $domain);
+			return new BWP_Recaptcha_Provider_V2($providerOptions, $domain, $plugin->get_bridge());
 		}
 	}
 
