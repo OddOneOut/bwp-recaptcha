@@ -37,9 +37,9 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 	 */
 	protected $instances = array();
 
-	public function __construct(array $options, $domain)
+	public function __construct(array $options, $domain, BWP_WP_Bridge $bridge)
 	{
-		parent::__construct($options, $domain);
+		parent::__construct($options, $domain, $bridge);
 
 		$this->_registerHooks();
 	}
@@ -152,7 +152,29 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 	 */
 	private function _createRequestMethod()
 	{
-		// check for cURL first
+		// @since 2.0.3 if there's a specific request method set, use it
+		if ($this->options['request_method'] !== 'auto') {
+			switch ($this->options['request_method']) {
+				case 'socket':
+					return new SocketPost();
+					break;
+
+				case 'curl':
+					return new CurlPost();
+					break;
+
+				case 'fileio':
+					return new Post();
+					break;
+			}
+		}
+
+		// @since 2.0.3 we try fsockopen first
+		if (function_exists('fsockopen')) {
+			return new SocketPost();
+		}
+
+		// next check for cURL
 		if (extension_loaded('curl')) {
 			return new CurlPost();
 		}
@@ -162,9 +184,6 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 		if (ini_get('allow_url_fopen')) {
 			return new Post();
 		}
-
-		// last resort, use fsockopen
-		return new SocketPost();
 	}
 
 	private function _registerHooks()
@@ -172,13 +191,25 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 		$priority = 99999;
 
 		// regular pages
-		add_action('wp_footer', array($this, 'printRecaptchaJS'), $priority);
+		$this->bridge->add_action(
+			'wp_footer',
+			array($this, 'printRecaptchaJS'),
+			$priority
+		);
 
 		// login/register page
-		add_action('login_footer', array($this, 'printRecaptchaJS'), $priority);
+		$this->bridge->add_action(
+			'login_footer',
+			array($this, 'printRecaptchaJS'),
+			$priority
+		);
 
 		// admin theme preview page
-		add_action('admin_footer-bwp-recapt_page_bwp_capt_theme', array($this, 'printRecaptchaJS'), $priority);
+		$this->bridge->add_action(
+			'admin_footer-bwp-recapt_page_bwp_capt_theme',
+			array($this, 'printRecaptchaJS'),
+			$priority
+		);
 	}
 
 	private function _getUniqueFormId($formId)

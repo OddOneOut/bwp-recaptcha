@@ -12,6 +12,8 @@ if (!class_exists('BWP_Framework_PHPUnit_WP_Legacy_Functional_TestCase')) {
  */
 class BWP_Recaptcha_Provider_Test extends PHPUnit_Framework_TestCase
 {
+	protected $bridge;
+
 	protected $plugin;
 
 	protected function setUp()
@@ -34,11 +36,15 @@ class BWP_Recaptcha_Provider_Test extends PHPUnit_Framework_TestCase
 			'input_error'              => '',
 			'input_error_cf7'          => '',
 			'enable_v1_https'          => '',
+			'select_request_method'    => 'auto',
 			'select_v2_lang'           => '',
 			'select_v2_theme'          => '',
 			'select_v2_size'           => '',
 			'select_v2_jsapi_position' => ''
 		);
+
+		$this->bridge = $this->getMockBuilder('BWP_WP_Bridge')
+			->getMock();
 
 		$this->plugin = $this->getMockBuilder('BWP_RECAPTCHA')
 			->disableOriginalConstructor()
@@ -46,6 +52,8 @@ class BWP_Recaptcha_Provider_Test extends PHPUnit_Framework_TestCase
 
 		$this->plugin->options = $options;
 		$this->plugin->domain  = 'bwp-capt';
+
+		$this->plugin->method('get_bridge')->willReturn($this->bridge);
 	}
 
 	/**
