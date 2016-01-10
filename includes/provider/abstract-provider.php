@@ -39,22 +39,25 @@ abstract class BWP_Recaptcha_Provider
 			'tabindex'                     => $options['input_tab'],
 			'invalid_response_message'     => $options['input_error'],
 			'invalid_response_message_cf7' => $options['input_error_cf7'],
+			'use_custom_styles'            => $options['enable_custom_styles'],
 		);
 
 		// if instructed to use recaptcha v1, or the current PHP version is
 		// less than 5.3.2, we need to use v1 provider
 		if ($plugin->should_use_old_recaptcha()) {
 			$providerOptions = array_merge($providerOptions, array(
-				'use_ssl' => $options['enable_v1_https']
+				'use_ssl'       => $options['enable_v1_https'],
+				'custom_styles' => $options['input_v1_styles']
 			));
 
 			return new BWP_Recaptcha_Provider_V1($providerOptions, $domain, $plugin->get_bridge());
 		} else {
 			$providerOptions = array_merge($providerOptions, array(
-				'language' => $options['select_v2_lang'],
-				'theme'    => $options['select_v2_theme'],
-				'size'     => $options['select_v2_size'],
-				'position' => $options['select_v2_jsapi_position']
+				'language'      => $options['select_v2_lang'],
+				'theme'         => $options['select_v2_theme'],
+				'size'          => $options['select_v2_size'],
+				'position'      => $options['select_v2_jsapi_position'],
+				'custom_styles' => $options['input_v2_styles']
 			));
 
 			return new BWP_Recaptcha_Provider_V2($providerOptions, $domain, $plugin->get_bridge());

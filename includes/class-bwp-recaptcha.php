@@ -119,6 +119,8 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 			'input_tab'                => 0,
 			'input_error_cf7'          => $this->bridge->t('Incorrect or empty reCAPTCHA response, '
 				. 'please try again.', $this->domain),
+			'input_v1_styles'          => $this->get_default_v1_custom_styles(), // @since 2.0.3
+			'input_v2_styles'          => $this->get_default_v2_custom_styles(), // @since 2.0.3
 			'enable_comment'           => 'yes',
 			'enable_registration'      => '',
 			'enable_login'             => '',
@@ -128,6 +130,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 			'enable_auto_fill_comment' => '',
 			'enable_css'               => 'yes',
 			'enable_v1_https'          => '', // @since 2.0.0, force recaptcha v1 to use https
+			'enable_custom_styles'     => '', // @since 2.0.3
 			'use_recaptcha_v1'         => '', // @since 2.0.0 whether to use recaptcha v1
 			'use_global_keys'          => 'yes',
 			'select_lang'              => 'en',
@@ -157,6 +160,32 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 		$this->build_properties('BWP_CAPT', $options,
 			dirname(dirname(__FILE__)) . '/bwp-recaptcha.php',
 			'http://betterwp.net/wordpress-plugins/bwp-recaptcha/', false);
+	}
+
+	private function get_default_v1_custom_styles()
+	{
+		$styles = array(
+			'#recaptcha_widget_div {',
+			'    display: block;',
+			'    clear: both;',
+			'    margin-bottom: 1em;',
+			'}'
+		);
+
+		return implode("\n", $styles);
+	}
+
+	private function get_default_v2_custom_styles()
+	{
+		$styles = array(
+			'.g-recaptcha {',
+			'    display: block;',
+			'    clear: both;',
+			'    margin-bottom: 1em;',
+			'}'
+		);
+
+		return implode("\n", $styles);
 	}
 
 	/**
@@ -460,6 +489,13 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 		if ($this->is_admin_page())
 		{
 			wp_enqueue_script('bwp-capt-admin', BWP_CAPT_JS . '/admin.js', array('bwp-op'), $this->plugin_ver, true);
+
+			if ($this->is_admin_page(BWP_CAPT_OPTION_THEME))
+			{
+				wp_enqueue_style('bwp-codemirror');
+				wp_enqueue_script('bwp-codemirror-css');
+				wp_enqueue_script('bwp-op-codemirror');
+			}
 		}
 
 		if ('yes' == $this->options['enable_css'])
@@ -913,6 +949,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					'items' => array(
 						'select',
 						'checkbox',
+						'checkbox',
 						'select',
 						'input',
 						'heading'
@@ -920,6 +957,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					'item_labels' => array(
 						__('reCAPTCHA theme', $this->domain),
 						__('Use default CSS', $this->domain),
+						__('Enable custom CSS', $this->domain),
 						__('Language for built-in themes', $this->domain),
 						__('Tabindex for captcha input field', $this->domain),
 						__('Preview your reCAPTCHA', $this->domain)
@@ -927,6 +965,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					'item_names' => array(
 						'select_theme',
 						'enable_css',
+						'enable_custom_styles',
 						'select_lang',
 						'input_tab',
 						'h1'
@@ -946,12 +985,23 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						'select_lang' => $this->lang
 					),
 					'checkbox' => array(
-						'enable_css' => array('' => '')
+						'enable_css'           => array('' => ''),
+						'enable_custom_styles' => array(__('Add additional CSS rules '
+							. 'to all recaptcha instances. You can edit them below.', $this->domain) . '<br />' => '')
 					),
 					'input'	=> array(
 						'input_tab' => array(
 							'size' => 3
 						)
+					),
+					'textarea' => array(
+						'input_v1_styles' => array(
+							'cols' => 90,
+							'rows' => 10
+						)
+					),
+					'inline_fields' => array(
+						'enable_custom_styles' => array('input_v1_styles' => 'textarea')
 					),
 					'container' => array(
 					),
@@ -980,12 +1030,21 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 							'class'             => 'bwp-switch-select bwp-switch-on-load',
 							'data-target'       => 'enable_css',
 							'data-toggle-value' => 'custom'
+						),
+						'enable_custom_styles' => array(
+							'class'       => 'bwp-code-editor-cb',
+							'data-target' => 'input_v1_styles'
+						),
+						'input_v1_styles' => array(
+							'class'     => 'bwp-form-control bwp-code-editor',
+							'data-mode' => 'css'
 						)
 					)
 				) : array(
 					'items' => array(
 						'select',
 						'select',
+						'checkbox',
 						'select',
 						'input',
 						'heading'
@@ -993,6 +1052,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					'item_labels' => array(
 						__('reCAPTCHA theme', $this->domain),
 						__('reCAPTCHA size', $this->domain),
+						__('Enable custom CSS', $this->domain),
 						__('Language', $this->domain),
 						__('Tabindex for captcha input field', $this->domain),
 						__('Preview your reCAPTCHA', $this->domain)
@@ -1000,6 +1060,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 					'item_names' => array(
 						'select_v2_theme',
 						'select_v2_size',
+						'enable_custom_styles',
 						'select_v2_lang',
 						'input_tab',
 						'h1'
@@ -1026,10 +1087,33 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						/* 	__('Manually', $this->domain)    => 'manually' */
 						/* ) */
 					),
+					'checkbox' => array(
+						'enable_custom_styles' => array(__('Add additional CSS rules '
+							. 'to all recaptcha instances. You can edit them below.', $this->domain) . '<br />' => '')
+					),
 					'input'	=> array(
 						'input_tab' => array(
 							'size'  => 3,
 							'label' => __('Set to 0 to disable.', $this->domain)
+						)
+					),
+					'textarea' => array(
+						'input_v2_styles' => array(
+							'cols' => 90,
+							'rows' => 10
+						)
+					),
+					'inline_fields' => array(
+						'enable_custom_styles' => array('input_v2_styles' => 'textarea')
+					),
+					'attributes' => array(
+						'enable_custom_styles' => array(
+							'class'       => 'bwp-code-editor-cb',
+							'data-target' => 'input_v2_styles'
+						),
+						'input_v2_styles' => array(
+							'class'     => 'bwp-form-control bwp-code-editor',
+							'data-mode' => 'css'
 						)
 					)
 				);
@@ -1048,12 +1132,16 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 						'select_lang',
 						'select_theme',
 						'input_tab',
+						'enable_custom_styles',
+						'input_v1_styles',
 						'enable_css'
 					) : array(
 						'select_v2_theme',
 						'select_v2_size',
 						'select_v2_lang',
-						'input_tab'
+						'input_tab',
+						'enable_custom_styles',
+						'input_v2_styles'
 					);
 			}
 		}
