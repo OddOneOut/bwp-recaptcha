@@ -37,6 +37,16 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 	 */
 	protected $instances = array();
 
+	/**
+	 * Whether custom styles have been printed.
+	 *
+	 * Custom styles should only be printed once, so when it's printed this
+	 * will become true to prevent further printing.
+	 *
+	 * @var bool
+	 */
+	protected $custom_styles_printed = false;
+
 	public function __construct(array $options, $domain, BWP_WP_Bridge $bridge)
 	{
 		parent::__construct($options, $domain, $bridge);
@@ -64,7 +74,24 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 			$output[] = '<p class="bwp-recaptcha-error error">' . $captchaError . '</p>';
 		}
 
+		// @since 2.0.3 allow adding custom styles to captcha instances
+		if ($this->options['use_custom_styles'] && ! $this->custom_styles_printed
+			&& !empty($this->options['custom_styles'])
+		) {
+			$custom_styles = implode("\n", array(
+				'<style type="text/css">',
+				esc_html($this->options['custom_styles']),
+				'</style>'
+			));
+
+			// only print custom styles once
+			$this->custom_styles_printed = true;
+		} else {
+			$custom_styles = '';
+		}
+
 		$output[] = implode('', array(
+			$custom_styles,
 			'<input type="hidden" name="bwp-recaptcha-widget-id" value="' . esc_attr($this->_getWidgetId($formId)) . '" />',
 			'<div id="' . $this->_getWidgetHtmlId($formId) . '" class="bwp-recaptcha g-recaptcha" ',
 				/* 'data-sitekey="' . esc_attr($this->options['site_key']) . '" ', */

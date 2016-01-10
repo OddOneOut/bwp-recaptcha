@@ -44,6 +44,12 @@ class BWP_Recaptcha_Provider_V1 extends BWP_Recaptcha_Provider
 			iframe[src="about:blank"] { display: none; }
 			/* make sure the captcha uses auto table layout */
 			.recaptchatable { table-layout: auto; }
+<?php
+			// @since 2.0.3 allow adding custom styles to captcha instances
+			if ($this->options['use_custom_styles'] && !empty($this->options['custom_styles'])) {
+				echo  esc_html($this->options['custom_styles']);
+			}
+?>
 		</style>
 <?php
 			if ($this->options['theme'] != 'custom') {
