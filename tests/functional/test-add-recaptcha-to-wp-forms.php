@@ -59,7 +59,9 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		$captcha = $crawler->filter('div.g-recaptcha');
 
 		$this->assertCount(1, $captcha);
-		$this->assertCount(0, $captcha->previousAll()->filter('p > textarea[name="comment"]'), 'captcha added after author fields, before comment field');
+
+		$this->assertCount(1, $captcha->previousAll()->filter('p > input[name="author"]'), 'captcha added after author fields (author)');
+		$this->assertCount(1, $captcha->previousAll()->filter('p > input[name="email"]'), 'captcha added after author fields (email)');
 	}
 
 	public function test_add_captcha_to_comment_form_after_comment_field()
