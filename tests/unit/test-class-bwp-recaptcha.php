@@ -46,6 +46,10 @@ class BWP_RECAPTCHA_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 
 	protected function tearDown()
 	{
+		if (isset($_SERVER['REQUEST_URI'])) {
+			unset($_SERVER['REQUEST_URI']);
+		}
+
 		parent::tearDown();
 	}
 
@@ -132,6 +136,111 @@ class BWP_RECAPTCHA_Test extends BWP_Framework_PHPUnit_Unit_TestCase
 			array(3, 2),
 			array(3, 3),
 			array(3, 4)
+		);
+	}
+
+	/**
+	 * @covers BWP_RECAPTCHA::determine_current_page
+	 * @dataProvider get_request_uris_for_login_page
+	 */
+	public function test_should_determine_login_page_correctly(
+		$request_uri,
+		$login_path = 'wp-login.php',
+		$is_ssl = false,
+		$expected = false
+	) {
+		$this->plugin->is_login  = false;
+		$this->plugin->is_reg    = false;
+		$this->plugin->is_signup = false;
+
+		$_SERVER['REQUEST_URI'] = $request_uri;
+
+		if ($is_ssl) {
+			$this->scheme = 'https';
+			$this->setup_url_functions();
+		}
+
+		$this->bridge
+			->shouldReceive('wp_login_url')
+			->andReturn($this->bridge->home_url($login_path))
+			->byDefault();
+
+		$this->call_protected_method('determine_current_page');
+
+		$this->assertEquals($expected, $this->plugin->is_login);
+
+		$this->assertFalse($this->plugin->is_reg);
+		$this->assertFalse($this->plugin->is_signup);
+	}
+
+	public function get_request_uris_for_login_page()
+	{
+		return array(
+			array('/a-page'),
+			array('/wp-login.php', 'wp-login.php', false, true),
+			array('/blog/wp-login.php', 'blog/wp-login.php', false, true),
+			array('wp-login.php?redirect_to=url&reauth=1', 'wp-login.php', false, true),
+			array('/member-login/', 'member-login', false, true),
+
+			// ssl on
+			array('/a-page', 'wp-login.php', true),
+			array('/wp-login.php', 'wp-login.php', true, true),
+			array('/blog/wp-login.php', 'blog/wp-login.php', true, true),
+			array('wp-login.php?redirect_to=url&reauth=1', 'wp-login.php', true, true),
+			array('/member-login/', 'member-login', true, true),
+		);
+	}
+
+	/**
+	 * @covers BWP_RECAPTCHA::determine_current_page
+	 * @dataProvider get_request_uris_for_register_page
+	 */
+	public function test_should_determine_register_page_correctly(
+		$request_uri,
+		$wp_path = '',
+		$is_ssl = false,
+		$expected = false
+	) {
+		$this->plugin->is_login  = false;
+		$this->plugin->is_reg    = false;
+		$this->plugin->is_signup = false;
+
+		$_SERVER['REQUEST_URI'] = $request_uri;
+
+		if ($is_ssl) {
+			$this->scheme = 'https';
+		}
+
+		$this->wp_path = $wp_path;
+		$this->setup_url_functions();
+
+		$this->bridge
+			->shouldReceive('wp_login_url')
+			->andReturn($this->bridge->home_url('wp-login.php'))
+			->byDefault();
+
+		$this->call_protected_method('determine_current_page');
+
+		$this->assertEquals($expected, $this->plugin->is_reg);
+
+		$this->assertFalse($this->plugin->is_signup);
+	}
+
+	public function get_request_uris_for_register_page()
+	{
+		return array(
+			array('/a-page'),
+			array('/wp-login.php', false),
+			array('/wp-login.php?action=register', false, false, true),
+			array('wp-login.php?action=register&param2=1234', false, false, true),
+			array('/wp-login.php?action=register', 'path'),
+			array('/path/wp-login.php?action=register', 'path', false, true),
+
+			// ssl on
+			array('/wp-login.php?action=register', false, true, true),
+			array('wp-login.php?action=register&param2=1234', false, true, true),
+			array('/wp-login.php?action=register', 'path', true, false),
+			array('/path/wp-login.php?action=register', 'path', true, true),
 		);
 	}
 }

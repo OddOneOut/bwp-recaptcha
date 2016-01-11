@@ -16,6 +16,10 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		self::reset_users();
 		self::reset_comments();
 
+		if (isset($_SERVER['HTTPS'])) {
+			unset($_SERVER['HTTPS']);
+		}
+
 		parent::tearDown();
 	}
 
@@ -258,8 +262,15 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		$this->assertCount(0, $captcha);
 	}
 
-	public function test_add_captcha_to_login_form()
+	/**
+	 * @dataProvider is_ssl
+	 */
+	public function test_add_captcha_to_login_form($is_ssl)
 	{
+		if ($is_ssl) {
+			$_SERVER['HTTP'] = 'on';
+		}
+
 		$crawler = self::get_crawler_from_url(wp_login_url());
 
 		$captcha = $crawler->filter('div.g-recaptcha');
@@ -271,17 +282,19 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 	/**
 	 * @depends test_add_captcha_to_login_form
 	 */
-	public function test_show_only_captcha_error_in_login_error_if_wrong_captcha(Crawler $crawler)
+	public function test_show_only_captcha_error_in_login_error_if_wrong_captcha()
 	{
 		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
 			'input_error' => 'invalid captcha'
 		));
 
+		$client = self::get_client_clone();
+		$crawler = $client->getCrawler();
+
 		$login_form = $crawler->filter('#loginform input[type="submit"]')->form(array(
 			'log' => 'test'
 		));
 
-		$client = self::get_client_clone();
 		$crawler = $client->submit($login_form);
 
 		$this->assertEquals('invalid captcha', trim($crawler->filter('#login_error')->text()));
@@ -290,7 +303,7 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 	/**
 	 * @depends test_add_captcha_to_login_form
 	 */
-	public function test_login_successfully_if_captcha_is_correct(Crawler $crawler)
+	public function test_login_successfully_if_captcha_is_correct()
 	{
 		self::ensure_correct_captcha();
 
@@ -301,20 +314,29 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 
 		self::commit_transaction();
 
+		$client = self::get_client_clone();
+		$crawler = $client->getCrawler();
+
 		$login_form = $crawler->filter('#loginform input[type="submit"]')->form(array(
 			'log' => $user_login,
 			'pwd' => 'password'
 		));
 
-		$client = self::get_client_clone();
 		$client->followRedirects(false);
 		$crawler = $client->submit($login_form);
 
 		$this->assertEquals(302, $client->getResponse()->getStatus(), 'a successful login means a redirection');
 	}
 
-	public function test_add_captcha_to_registration_form()
+	/**
+	 * @dataProvider is_ssl
+	 */
+	public function test_add_captcha_to_registration_form($is_ssl)
 	{
+		if ($is_ssl) {
+			$_SERVER['HTTP'] = 'on';
+		}
+
 		$crawler = self::get_crawler_from_url(wp_registration_url());
 
 		$captcha = $crawler->filter('div.g-recaptcha');
@@ -323,21 +345,31 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		return $crawler;
 	}
 
+	public function is_ssl()
+	{
+		return array(
+			array(false),
+			array(true)
+		);
+	}
+
 	/**
 	 * @depends test_add_captcha_to_registration_form
 	 */
-	public function test_show_registration_error_if_wrong_captcha(Crawler $crawler)
+	public function test_show_registration_error_if_wrong_captcha()
 	{
 		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
 			'input_error' => 'invalid captcha'
 		));
+
+		$client = self::get_client_clone();
+		$crawler = $client->getCrawler();
 
 		$register_form = $crawler->filter('#registerform input[type="submit"]')->form(array(
 			'user_login' => 'test',
 			'user_email' => 'test@example.com'
 		));
 
-		$client = self::get_client_clone();
 		$crawler = $client->submit($register_form);
 
 		$this->assertCount(1, $crawler->filter('#login_error:contains(invalid captcha)'));
@@ -346,18 +378,20 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 	/**
 	 * @depends test_add_captcha_to_registration_form
 	 */
-	public function test_register_successfully_if_captcha_is_correct(Crawler $crawler)
+	public function test_register_successfully_if_captcha_is_correct()
 	{
 		self::ensure_correct_captcha();
 
 		$user_login = 'test' . self::uniqid();
+
+		$client = self::get_client_clone();
+		$crawler = $client->getCrawler();
 
 		$register_form = $crawler->filter('#registerform input[type="submit"]')->form(array(
 			'user_login' => $user_login,
 			'user_email' => $user_login . '@example.com'
 		));
 
-		$client = self::get_client_clone();
 		$crawler = $client->submit($register_form);
 
 		$this->assertInstanceOf('WP_User', get_user_by('login', $user_login));
