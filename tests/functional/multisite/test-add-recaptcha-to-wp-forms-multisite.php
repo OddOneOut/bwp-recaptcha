@@ -31,8 +31,15 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Multisite_Functional_Test extends 
 		self::update_option(BWP_CAPT_OPTION_GENERAL, $default_options);
 	}
 
-	public function test_add_captcha_to_signup_form()
+	/**
+	 * @dataProvider is_ssl
+	 */
+	public function test_add_captcha_to_signup_form($is_ssl)
 	{
+		if ($is_ssl) {
+			$_SERVER['HTTP'] = 'on';
+		}
+
 		$crawler = self::get_crawler_from_url(site_url('wp-signup.php'));
 
 		$captcha = $crawler->filter('div.g-recaptcha');
@@ -41,18 +48,27 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Multisite_Functional_Test extends 
 		return $crawler;
 	}
 
+	public function is_ssl()
+	{
+		return array(
+			array(false),
+			array(true)
+		);
+	}
+
 	/**
 	 * @depends test_add_captcha_to_signup_form
 	 */
-	public function test_show_signup_user_error_if_wrong_captcha(Crawler $crawler)
+	public function test_show_signup_user_error_if_wrong_captcha()
 	{
 		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
 			'input_error' => 'invalid captcha'
 		));
 
-		$signup_form = $crawler->filter('#setupform input[type="submit"]')->form();
-
 		$client = self::get_client_clone();
+		$crawler = $client->getCrawler();
+
+		$signup_form = $crawler->filter('#setupform input[type="submit"]')->form();
 		$crawler = $client->submit($signup_form);
 
 		$this->assertCount(1, $crawler->filter('.bwp-recaptcha-error:contains(invalid captcha)'));
@@ -61,11 +77,14 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Multisite_Functional_Test extends 
 	/**
 	 * @depends test_add_captcha_to_signup_form
 	 */
-	public function test_signup_user_successfully_if_captcha_is_correct(Crawler $crawler)
+	public function test_signup_user_successfully_if_captcha_is_correct()
 	{
 		self::ensure_correct_captcha();
 
 		$user_login = 'test' . self::uniqid();
+
+		$client = self::get_client_clone();
+		$crawler = $client->getCrawler();
 
 		$signup_form = $crawler->filter('#setupform input[type="submit"]')->form(array(
 			'user_name'  => $user_login,
@@ -73,7 +92,6 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Multisite_Functional_Test extends 
 			'signup_for' => 'user'
 		));
 
-		$client = self::get_client_clone();
 		$crawler = $client->submit($signup_form);
 
 		global $wpdb;

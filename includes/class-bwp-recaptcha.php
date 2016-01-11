@@ -344,25 +344,30 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 	 */
 	private function _wp_registration_url()
 	{
-		return apply_filters('register_url', site_url('wp-login.php?action=register', 'login'));
+		return $this->bridge->apply_filters('register_url', $this->bridge->site_url('wp-login.php?action=register', 'login'));
 	}
 
 	protected function determine_current_page()
 	{
-		$login_path    = str_replace(home_url(), '', wp_login_url());
-		$register_path = str_replace(home_url(), '', $this->_wp_registration_url());
+		// @since 2.0.3 only strip the host and scheme (including https), so
+		// we can properly compare with REQUEST_URI later on.
+		$login_path    = preg_replace('#https?://[^/]+/#i', '', $this->bridge->wp_login_url());
+		$register_path = preg_replace('#https?://[^/]+/#i', '', $this->_wp_registration_url());
 
-		if (strpos($_SERVER['REQUEST_URI'], $register_path) === 0)
+		global $pagenow;
+
+		$request_uri = ltrim($_SERVER['REQUEST_URI'], '/');
+		if (strpos($request_uri, $register_path) === 0)
 		{
 			// whether user is requesting regular user registration page
 			$this->is_reg = true;
 		}
-		elseif (strpos($_SERVER['REQUEST_URI'], $login_path) === 0)
+		elseif (strpos($request_uri, $login_path) === 0)
 		{
 			// whether user is requesting the wp-login page
 			$this->is_login = true;
 		}
-		elseif (strpos($_SERVER['REQUEST_URI'], 'wp-signup.php') !== false)
+		elseif (!empty($pagenow) && $pagenow == 'wp-signup.php')
 		{
 			// whether user is requesting wp-signup page (multi-site page for
 			// user/site registration)
