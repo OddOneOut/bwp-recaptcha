@@ -56,7 +56,10 @@ class BWP_Recaptcha_Provider_Test extends PHPUnit_Framework_TestCase
 		$this->plugin->options = $options;
 		$this->plugin->domain  = 'bwp-capt';
 
-		$this->plugin->method('get_bridge')->willReturn($this->bridge);
+		$this->plugin
+			->expects($this->any())
+			->method('get_bridge')
+			->will($this->returnValue($this->bridge));
 	}
 
 	/**
@@ -66,10 +69,14 @@ class BWP_Recaptcha_Provider_Test extends PHPUnit_Framework_TestCase
 	public function test_should_create_correct_version_of_provider_based_on_setting($use_v1, $provider_class_name)
 	{
 		if (version_compare(PHP_VERSION, '5.3.2', '<')) {
-			$this->markTestSkipped();
+			$use_v1 = true;
+			$provider_class_name = 'BWP_Recaptcha_Provider_V1';
 		}
 
-		$this->plugin->method('should_use_old_recaptcha')->willReturn($use_v1);
+		$this->plugin
+			->expects($this->any())
+			->method('should_use_old_recaptcha')
+			->will($this->returnValue($use_v1));
 
 		$provider = BWP_Recaptcha_Provider::create($this->plugin);
 
