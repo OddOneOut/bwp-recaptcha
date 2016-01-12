@@ -33,6 +33,11 @@ function bwp_capt_comment_form($args = array(), $post_id = null)
 
 	ob_start();
 
+	/**
+	 * Fire where a recaptcha should be rendered.
+	 *
+	 * This action hooks is mostly used to render the captcha in certain forms.
+	 */
 	do_action('bwp_recaptcha_add_markups');
 	$recaptcha_html = ob_get_contents();
 
@@ -292,6 +297,21 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 		$this->lang    = include_once dirname(__FILE__) . '/provider/v1-languages.php';
 		$this->v2_lang = include_once dirname(__FILE__) . '/provider/v2-languages.php';
 
+		/**
+		 * Filter WordPress capabilities that can bypass a recaptcha.
+		 *
+		 * @see https://codex.wordpress.org/Roles_and_Capabilities
+		 *
+		 * @param array $capabilities The capabilities to filter.
+		 *
+		 * @return array Example:
+		 * ```
+		 * return $caps = array(
+		 *     'Read Profile' => 'read',
+		 *     'Manage Options' => 'manage_options'
+		 * );
+		 * ```
+		 */
 		$this->caps = $this->bridge->apply_filters('bwp_capt_bypass_caps', array(
 			$this->bridge->t('Read Profile', $this->domain)   => 'read',
 			$this->bridge->t('Manage Options', $this->domain) => 'manage_options'
@@ -508,6 +528,13 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 			if ('custom' == $this->options['select_theme']
 				&& ($this->is_admin_page(BWP_CAPT_OPTION_THEME) || !is_admin())
 			) {
+				/**
+				 * Filter the CSS file used for Custom Theme.
+				 *
+				 * This filter is used for **reCAPTCHA version 1** only.
+				 *
+				 * @param string $css_file An absolute URL to the CSS file.
+				 */
 				$custom_theme_css = apply_filters('bwp_capt_css', BWP_CAPT_CSS . '/custom-theme.css');
 				wp_enqueue_style('bwp-capt', $custom_theme_css);
 			}

@@ -102,6 +102,12 @@ class BWP_Recaptcha_Provider_V2 extends BWP_Recaptcha_Provider
 			'</div>'
 		));
 
+		/**
+		 * Fire before the captcha is shown.
+		 *
+		 * This action hook can be used to add custom markups before the
+		 * captcha form.
+		 */
 		do_action('bwp_capt_before_add_captcha');
 
 		echo implode("\n", $output);
