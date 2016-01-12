@@ -4,6 +4,7 @@ bower_components/
 bin/
 .*
 phpunit*.*
+phpdoc*.*
 composer.*
 bower.json
 package.json
