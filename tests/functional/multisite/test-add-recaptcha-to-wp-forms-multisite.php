@@ -13,7 +13,7 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Multisite_Functional_Test extends 
 
 	public function get_plugin_under_test()
 	{
-		$root_dir = dirname(dirname(dirname(__FILE__)));
+		$root_dir = dirname(dirname(dirname(dirname(__FILE__))));
 
 		return array(
 			$root_dir . '/bwp-recaptcha.php' => 'bwp-recaptcha/bwp-recaptcha.php'
