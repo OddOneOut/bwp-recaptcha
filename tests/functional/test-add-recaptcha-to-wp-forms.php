@@ -40,6 +40,15 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		self::update_option(BWP_CAPT_OPTION_GENERAL, $default_options);
 	}
 
+	public function get_extra_plugins()
+	{
+		$fixtures_dir = dirname(__FILE__) . '/data/fixtures';
+
+		return array(
+			$fixtures_dir . '/filters.php' => 'bwp-recaptcha-fixtures/filters.php'
+		);
+	}
+
 	public function test_add_captcha_to_comment_form_after_author_fields()
 	{
 		self::set_options(BWP_CAPT_OPTION_GENERAL, array(
@@ -47,7 +56,6 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		));
 
 		$crawler = self::get_crawler_from_post($this->create_post());
-
 		$captcha = $crawler->filter('div.g-recaptcha');
 
 		$this->assertCount(1, $captcha);
@@ -82,14 +90,20 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		$comment_form = $crawler->filter('#commentform input[type="submit"]')->form();
 
 		$client = self::get_client_clone();
-		$post_uri = $client->getRequest()->getUri();
+		$post_uri = self::get_uri_from_client($client);
 
 		// don't follow redirect so we can check the actual redirect response
 		$client->followRedirects(false);
 		$client->submit($comment_form);
 
 		$this->assertEquals(302, $client->getResponse()->getStatus());
-		$this->assertEquals(add_query_arg(array('cerror' => 'missing-input-response'), $post_uri . '#respond'), $client->getResponse()->getHeader('Location'));
+		$this->assertEquals(
+			add_query_arg(
+				array('cerror' => 'missing-input-response'),
+				$post_uri . '#respond'
+			),
+			$client->getResponse()->getHeader('Location')
+		);
 	}
 
 	/**
@@ -195,17 +209,35 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		));
 
 		$client = self::get_client_clone();
+		$post_uri = self::get_uri_from_client($client);
 
+		// first comment
 		$client->submit($comment_form, array(
-			'comment' => sprintf($comment, self::uniqid())
+			'comment' => sprintf($comment, self::uniqid()) . ' from ' . getenv('WP_VERSION')
 		));
 
+		// second comment
 		$crawler = $client->submit($comment_form, array(
-			'comment' => sprintf($comment, self::uniqid())
+			'comment' => sprintf($comment, self::uniqid()) . ' from ' . getenv('WP_VERSION')
 		));
+
+		// make sure the two comments are approved
+		global $wpdb;
+		$wpdb->query($wpdb->prepare(
+			"UPDATE $wpdb->comments SET comment_approved = 1 WHERE comment_author_email = %s",
+			$email
+		));
+		self::commit_transaction();
+
+		// visit the post with comment page again
+		$crawler = $client->request('GET', $post_uri);
 
 		$captcha = $crawler->filter('div.g-recaptcha');
-		$this->assertCount(0, $captcha, 'users who have "input_approved" approved comments should not have to fill captcha');
+		$this->assertCount(
+			0,
+			$captcha,
+			'users who have "input_approved" of approved comments should not have to fill captcha'
+		);
 	}
 
 	/**
