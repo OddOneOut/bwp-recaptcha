@@ -182,6 +182,7 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		));
 
 		$client = self::get_client_clone();
+		$client->followRedirects(false);
 		$client->submit($comment_form);
 
 		$this->assertCount(1, get_comments(array(
@@ -211,6 +212,7 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		));
 
 		$client = self::get_client_clone();
+		$client->followRedirects(false);
 		$post_uri = self::get_uri_from_client($client);
 
 		// first comment
@@ -261,6 +263,7 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		self::commit_transaction();
 
 		$client = self::get_client(false);
+		$client->followRedirects(false);
 		$client->request('POST', wp_login_url(), array(
 			'log' => $user_login,
 			'pwd' => 'password'
@@ -285,6 +288,7 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 		));
 
 		$client = self::get_client(false);
+		$client->followRedirects(false);
 		$client->request('POST', wp_login_url(), array(
 			'log' => 'admin',
 			'pwd' => 'password'
@@ -426,6 +430,7 @@ class BWP_Recaptcha_Add_Recaptcha_To_WP_Forms_Functional_Test extends BWP_Recapt
 			'user_email' => $user_login . '@example.com'
 		));
 
+		$client->followRedirects(false);
 		$crawler = $client->submit($register_form);
 
 		$this->assertInstanceOf('WP_User', get_user_by('login', $user_login));
