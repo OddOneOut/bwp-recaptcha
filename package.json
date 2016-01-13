@@ -1,6 +1,6 @@
 {
     "name": "BWP_Recaptcha",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "config": {
         "phpunit_suite": ""
     },
