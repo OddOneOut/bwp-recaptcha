@@ -27,7 +27,7 @@
         "build:docs:api": "phpdoc",
         "postbuild:translations": "echo 'POT file is marked as modified due to timestamp change, revert it' && git co *.pot",
         "build:translations": "export PACKAGE_NAME='BWP Recaptcha' && export PACKAGE_VERSION='2.0.3' && export DOMAIN='bwp-recaptcha' && export LANGS='de_DE es_ES fr_FR hr hu_HU' && vendor/bin/build-translations",
-        "prebuild:dist": "npm run build && rm -rf dist/wp.org && git clone . dist/wp.org",
+        "prebuild:dist": "npm run update:composer && npm run build && rm -rf dist/wp.org && git clone . dist/wp.org",
         "build:dist": "cd dist/wp.org && composer install --no-dev --no-plugins && cd ../../ && npm run copy:dist:node_bower && cd dist/wp.org/vendor/kminh/bwp-framework && npm run build:dist",
         "build:ci": "export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:all",
         "build:legacy": "export WP_DB_USER=root && export WP_DB_PASS=wordpress && npm run test:php:legacy:all",
