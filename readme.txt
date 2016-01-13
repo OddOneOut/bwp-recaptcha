@@ -3,8 +3,8 @@ Contributors: OddOneOut
 Donate link: http://betterwp.net/wordpress-plugins/bwp-recaptcha/#contributions
 Tags: recaptcha, captcha, no captcha, nocapthca, no captcha recaptcha, nocaptcha recaptcha, comment captcha, login captcha, user registration captcha, blog registration captcha, contact form, contact form 7, contact form 7 recaptcha, akismet, akismet integration, akismet captcha, anti-spam, antispam
 Requires at least: 3.6
-Tested up to: 4.3
-Stable tag: 2.0.2
+Tested up to: 4.4
+Stable tag: 2.0.3
 License: GPLv3 or later
 
 This plugin utilizes Google reCAPTCHA to help your blog stay clear of spams.
