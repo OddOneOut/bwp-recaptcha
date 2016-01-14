@@ -97,6 +97,30 @@ Please [help translate](http://betterwp.net/wordpress-tips/create-pot-file-using
 
 == Changelog ==
 
+= 2.0.3 (2016-01-13) =
+
+-   **New Features**
+    -   Allow adding custom CSS rules to control the look and feel of
+        recaptcha instances. To enable this feature, navigate to *BWP
+        reCAPT >> Theme Options*, choose to enable Custom CSS, and then
+        customize the default CSS rules however you like.
+-   **Enhancements**
+    -   Allow setting a request method to work around the "invalid-json" error.
+        With this change fsockopen is preferred to cURL, and will be the first
+        to be used to communicate with reCAPTCHA's server.
+-   **Other Changes**
+    -   Marked as compatible with WordPress 4.4+.
+    -   Update language template file and translation files. If you're a
+        translator, please help translating this plugin (your name and website
+        will be listed on this plugin's page!) For more info, see:
+        <http://betterwp.net/wordpress-tips/create-pot-file-using-poedit/>
+-   **Bugs fixed**
+    -   Fix a bug that results in captcha not showing on certain login pages.
+        Affected login pages include:
+        -   Login page that uses secured HTTP (HTTPS)
+        -   Login page of a child blog in a sub-directory multisite
+            installation.
+
 = 2.0.2 (2015-10-30) =
 
 -   **New Features**
