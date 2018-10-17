@@ -37,7 +37,7 @@ else
 
 // @since 2.0.0 we hook to 'init' action with a priority of 9 to make sure the
 // plugin loads before Contact Form 7 loads
-add_filter('bwp_capt_init_priority', create_function('', 'return 9;'));
+add_filter('bwp_capt_init_priority', function() { return 9; });
 
 // init the plugin
 $bwp_capt = new BWP_RECAPTCHA($bwp_capt_meta);

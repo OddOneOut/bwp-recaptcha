@@ -1569,7 +1569,7 @@ class BWP_RECAPTCHA extends BWP_Framework_V3
 			if ($this->_is_previous_comment_spam())
 			{
 				// do not increase Akismet spam counter
-				add_filter('akismet_spam_count_incr', create_function('', 'return 0;'), 11);
+				add_filter('akismet_spam_count_incr', function() { return 0; }, 11);
 
 				// use the correct status for the marked-as-spam comment, use
 				// workaround for remove_filter function
